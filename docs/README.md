@@ -7,6 +7,8 @@ Các tài liệu trong repo được tổ chức theo từng chủ đề lớn.
 - [Embeddings](./embeddings/)
 - [Multi-turn Conversation & Prompt Caching](./multi-turn-conversation/)
 - [Structured Output (JSON, Schema, Constrained Decoding)](./structured-output/)
+- [Tool Use](./tool-use/)
+- [Decision Models (Jev, Clef, OpenAI Decisions, open-weight)](./decision-models/)
 - [Prompt Engineering](./prompt-engineering/)
 - [Under Attack (Xử lý DDoS/Flood với Cloudflare)](./under-attack/)
 - [Deploying AI Systems](./deploying-ai-systems/) — *sắp có, hiện mới là dàn ý*
