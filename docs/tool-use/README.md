@@ -306,8 +306,13 @@ tools = [{
 items = [{"role": "user", "content": "Đơn DH-208431 của tôi đâu rồi?"}]
 for _ in range(12):
     resp = client.responses.create(model="gpt-6.1-sol", tools=tools, input=items, store=False)
-    if resp.status == "incomplete":           # ví dụ max_output_tokens: arguments có thể dở dang
-        raise Truncated(resp.incomplete_details)   # không đưa vào lịch sử, không thực thi
+    if resp.status == "incomplete":           # không đưa vào lịch sử, không thực thi
+        reason = resp.incomplete_details.reason
+        if reason == "max_output_tokens":
+            raise Truncated()                 # arguments có thể dở dang: tăng giới hạn rồi thử lại
+        if reason == "content_filter":
+            raise Refused()                   # bị chặn theo policy: không retry nguyên văn
+        raise UnexpectedStatus(reason)        # lý do khác: dừng, không đoán
     items += resp.output                      # gồm cả reasoning item, không lọc
     calls = [it for it in resp.output if it.type == "function_call"]
     if not calls:
