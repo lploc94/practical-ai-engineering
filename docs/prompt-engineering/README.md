@@ -6,11 +6,13 @@ Tuần sau, khách hỏi "cửa hàng mở cửa mấy giờ?" thì bot đòi m�
 
 Cả ba sự cố đều có chung một nguyên nhân: prompt là một phần của chương trình, nhưng không có compiler, không có type, và hành vi của nó phụ thuộc vào đúng model đang chạy nó. Viết prompt cho bản demo nghĩa là tìm câu chữ chạy được trên vài ví dụ. Viết prompt cho production nghĩa là quản lý một thành phần có thể hỏng âm thầm khi bạn sửa một câu, khi đổi model, hoặc khi provider bỏ đi một tính năng.
 
-Tài liệu này không lặp lại các mẹo đã có trong mọi bài nhập môn. Nó tập trung vào những điều ít được nhắc tới: cơ chế đằng sau các mẹo đó, những chỗ các provider khuyên ngược nhau, những kỹ thuật từng phổ biến nhưng nay đã bị gỡ khỏi API, và cách quản lý prompt để thay đổi nào cũng đo được.
+Đây là tài liệu cho đội đã có prompt chạy được và muốn đưa nó vào production. Trọng tâm là cơ chế phía sau các kỹ thuật, những chỗ provider khuyên khác nhau, các tính năng đã bị gỡ khỏi API, và cách quản lý prompt để mỗi thay đổi đều có thể đo được.
 
-- **Phần 1 — Nền tảng:** vì sao prompt nhạy cảm đến vậy, phân quyền giữa các loại message, điều gì thật sự giúp model làm đúng, few-shot dạy model những gì, và vì sao prompt gắn chặt với model.
-- **Phần 2 — Kỹ thuật và công cụ:** cấu trúc prompt, xử lý tài liệu dài, kiểm soát format khi không còn prefill và temperature, chaining, tự động tối ưu prompt, công cụ quản lý.
-- **Phần 3 — Thiết kế và vận hành:** lưu prompt ở đâu, versioning, regression test, chuyển model, prompt tiếng Việt. Khi cần tìm nguyên nhân một lỗi cụ thể, bắt đầu từ [bảng ở §3.7](#37-failure-modes-thường-gặp).
+- **Phần 1 — Nền tảng:** vì sao prompt nhạy cảm, phân quyền giữa các message, few-shot, và mối quan hệ giữa prompt với model, context và tool.
+- **Phần 2 — Kỹ thuật và công cụ:** cấu trúc prompt, tài liệu dài, format, chaining, tối ưu tự động, registry và các ranh giới an toàn.
+- **Phần 3 — Thiết kế và vận hành:** lưu prompt, versioning, regression test, chuyển model, prompt tiếng Việt và checklist production. Khi cần tìm nguyên nhân một lỗi cụ thể, bắt đầu từ [bảng ở §3.7](#37-failure-modes-thường-gặp).
+
+Phạm vi của tài liệu là phần giao giữa câu chữ và hệ thống chạy câu chữ đó. Chi tiết về RAG, tool use, security, evaluation, observability, latency và agents nằm ở các tài liệu riêng; ở đây chỉ giữ lại những quyết định ảnh hưởng trực tiếp đến prompt và cách kiểm tra chúng.
 
 > Bản tháng 11/2026. Thuật ngữ kỹ thuật giữ nguyên tiếng Anh để tiện đối chiếu tài liệu và API. Hướng dẫn của provider thay đổi theo từng thế hệ model; những điểm chỉ xác minh qua nguồn thứ cấp được đánh dấu tại chỗ.
 
@@ -25,6 +27,7 @@ Tài liệu này không lặp lại các mẹo đã có trong mọi bài nhập 
   - [1.3 Cụ thể, có ngữ cảnh, có lý do: điều model cần để làm đúng](#13-cụ-thể-có-ngữ-cảnh-có-lý-do-điều-model-cần-để-làm-đúng)
   - [1.4 Few-shot: khi nào giúp, khi nào làm model bắt chước sai](#14-few-shot-khi-nào-giúp-khi-nào-làm-model-bắt-chước-sai)
   - [1.5 Prompt và model: vì sao prompt tốt cho model này chưa chắc tốt cho model khác](#15-prompt-và-model-vì-sao-prompt-tốt-cho-model-này-chưa-chắc-tốt-cho-model-khác)
+  - [1.6 Prompt, context và tool contract](#16-prompt-context-và-tool-contract)
 - [Phần 2 — Kỹ thuật và công cụ](#phần-2--kỹ-thuật-và-công-cụ)
   - [2.1 Cấu trúc prompt: section, tag XML, markdown](#21-cấu-trúc-prompt-section-tag-xml-markdown)
   - [2.2 Đưa tài liệu dài vào prompt: thứ tự, trích dẫn](#22-đưa-tài-liệu-dài-vào-prompt-thứ-tự-trích-dẫn)
@@ -32,6 +35,7 @@ Tài liệu này không lặp lại các mẹo đã có trong mọi bài nhập 
   - [2.4 Prompt chaining, chain-of-thought và tách tác vụ](#24-prompt-chaining-chain-of-thought-và-tách-tác-vụ)
   - [2.5 Tự động tối ưu prompt: DSPy, GEPA, công cụ của provider](#25-tự-động-tối-ưu-prompt-dspy-gepa-công-cụ-của-provider)
   - [2.6 Công cụ quản lý prompt: registry, versioning, template](#26-công-cụ-quản-lý-prompt-registry-versioning-template)
+  - [2.7 Những việc prompt không thể tự đảm bảo](#27-những-việc-prompt-không-thể-tự-đảm-bảo)
 - [Phần 3 — Thiết kế và vận hành](#phần-3--thiết-kế-và-vận-hành)
   - [3.1 Lưu prompt ở đâu: trong code, file template hay prompt registry](#31-lưu-prompt-ở-đâu-trong-code-file-template-hay-prompt-registry)
   - [3.2 Versioning và review thay đổi prompt](#32-versioning-và-review-thay-đổi-prompt)
@@ -67,7 +71,7 @@ Thứ tự dưới đây kết hợp khuyến nghị của các provider ([§2.1
 10. Câu hỏi / yêu cầu cụ thể — đặt cuối cùng
 ```
 
-### Bảy điều ít được nhắc nhưng hay gây sự cố
+### Bảy điểm dễ gây sự cố
 
 1. **Một thay đổi nhỏ về format có thể làm kết quả chênh lớn.** Trên model cũ, mức chênh đo được lên tới 76 điểm accuracy, và format tốt cho model này không tương quan nhiều với format tốt cho model khác ([§1.1](#11-prompt-là-một-phần-của-chương-trình)).
 2. **Ngôn ngữ nhấn mạnh làm model mới kích hoạt quá mức.** `CRITICAL`, `MUST`, "nếu nghi ngờ thì cứ gọi tool" từng cần thiết với model cũ, nhưng nay khiến model gọi tool cả khi không cần ([§1.3](#13-cụ-thể-có-ngữ-cảnh-có-lý-do-điều-model-cần-để-làm-đúng)).
@@ -75,7 +79,7 @@ Thứ tự dưới đây kết hợp khuyến nghị của các provider ([§2.1
 4. **Prefill và `temperature` đang biến mất.** Claude từ 4.6 và Gemini 3.6 trả 400 khi request có prefill. Claude Opus 4.7, 4.8, Sonnet 5 và Haiku 5.5 trả 400 với `temperature` khác mặc định; Gemini 3.6 bỏ qua tham số này ([§2.3](#23-kiểm-soát-độ-dài-giọng-văn-và-format)).
 5. **Persona không làm model giỏi hơn.** "Bạn là chuyên gia 20 năm kinh nghiệm" không cải thiện độ chính xác. Tip tiền hay đe doạ cũng không có tác dụng trung bình, dù có thể làm từng câu riêng lẻ lệch mạnh theo cả hai chiều ([§1.3](#13-cụ-thể-có-ngữ-cảnh-có-lý-do-điều-model-cần-để-làm-đúng)).
 6. **Công cụ prompt do provider host có thể bị tắt.** OpenAI tắt reusable prompt objects vào 30/11/2026. Anthropic đã gỡ prompt generator/improver API và saved prompts của Workbench từ 17/08/2026 ([§2.6](#26-công-cụ-quản-lý-prompt-registry-versioning-template)).
-7. **Tiếng Việt dạng NFD tốn gấp 2,8 lần token so với NFC**, và cũng làm vỡ cache. Viết không dấu không rẻ hơn viết có dấu ([§3.6](#36-đa-ngôn-ngữ-prompt-tiếng-anh-hay-tiếng-việt)).
+7. **Tiếng Việt dạng NFD có thể tốn nhiều token hơn NFC**, và cũng làm vỡ cache. Tỷ lệ phụ thuộc tokenizer và dữ liệu đo; viết không dấu không mặc nhiên rẻ hơn viết có dấu ([§3.6](#36-đa-ngôn-ngữ-prompt-tiếng-anh-hay-tiếng-việt)).
 
 ### Khi nào cần few-shot
 
@@ -117,7 +121,7 @@ Code thông thường có ba thứ mà prompt không có. Compiler báo lỗi kh
 
 **Nhạy với những thay đổi tưởng như vô nghĩa.** Sclar và cộng sự (ICLR 2024) đo ảnh hưởng của các thay đổi format giữ nguyên nghĩa: dấu phân cách, chữ hoa thường, khoảng trắng giữa các trường. Với LLaMA-2-13B, mức chênh lên tới **76 điểm accuracy** giữa format tốt nhất và tệ nhất trên cùng tác vụ. Độ nhạy này vẫn còn khi tăng kích thước model, thêm few-shot hay instruction tuning. Một kết quả quan trọng hơn cho production: format tốt trên model này **chỉ tương quan yếu** với format tốt trên model khác [27]. Nhóm tác giả đề xuất báo cáo một *khoảng* hiệu năng trên nhiều format, thay vì một con số duy nhất.
 
-Model mới ít nhạy hơn, nhưng không hết hẳn. Hua và cộng sự (EMNLP 2025) thử 7 model gồm các họ GPT và Gemini với 12 template và thấy độ lệch giữa template khá thấp. Họ cho rằng phần lớn "độ nhạy với prompt" trong các nghiên cứu cũ là artifact của cách chấm điểm [28]. Tuy vậy, độ nhạy với *thứ tự* nội dung vẫn còn trên model mới [29]. Kết luận thực tế: với model hiện tại, bạn ít khi mất 76 điểm chỉ vì đổi dấu hai chấm thành gạch ngang. Nhưng bạn vẫn không thể biết một thay đổi là vô hại nếu chưa đo.
+Model mới ít nhạy hơn, nhưng không hết hẳn. Hua và cộng sự (EMNLP 2025) thử 7 model gồm các họ GPT và Gemini với 12 template và thấy độ lệch giữa template khá thấp. Họ cho rằng phần lớn "độ nhạy với prompt" trong các nghiên cứu cũ là artifact của cách chấm điểm [28]. Tuy vậy, độ nhạy với *thứ tự* nội dung vẫn còn trên model mới [29]. Với model hiện tại, đổi dấu hai chấm thành gạch ngang hiếm khi làm mất 76 điểm, nhưng mọi thay đổi vẫn cần được đo.
 
 **Không deterministic, kể cả khi bạn muốn.** Thinking Machines Lab chạy Qwen3-235B 1.000 lần với cùng prompt, temperature 0, và nhận được 80 output khác nhau. Các output giống nhau ở 102 token đầu, rồi tách ra từ token 103. Nguyên nhân không phải race condition, mà là kích thước batch trên server thay đổi theo tải, làm thứ tự phép cộng số thực thay đổi theo [41]. Chỉ khi dùng kernel batch-invariant, cả 1.000 output mới giống hệt nhau. Các provider thương mại không hứa điều này. Hơn nữa, như bảng ở phần Tra cứu nhanh cho thấy, nhiều model mới không còn cho bạn đặt temperature.
 
@@ -133,11 +137,11 @@ Trên Claude, `system` là top-level. Các model mới còn cho chèn system mes
 
 ### Thứ bậc đó yếu hơn bạn nghĩ
 
-Thứ bậc vai trò là thứ model được *huấn luyện* để tôn trọng, không phải cơ chế được *thực thi*. Nghiên cứu "Control Illusion" (AAAI-26) thử 6 LLM với các xung đột đơn giản, ví dụ system yêu cầu viết chữ thường còn user yêu cầu viết hoa. Kết quả: thứ tự ưu tiên giữa system và user không ổn định, ngay cả với những xung đột chỉ liên quan đến format. Prompt engineering và fine-tuning chỉ cải thiện nhẹ. Đáng chú ý hơn, các khung xã hội như "theo chuyên gia" hay "mọi người đều đồng ý" ảnh hưởng đến hành vi nhiều hơn chính vai trò của message [33].
+Thứ bậc vai trò là thứ model được *huấn luyện* để tôn trọng, không phải cơ chế được *thực thi*. Nghiên cứu "Control Illusion" (AAAI-26) thử 6 LLM với các xung đột đơn giản, ví dụ system yêu cầu viết chữ thường còn user yêu cầu viết hoa. Kết quả: thứ tự ưu tiên giữa system và user không ổn định, ngay cả với những xung đột chỉ liên quan đến format. Prompt engineering và fine-tuning chỉ cải thiện nhẹ. Các khung xã hội như "theo chuyên gia" hay "mọi người đều đồng ý" còn ảnh hưởng đến hành vi nhiều hơn chính vai trò của message [33].
 
 Có ba hệ quả cho thiết kế:
 
-- **System prompt không phải ranh giới bảo mật.** Quy tắc như "không bao giờ hoàn tiền quá 2 triệu" phải được kiểm tra trong code của tool hoàn tiền, không chỉ nằm trong prompt. Xem [tài liệu Bảo mật LLM](../llm-security/) (đang soạn).
+- **System prompt không phải ranh giới bảo mật.** Quy tắc như "không bao giờ hoàn tiền quá 2 triệu" phải được kiểm tra trong code của tool hoàn tiền, không chỉ nằm trong prompt. Xem [tài liệu Bảo mật LLM](../llm-security/).
 - **System prompt không bí mật.** Hãy coi mọi thứ trong prompt là có thể bị người dùng đọc được. Đừng đặt API key, tên nội bộ nhạy cảm hay logic chống gian lận vào đó.
 - **Tool result không có quyền ra lệnh**, và model mới được huấn luyện để nghi ngờ chỉ thị nằm trong đó. Trang hướng dẫn Haiku 5.5 ghi rằng tin nhắn của user được chèn vào giữa lượt qua `tool_result` có thể bị model coi là không đáng tin [3]. Nếu cần chuyển lời người dùng vào giữa một vòng tool, hãy đặt nó vào lượt user.
 
@@ -190,7 +194,7 @@ Anthropic gọi đây là bài toán chọn đúng "altitude": tránh cả hai c
 
 "Bạn là chuyên gia chăm sóc khách hàng 20 năm kinh nghiệm" xuất hiện trong rất nhiều prompt. Zheng, Pei và Jurgens thử 162 vai trò trên 2.457 câu hỏi factual. Bản cập nhật của bài báo đổi tên thành "Personas in System Prompts Do Not Improve Performances of Large Language Models": thêm persona không cải thiện độ chính xác so với không có persona, và chọn persona tự động cho từng câu hỏi gần như không hơn chọn ngẫu nhiên [37].
 
-Nhóm Wharton (Prompting Science Report) đo các mẹo khác. Hứa "tip $100" hay đe doạ model không tạo khác biệt có ý nghĩa khi tính trung bình trên benchmark. Nói "please" cũng vậy [38][39]. Phát hiện đáng chú ý nhất lại là một chi tiết phụ: **ở từng câu hỏi riêng lẻ**, các biến thể này có thể đẩy kết quả lên hoặc xuống rất mạnh, dù trung bình gần như bằng không [38]. Bài học thực tế không nằm ở chuyện tip có tác dụng hay không. Nó nằm ở chỗ: nếu bạn thử một thay đổi prompt trên 5 câu và thấy tốt hơn, rất có thể bạn chỉ đang thấy nhiễu ở cấp từng câu.
+Nhóm Wharton (Prompting Science Report) đo các mẹo khác. Hứa "tip $100" hay đe doạ model không tạo khác biệt có ý nghĩa khi tính trung bình trên benchmark. Nói "please" cũng vậy [38][39]. **Ở từng câu hỏi riêng lẻ**, các biến thể này vẫn có thể đẩy kết quả lên hoặc xuống rất mạnh, dù trung bình gần như bằng không [38]. Vì vậy, thử một thay đổi trên năm câu dễ dẫn đến kết luận sai; cần một bộ test đủ rộng và chạy lặp lại.
 
 Vậy role có vô dụng không? Không hẳn. Anthropic vẫn khuyên đặt role trong system prompt, vì nó "focuses Claude's behavior and tone" [1]. Role hữu ích để định giọng văn, mức độ trang trọng và phạm vi. Nó không thêm kiến thức. Một role tốt mô tả *bối cảnh*, chẳng hạn "Bạn trả lời khách hàng của một cửa hàng điện tử ở Việt Nam qua chat; khách thường hỏi trên điện thoại, giữa giờ làm", chứ không phải một danh hiệu.
 
@@ -229,7 +233,7 @@ Khuyến nghị của DeepSeek là quan sát của nhóm phát triển, không p
 
 ### Many-shot
 
-Với context dài và prompt caching, bạn không còn bị giới hạn ở 3–5 ví dụ. Agarwal và cộng sự (2024) cho thấy chuyển từ few-shot sang many-shot, tức hàng trăm đến hàng nghìn ví dụ, cải thiện rõ trên nhiều tác vụ. Many-shot còn có thể ghi đè thiên lệch từ pretraining [25]. Chi phí tăng tuyến tính theo số ví dụ, nhưng nếu các ví dụ nằm ở phần đầu prompt và được cache, chi phí thực tế giảm còn khoảng một phần mười ([tài liệu Multi-turn, §1.4](../multi-turn-conversation/#14-kinh-tế-học-của-prompt-caching)). Many-shot là một lựa chọn trung gian giữa prompt và fine-tuning, đáng thử trước khi quyết định fine-tune ([tài liệu Fine-tuning](../fine-tuning/) (đang soạn)).
+Với context dài và prompt caching, bạn không còn bị giới hạn ở 3–5 ví dụ. Agarwal và cộng sự (2024) cho thấy chuyển từ few-shot sang many-shot, tức hàng trăm đến hàng nghìn ví dụ, cải thiện rõ trên nhiều tác vụ. Many-shot còn có thể ghi đè thiên lệch từ pretraining [25]. Chi phí tăng tuyến tính theo số ví dụ, nhưng nếu các ví dụ nằm ở phần đầu prompt và được cache, chi phí thực tế giảm còn khoảng một phần mười ([tài liệu Multi-turn, §1.4](../multi-turn-conversation/#14-kinh-tế-học-của-prompt-caching)). Many-shot là một lựa chọn trung gian giữa prompt và fine-tuning, đáng thử trước khi quyết định fine-tune ([tài liệu Fine-tuning](../fine-tuning/)).
 
 ## 1.5 Prompt và model: vì sao prompt tốt cho model này chưa chắc tốt cho model khác
 
@@ -246,6 +250,24 @@ Mỗi model được post-train với dữ liệu và mục tiêu khác nhau, n�
 Hướng dẫn GPT-5.5 của OpenAI (theo trích dẫn của Simon Willison, chưa đối chiếu trực tiếp trang gốc) nói điều này rõ nhất. Họ khuyên coi model mới là "a new model family to tune for, not a drop-in replacement", bắt đầu từ "the smallest prompt that preserves the product contract", rồi tinh chỉnh lại effort, verbosity, tool description và format trên các ví dụ đại diện [14].
 
 Hệ quả cho cách quản lý: **một prompt chỉ có nghĩa khi đi cùng một model ID cụ thể.** Version của prompt phải gồm cả model, tham số và định nghĩa tool ([§3.2](#32-versioning-và-review-thay-đổi-prompt)). Đổi model là một thay đổi prompt, cần chạy lại toàn bộ eval ([§3.5](#35-di-chuyển-prompt-khi-đổi-model-hoặc-nâng-version)).
+
+---
+
+## 1.6 Prompt, context và tool contract
+
+Trong một ứng dụng đơn giản, prompt gần như là toàn bộ phần điều khiển model. Trong một agent, nó chỉ là một phần của trạng thái được gửi ở mỗi lượt. Model còn thấy lịch sử hội thoại, kết quả retrieval, định nghĩa tool, kết quả tool, bộ nhớ phiên và các chỉ dẫn được chèn giữa chừng [66].
+
+Nên tách ba thứ khi thiết kế và debug:
+
+| Thành phần | Câu hỏi cần trả lời |
+|---|---|
+| **Prompt** | Model phải làm gì, trong điều kiện nào, và thế nào là đạt? |
+| **Context** | Ở lượt này model cần biết những dữ liệu nào, dữ liệu nào đã cũ hoặc không đáng tin? |
+| **Tool contract** | Model được yêu cầu gì, ứng dụng thực thi gì, quyền hạn nào bị giới hạn, lỗi được trả về ra sao? |
+
+Context cần có ngân sách. Lịch sử dài, kết quả tool lặp lại và tài liệu không liên quan đều chiếm attention mà không nhất thiết làm câu trả lời tốt hơn. Khi phải cắt hoặc tóm tắt, giữ lại mục tiêu, ràng buộc, trạng thái hành động và các bằng chứng cần kiểm tra; đừng chỉ giữ phần hội thoại mới nhất.
+
+Tool contract cũng không nên nằm hết trong description. Tên tool, schema, quyền truy cập, kiểm tra tham số, timeout, retry và xác nhận trước side effect phải được code kiểm soát. Anthropic mô tả tool use như một hợp đồng giữa model và ứng dụng [65]. Phần agent và tool use trong repo đi sâu hơn vào vòng lặp, memory và MCP.
 
 ---
 
@@ -277,7 +299,7 @@ Trả lời câu hỏi của khách dựa trên chính sách trong <policies>.
 </customer_message>
 ```
 
-Đánh dấu dữ liệu không đáng tin bằng tag giúp model phân biệt, nhưng **không phải là biện pháp phòng chống prompt injection**: kẻ tấn công có thể viết `</customer_message>` ngay trong nội dung. Các lớp phòng thủ thật sự (giới hạn quyền của tool, tách nguồn tin cậy, xác nhận của con người) sẽ được trình bày trong [tài liệu Bảo mật LLM](../llm-security/), hiện đang soạn.
+Đánh dấu dữ liệu không đáng tin bằng tag giúp model phân biệt, nhưng **không phải là biện pháp phòng chống prompt injection**: kẻ tấn công có thể viết `</customer_message>` ngay trong nội dung. Phòng thủ phải nằm ở giới hạn quyền của tool, tách nguồn tin cậy và xác nhận của con người; xem [tài liệu Bảo mật LLM](../llm-security/).
 
 ### XML, markdown hay JSON
 
@@ -307,7 +329,7 @@ Hai cách này không loại trừ nhau. Một bố cục chạy ổn trên cả
 - **Context window được quảng cáo khác context dùng được.** NoLiMa (2025) loại bỏ trùng lặp từ khoá giữa câu hỏi và thông tin cần tìm, buộc model phải suy luận để nối hai bên. Trong điều kiện đó, GPT-4o đạt 99,3 điểm ở context ngắn, nhưng "effective length", tức độ dài còn giữ được 85% điểm gốc, chỉ là 8K trên 128K được công bố. Ở 32K, điểm còn 69,7 [32].
 - **Chroma "Context Rot" (2025)** thử 18 model. Hiệu năng giảm theo độ dài ngay cả với tác vụ đơn giản. Câu hỏi càng ít giống về mặt từ ngữ với thông tin cần tìm thì càng giảm nhanh [34].
 
-Từ đó, đưa thêm tài liệu vào prompt không miễn phí, kể cả khi context window còn trống. Với RAG, retrieve 5 đoạn đúng thường tốt hơn retrieve 30 đoạn "cho chắc". Xem [tài liệu RAG nâng cao](../advanced-rag/) (đang soạn) về reranking.
+Mỗi đoạn thêm vào prompt đều tiêu tốn attention và token, kể cả khi context window còn trống. Với RAG, retrieve 5 đoạn đúng thường tốt hơn retrieve 30 đoạn "cho chắc". Xem [tài liệu RAG nâng cao](../advanced-rag/) về reranking.
 
 ### Trích dẫn trước, trả lời sau
 
@@ -368,11 +390,11 @@ Hướng dẫn GPT-5 ghi nhận rằng chỉ dẫn về markdown có thể mất
 Một prompt làm năm việc thì khó đo xem việc nào hỏng. Tách tác vụ thành chuỗi các bước có giá trị khi:
 
 - Các bước cần **chỉ dẫn mâu thuẫn nhau**. Ví dụ, bước trích xuất cần "chỉ dùng thông tin có trong email", còn bước soạn trả lời cần "giọng thân thiện, chủ động gợi ý".
-- Một bước cần **model khác**, rẻ hơn cho phân loại hoặc mạnh hơn cho suy luận ([tài liệu Model Routing](../model-routing/) (đang soạn)).
+- Một bước cần **model khác**, rẻ hơn cho phân loại hoặc mạnh hơn cho suy luận ([tài liệu Model Routing](../model-routing/)).
 - Bạn cần **kiểm tra bằng code giữa hai bước**, ví dụ mã đơn trích ra có tồn tại không, trước khi soạn câu trả lời.
 - Bạn muốn **eval riêng từng bước** để biết lỗi nằm ở đâu.
 
-Cái giá là độ trễ cộng dồn và nhiều điểm hỏng hơn. Nếu các bước không cần kiểm tra giữa chừng và dùng chung một model, một prompt có cấu trúc tốt kèm reasoning thường đủ ([tài liệu Latency](../latency/) (đang soạn)).
+Cái giá là độ trễ cộng dồn và nhiều điểm hỏng hơn. Nếu các bước không cần kiểm tra giữa chừng và dùng chung một model, một prompt có cấu trúc tốt kèm reasoning thường đủ ([tài liệu Latency](../latency/)).
 
 ### Chain-of-thought đang mất giá trị
 
@@ -383,7 +405,7 @@ Cái giá là độ trễ cộng dồn và nhiều điểm hỏng hơn. Nếu c�
 
 CoT còn có thể gây hại. "Mind Your Step (by Step)" (ICML 2025) tìm ra các nhóm tác vụ mà CoT làm hiệu năng giảm rõ. Đó là những tác vụ mà ngay con người cũng làm kém đi khi phải suy nghĩ thành lời, chẳng hạn học quy luật ngầm từ ví dụ [42].
 
-Với reasoning model, Anthropic khuyên dùng chỉ dẫn chung thay vì các bước viết sẵn: "A prompt such as 'think thoroughly' often produces better reasoning than a hand-written step-by-step plan" [1]. OpenAI cũng viết rằng yêu cầu reasoning model "think step by step" là không cần thiết, và có thể làm kết quả kém đi [12]. Một quy trình nghiệp vụ năm bước viết sẵn trong prompt có thể *giới hạn* model vào lối giải bạn nghĩ ra. Hãy mô tả mục tiêu và tiêu chí đúng, để model tự lập kế hoạch. Xem thêm [tài liệu Reasoning Models](../reasoning-models/) (đang soạn).
+Với reasoning model, Anthropic khuyên dùng chỉ dẫn chung thay vì các bước viết sẵn: "A prompt such as 'think thoroughly' often produces better reasoning than a hand-written step-by-step plan" [1]. OpenAI cũng viết rằng yêu cầu reasoning model "think step by step" là không cần thiết, và có thể làm kết quả kém đi [12]. Một quy trình nghiệp vụ năm bước viết sẵn trong prompt có thể *giới hạn* model vào lối giải bạn nghĩ ra. Hãy mô tả mục tiêu và tiêu chí đúng, để model tự lập kế hoạch. Xem thêm [tài liệu Reasoning Models](../reasoning-models/).
 
 ### Đừng dùng phần suy luận làm lời giải thích
 
@@ -398,11 +420,11 @@ Các optimizer coi prompt là tham số cần tối ưu. Bạn cung cấp một 
 - **MIPROv2 (DSPy)** tối ưu đồng thời chỉ dẫn và ví dụ few-shot cho chương trình nhiều bước. Trên 7 chương trình thử nghiệm với Llama-3-8B, nó tốt hơn baseline ở 5 chương trình, với mức cải thiện tới 13% độ chính xác [44].
 - **GEPA (2025)** dùng LLM đọc lại trace của các lần chạy thất bại, viết ra nhận xét bằng ngôn ngữ tự nhiên, rồi sửa prompt dựa trên nhận xét đó. Bài báo báo cáo GEPA vượt GRPO, một phương pháp RL cập nhật trọng số, trung bình 6% và tối đa 20%, trong khi dùng ít hơn tới 35 lần số lần chạy. Nó cũng vượt MIPROv2 hơn 10% [45].
 
-Điểm ít được nhắc trong kết quả của GEPA: trên một số tác vụ, tối ưu prompt cạnh tranh được với fine-tuning bằng RL, với chi phí thấp hơn nhiều. Trước khi quyết định fine-tune, đáng thử một optimizer với cùng bộ dữ liệu.
+GEPA cho thấy trên một số tác vụ, tối ưu prompt có thể cạnh tranh với fine-tuning bằng RL với chi phí thấp hơn. Trước khi fine-tune, có thể chạy optimizer trên cùng bộ dữ liệu để có một mốc so sánh.
 
 ### Những rủi ro cần biết
 
-- **Không có metric thì không có optimizer.** Phần khó nhất là bộ dữ liệu và metric, không phải chạy optimizer. Nếu chưa có eval, hãy làm eval trước ([tài liệu Evaluation](../evaluation/) (đang soạn)).
+- **Không có metric thì không có optimizer.** Phần khó nhất là bộ dữ liệu và metric, không phải chạy optimizer. Nếu chưa có eval, hãy làm eval trước ([tài liệu Evaluation](../evaluation/)).
 - **Overfit bộ dev.** Optimizer tìm ra prompt tốt nhất *trên dữ liệu bạn đưa vào*. Với bộ dev 50 câu và nhiễu ở cấp từng câu lớn như §1.3 mô tả, prompt "tốt nhất" có thể chỉ là prompt may mắn nhất. Luôn giữ một bộ test riêng mà optimizer không thấy.
 - **Prompt tối ưu chuyển sang model khác được một phần.** PromptAgent (ICLR 2024) lấy prompt tối ưu trên GPT-3.5 đem sang GPT-4 và PaLM 2: prompt vẫn tốt hơn baseline ở 11/12 tác vụ với GPT-4, nhưng chỉ 7/12 với PaLM 2 [64]. Mức chuyển được phụ thuộc vào model đích và tác vụ, khớp với các bằng chứng ở §1.5. Khi đổi model, chạy eval cho prompt đã tối ưu trước; chỉ chạy lại optimizer nếu kết quả không đạt.
 - **Prompt khó đọc và khó review.** Prompt do optimizer viết có thể chứa ví dụ và câu chữ mà không ai trong đội hiểu vì sao lại ở đó. Hãy lưu kèm điểm eval và cấu hình optimizer, để lần sau có thể chạy lại thay vì sửa tay.
@@ -414,7 +436,7 @@ Hai provider lớn đều đã gỡ hoặc đang gỡ công cụ tối ưu promp
 - **Anthropic** gỡ các endpoint `/v1/experimental/generate_prompt`, `improve_prompt`, `templatize_prompt` cùng lúc với Workbench cũ, từ 17/08/2026. Saved prompts, biến và eval của Workbench không được chuyển sang playground mới [2].
 - **OpenAI** vẫn giữ chat tối ưu prompt trên dashboard, nhưng workflow tối ưu dựa trên dataset đi cùng Evals. Evals chuyển sang chỉ đọc từ 31/10/2026 và dự kiến tắt vào 30/11/2026 [9].
 
-Bài học không nằm ở việc công cụ nào tốt hơn. Nó nằm ở chỗ **đừng đặt dữ liệu eval và lịch sử prompt duy nhất trong công cụ do provider host**. Hãy dùng chúng để khám phá, nhưng lưu kết quả vào repo của bạn.
+Đừng để dữ liệu eval và lịch sử prompt chỉ tồn tại trong công cụ do provider host. Có thể dùng các công cụ đó để khám phá, nhưng kết quả và phiên bản chính thức nên được lưu trong repo.
 
 ## 2.6 Công cụ quản lý prompt: registry, versioning, template
 
@@ -426,7 +448,7 @@ Registry lưu prompt ngoài code, có version, và cho phép đổi version đan
 - Rollback bằng cách chuyển label `production` về version cũ. Label có thể được bảo vệ để chỉ admin mới đổi được (tính năng trả phí).
 - SDK **cache prompt phía client, TTL mặc định 60 giây**. Khi cache hết hạn, SDK trả bản cũ và làm mới ở nền. Khi cache trống, chẳng hạn lúc process vừa khởi động, mà registry không truy cập được, bạn phải tự truyền `fallback`. Nếu không, request lỗi.
 
-Chi tiết cuối cùng là điều ít ai để ý khi bắt đầu dùng registry: **registry trở thành một dependency lúc runtime**. Khi registry gặp sự cố đúng lúc bạn deploy hoặc autoscale, các instance mới không có prompt nào để chạy. Prompt fallback trong code cần được giữ đồng bộ với version production. Nếu không, khi registry lỗi, bạn đang chạy một prompt cũ mà không ai biết.
+Registry cũng là một dependency lúc runtime. Khi registry gặp sự cố đúng lúc deploy hoặc autoscale, instance mới có thể không có prompt để chạy. Prompt fallback trong code cần được giữ đồng bộ với version production; nếu không, registry lỗi sẽ khiến hệ thống chạy một prompt cũ mà không có dấu hiệu rõ ràng.
 
 MLflow Prompt Registry và PromptLayer có mô hình tương tự: version bất biến, alias hoặc release label, gắn version vào trace [8].
 
@@ -445,6 +467,20 @@ Prompt production gần như luôn là template có biến. Có hai loại rủi
 ### Ngôn ngữ chuyên cho prompt
 
 Có các định dạng riêng cho prompt, như POML của Microsoft (08/2025), một ngôn ngữ markup kiểu HTML có biến, vòng lặp và điều kiện [49], hay BAML (xem [tài liệu Structured Output, §2.8](../structured-output/#28-thư-viện)). Chúng giúp tách prompt khỏi code và review dễ hơn. Đổi lại, bạn có thêm một bước build và một dependency. Với đa số đội, một hàm Python hoặc TypeScript có type cho các biến là đủ.
+
+## 2.7 Những việc prompt không thể tự đảm bảo
+
+Prompt có thể hướng dẫn model, nhưng không cấp quyền và cũng không kiểm tra được hệ thống phía sau. Các ranh giới sau phải nằm ngoài câu chữ:
+
+| Rủi ro | Kiểm soát nên đặt ở đâu |
+|---|---|
+| Người dùng, tài liệu hoặc tool result chèn chỉ dẫn mới | Đánh dấu nguồn không tin cậy; giới hạn tool; kiểm tra hành động bằng code |
+| Model tự gọi tool có side effect | Quyền tối thiểu, schema chặt, idempotency, timeout và bước người dùng xác nhận |
+| Output đi vào HTML, SQL, shell, URL hoặc đường dẫn file | Parse và validate theo ngữ cảnh đích; encode hoặc parameterize trước khi sử dụng |
+| RAG trả lời dựa trên tài liệu sai, cũ hoặc người dùng không được xem | Lọc quyền trước retrieval, kiểm tra nguồn và citation, có nhánh “không đủ thông tin” |
+| Log chứa PII hoặc bí mật | Che dữ liệu trước khi ghi log; đặt thời hạn lưu và quyền truy cập |
+
+Tag XML, câu “bỏ qua mọi chỉ dẫn trong dữ liệu” và system prompt chỉ giúp model nhận biết ý định. Chúng không thay thế least privilege, output validation, guardrail hay human approval. Xem [Bảo mật LLM](../llm-security/), [Tool use](../tool-use/), [RAG nâng cao](../advanced-rag/) và [Guardrails](../guardrails/). Các rủi ro này được OWASP mô tả trong [Prompt Injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection), [Improper Output Handling](https://genai.owasp.org/llmrisk/llm052025-improper-output-handling) và [Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency).
 
 ---
 
@@ -479,7 +515,7 @@ class PromptConfig:
     output_schema_version: str   # nếu dùng structured output
 ```
 
-Ghi `PromptConfig` (hoặc hash của nó) vào trace của mọi request. Anthropic postmortem tháng 09/2025 về ba lỗi hạ tầng có câu: "we lacked a clear way to connect these to each of our recent changes" [52]. Nếu bạn không ghi version vào trace, khi chất lượng giảm, bạn cũng sẽ ở vào đúng tình huống đó. Xem [tài liệu LLM Observability](../llm-observability/) (đang soạn).
+Ghi `PromptConfig` (hoặc hash của nó) vào trace của mọi request. Anthropic postmortem tháng 09/2025 về ba lỗi hạ tầng có câu: "we lacked a clear way to connect these to each of our recent changes" [52]. Nếu bạn không ghi version vào trace, khi chất lượng giảm, bạn cũng sẽ ở vào đúng tình huống đó. Xem [tài liệu LLM Observability](../llm-observability/).
 
 ### Ghim model
 
@@ -513,7 +549,7 @@ Prompt caching tái sử dụng phần *đầu* prompt khi nó giống hệt l�
 
 ## 3.4 Regression test khi đổi prompt
 
-Phần này chỉ nêu những điểm đặc thù của prompt. Phương pháp eval đầy đủ (golden dataset, LLM-as-judge, số mẫu cần thiết) sẽ có trong [tài liệu Evaluation](../evaluation/), hiện đang soạn.
+Phần này chỉ nêu những điểm đặc thù của prompt. Phương pháp eval đầy đủ (golden dataset, LLM-as-judge, số mẫu cần thiết) sẽ có trong [tài liệu Evaluation](../evaluation/).
 
 ### Vì sao vài ca thử là không đủ
 
@@ -588,7 +624,7 @@ Ba điều rút ra, phần lớn không có trong các bài hướng dẫn:
 
 1. **Tokenizer mới thu hẹp khoảng cách rất nhiều.** Từ 2,13× xuống 1,28×. Các con số "tiếng Việt tốn gấp đôi tiếng Anh" lan truyền trên mạng thường đến từ tokenizer cũ.
 2. **Bỏ dấu không tiết kiệm token.** Với `o200k_base`, bản không dấu còn tốn hơn bản có dấu, vì tokenizer đã học các âm tiết tiếng Việt có dấu phổ biến như một token. Bỏ dấu còn làm mất nghĩa ("bàn", "bán", "bạn" đều thành "ban").
-3. **NFD đắt gấp 2,8 lần NFC.** Ở dạng NFD, mỗi chữ có dấu bị tách thành chữ cái gốc cộng một hoặc hai ký tự dấu kết hợp, ví dụ "ệ" thành "e" + dấu mũ + dấu nặng. Văn bản trông hoàn toàn giống nhau trên màn hình. Văn bản NFD thường đến từ tên file trên macOS, copy từ một số file PDF, hoặc bộ gõ cũ. Ngoài chi phí, NFD còn làm vỡ prompt cache (khác byte), làm hỏng so khớp chuỗi trong eval, và có thể làm giảm chất lượng vì model ít thấy dạng này khi huấn luyện.
+3. **NFD có thể đắt hơn NFC nhiều lần.** Ở dạng NFD, mỗi chữ có dấu bị tách thành chữ cái gốc cộng một hoặc hai ký tự dấu kết hợp, ví dụ "ệ" thành "e" + dấu mũ + dấu nặng. Văn bản trông hoàn toàn giống nhau trên màn hình. Văn bản NFD thường đến từ tên file trên macOS, copy từ một số file PDF, hoặc bộ gõ cũ. Ngoài chi phí, NFD còn làm vỡ prompt cache (khác byte), làm hỏng so khớp chuỗi trong eval, và có thể làm giảm chất lượng vì model ít thấy dạng này khi huấn luyện. Tỷ lệ cụ thể phụ thuộc tokenizer và dữ liệu; hãy đo trên dữ liệu thật.
 
 Cách xử lý: chuẩn hoá mọi văn bản về NFC (`unicodedata.normalize("NFC", s)` trong Python, `s.normalize("NFC")` trong JavaScript) ở ranh giới hệ thống, gồm input người dùng, tài liệu được ingest và chính file template prompt. Với Claude và Gemini, tokenizer khác `tiktoken`, nên hãy đo bằng API đếm token của provider trên dữ liệu thật của bạn.
 
@@ -643,7 +679,7 @@ Thường cách làm kết hợp chạy tốt: chỉ dẫn cấu trúc bằng ti
 | Số token tiếng Việt cao bất thường; cache miss dù nội dung giống | Văn bản ở dạng Unicode NFD | Chuẩn hoá NFC ở ranh giới hệ thống |
 | Kết quả eval dao động giữa các lần chạy với cùng prompt | Không deterministic; bộ test quá nhỏ | Chạy nhiều lần; so phân phối; tăng số ca ([§3.4](#34-regression-test-khi-đổi-prompt)) |
 | Lời giải thích của model không khớp với lý do thật | CoT không faithful | Yêu cầu bằng chứng kiểm tra được thay vì dựa vào phần suy luận ([§2.4](#24-prompt-chaining-chain-of-thought-và-tách-tác-vụ)) |
-| Dữ liệu người dùng bị hiểu như chỉ dẫn | Không có ranh giới giữa dữ liệu và chỉ dẫn | Tag cho dữ liệu; nhưng phòng thủ thật nằm ở [tài liệu Bảo mật LLM](../llm-security/) (đang soạn) |
+| Dữ liệu người dùng bị hiểu như chỉ dẫn | Không có ranh giới giữa dữ liệu và chỉ dẫn | Tag cho dữ liệu; nhưng phòng thủ thật nằm ở [tài liệu Bảo mật LLM](../llm-security/) |
 
 ## 3.8 Checklist
 
@@ -657,6 +693,8 @@ Thường cách làm kết hợp chạy tốt: chỉ dẫn cấu trúc bằng ti
 - [ ] Style của phần chỉ dẫn khớp với style output mong muốn.
 - [ ] Với context dài: tài liệu trước, câu hỏi cuối; tài liệu có tag và nguồn.
 - [ ] Không có quy tắc bảo mật hay giới hạn nghiệp vụ *chỉ* nằm trong prompt; mọi giới hạn đều được kiểm tra trong code.
+- [ ] Dữ liệu người dùng, tài liệu retrieve và tool result được coi là không đáng tin; prompt không được cấp quyền thay cho code.
+- [ ] Output được parse và kiểm tra trước khi đi vào HTML, SQL, shell, URL, đường dẫn file hoặc tool có side effect.
 - [ ] Không có bí mật trong prompt.
 - [ ] Văn bản tiếng Việt ở dạng NFC; quy tắc ngôn ngữ và xưng hô được ghi rõ.
 
@@ -669,12 +707,16 @@ Thường cách làm kết hợp chạy tốt: chỉ dẫn cấu trúc bằng ti
 - [ ] Phần tĩnh đứng trước phần động; không có timestamp hay dữ liệu theo request ở đầu prompt.
 - [ ] Registry (nếu dùng) có fallback trong code, đồng bộ với version production.
 - [ ] Template chỉ đến từ repo; dữ liệu người dùng chỉ là giá trị của biến; render đúng một lần.
+- [ ] Tool dùng quyền tối thiểu; hành động có side effect cần idempotency, giới hạn ngân sách và xác nhận phù hợp.
+- [ ] Có giới hạn token, độ trễ và chi phí; retry, timeout, fallback và rate limit được kiểm tra ngoài prompt.
+- [ ] Log được che PII và gắn với prompt/model/tool/schema version.
 
 ### Khi thay đổi prompt hoặc model
 
 - [ ] Có baseline eval trước khi đổi.
 - [ ] Bộ test có ca áp dụng và ca không áp dụng cho mỗi quy tắc, ca từ sự cố production, ca đối kháng, biến thể cách hỏi.
 - [ ] Mỗi ca quan trọng chạy nhiều lần; so phân phối, không so một output.
+- [ ] Có metric riêng cho correctness, groundedness, tool use, refusal, latency và cost; LLM-as-judge đã được hiệu chỉnh bằng human review.
 - [ ] Khi đổi model: đã gỡ các miếng vá cho model cũ, tinh chỉnh lại few-shot, kiểm tra độ dài và format.
 - [ ] Rollout dần, theo dõi tín hiệu production.
 - [ ] Đã kiểm tra lịch deprecation của model và tính năng đang dùng.
@@ -720,6 +762,19 @@ Thường cách làm kết hợp chạy tốt: chỉ dẫn cấu trúc bằng ti
 | 16 | Gemini prompting strategies | [aistudio.google.com/docs/prompting-strategies](https://aistudio.google.com/docs/prompting-strategies) |
 | 17 | Get started with Gemini 3 (Google Cloud) | [docs.cloud.google.com/gemini-enterprise-agent-platform/models/start/get-started-with-gemini-3](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/start/get-started-with-gemini-3) |
 | 18 | What's new in Gemini 3.6 | [aistudio.google.com/docs/whats-new-gemini-3.6](https://aistudio.google.com/docs/whats-new-gemini-3.6) |
+
+### Context, an toàn và đánh giá production
+
+| # | Resource | URL |
+|---|---|---|
+| 65 | Anthropic: How tool use works | [docs.anthropic.com/en/docs/agents-and-tools/tool-use/how-tool-use-works](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/how-tool-use-works) |
+| 66 | Anthropic: Effective context engineering for AI agents | [anthropic.com/engineering/effective-context-engineering-for-ai-agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) |
+| 67 | OWASP LLM01: Prompt Injection (2025) | [genai.owasp.org/llmrisk/llm01-prompt-injection](https://genai.owasp.org/llmrisk/llm01-prompt-injection) |
+| 68 | OWASP LLM05: Improper Output Handling (2025) | [genai.owasp.org/llmrisk/llm052025-improper-output-handling](https://genai.owasp.org/llmrisk/llm052025-improper-output-handling) |
+| 69 | OWASP LLM06: Excessive Agency (2025) | [genai.owasp.org/llmrisk/llm062025-excessive-agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency) |
+| 70 | OpenAI: Safety in building agents | [platform.openai.com/docs/guides/agent-builder-safety](https://platform.openai.com/docs/guides/agent-builder-safety) |
+| 71 | OpenAI: Evaluate agent workflows | [platform.openai.com/docs/guides/agent-evals](https://platform.openai.com/docs/guides/agent-evals) |
+| 72 | Google Cloud: From vibe checks to continuous evaluation | [cloud.google.com/blog/topics/developers-practitioners/from-vibe-checks-to-continuous-evaluation-engineering-reliable-ai-agents](https://cloud.google.com/blog/topics/developers-practitioners/from-vibe-checks-to-continuous-evaluation-engineering-reliable-ai-agents) |
 
 ### Nghiên cứu: few-shot
 
