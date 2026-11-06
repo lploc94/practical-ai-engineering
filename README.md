@@ -11,6 +11,7 @@ Mở API ra gọi thử một model thì không khó. Phần khó đến sau: ch
 | [**Embeddings**](./docs/embeddings/) | Embedding hoạt động thế nào, chọn model và similarity metric, semantic search, RAG, recommendation, chọn vector database, chunking, hybrid search, evaluation và observability | 11/2026 |
 | [**Multi-turn Conversation & Prompt Caching**](./docs/multi-turn-conversation/) | Lịch sử hội thoại được gửi lên model ra sao, vì sao cache khớp theo prefix, cấu hình cache và giá theo từng provider, rút gọn context, tìm nguyên nhân cache miss | 11/2026 |
 | [**Structured Output**](./docs/structured-output/) | Các mức đảm bảo từ prompt đến constrained decoding, JSON Schema trên OpenAI, Claude, Gemini, Grok và engine self-hosted, validate, retry, streaming, eval | 11/2026 |
+| [**Prompt Engineering**](./docs/prompt-engineering/) | Vì sao prompt nhạy cảm và gắn với model, phân quyền giữa các message, few-shot dạy model điều gì, tài liệu dài, thay thế prefill và temperature, lưu và version prompt, regression test, chuyển model, prompt tiếng Việt | 11/2026 |
 | [**Under Attack**](./docs/under-attack/) | Runbook xử lý DDoS cho server vật lý đặt sau Cloudflare, xếp theo thời gian từ lúc phát hiện: Under Attack Mode, security rules, rate limiting, xử lý khi lộ IP origin | 11/2026 |
 
 **Đang soạn:** [Deploying AI Systems](./docs/deploying-ai-systems/) — model serving, batching, autoscaling, observability, cost và capacity planning.
