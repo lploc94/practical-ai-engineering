@@ -11,7 +11,22 @@ Các tài liệu trong repo được tổ chức theo từng chủ đề lớn.
 - [Decision Models (Jev, Clef, OpenAI Decisions, open-weight)](./decision-models/)
 - [Prompt Engineering](./prompt-engineering/)
 - [Under Attack (Xử lý DDoS/Flood với Cloudflare)](./under-attack/)
-- [Deploying AI Systems](./deploying-ai-systems/) — *sắp có, hiện mới là dàn ý*
+- [Streaming](./streaming/)
+- [Reasoning Models](./reasoning-models/)
+- [Multimodal](./multimodal/)
+- [Evaluation](./evaluation/)
+- [LLM Observability](./llm-observability/)
+- [Agents](./agents/)
+- [RAG nâng cao](./advanced-rag/)
+- [MCP](./mcp/)
+- [Model Routing](./model-routing/)
+- [Cost Optimization](./cost-optimization/)
+- [Latency](./latency/)
+- [Bảo mật LLM](./llm-security/)
+- [Guardrails](./guardrails/)
+- [Fine-tuning](./fine-tuning/)
+- [Self-hosting LLM](./self-hosting-llm/)
+- [Deploying AI Systems](./deploying-ai-systems/)
 
 ## Quy ước nhanh
 

@@ -15,42 +15,22 @@ Mở API ra gọi thử một model thì không khó. Phần khó đến sau: ch
 | [**Decision Models**](./docs/decision-models/) | Model trả về lựa chọn kèm xác suất thay vì sinh văn bản: bốn loại câu hỏi, calibration và confidence, TypeSafe Jev, Cloudflare Clef, OpenAI Decisions API, Microsoft, Liquid và model open-weight chạy local, 16 bài toán ứng dụng có hướng dẫn (triage, guardrail, lọc RAG, rerank, cascade trích xuất, chọn tool, taxonomy, ghép thực thể), đặt ngưỡng, eval | 11/2026 |
 | [**Prompt Engineering**](./docs/prompt-engineering/) | Vì sao prompt nhạy cảm và gắn với model, phân quyền giữa các message, few-shot dạy model điều gì, tài liệu dài, thay thế prefill và temperature, lưu và version prompt, regression test, chuyển model, prompt tiếng Việt | 11/2026 |
 | [**Under Attack**](./docs/under-attack/) | Runbook xử lý DDoS cho server vật lý đặt sau Cloudflare, xếp theo thời gian từ lúc phát hiện: Under Attack Mode, security rules, rate limiting, xử lý khi lộ IP origin | 11/2026 |
-
-**Đang soạn:**
-
-*Gọi model và kiểm soát output*
-
-- [Streaming](./docs/streaming/) — SSE hoạt động thế nào, event model của từng provider, stream qua proxy và CDN, stream kèm tool call và JSON, xử lý đứt kết nối và huỷ.
-- [Reasoning Models](./docs/reasoning-models/) — thinking token, effort và budget, tác vụ nào đáng bật reasoning, reasoning trong hội thoại nhiều lượt.
-- [Multimodal](./docs/multimodal/) — ảnh, PDF và âm thanh, chi phí token của ảnh, pipeline xử lý tài liệu.
-
-*Chất lượng và quan sát*
-
-- [Evaluation](./docs/evaluation/) — golden dataset, LLM-as-judge, regression test khi đổi prompt hoặc model, eval trong CI.
-- [LLM Observability](./docs/llm-observability/) — trace, metric riêng của LLM, theo dõi chi phí, feedback người dùng, phát hiện drift.
-
-*Kiến trúc hệ thống*
-
-- [Agents](./docs/agents/) — workflow hay agent, quản lý context, multi-agent, điều kiện dừng, eval và vận hành.
-- [RAG nâng cao](./docs/advanced-rag/) — query rewriting, reranking, contextual retrieval, GraphRAG, RAG đa phương thức.
-- [MCP](./docs/mcp/) — host, client, server, transport, authorization, thiết kế và bảo mật MCP server.
-- [Model Routing](./docs/model-routing/) — rate limit, retry và backoff, LLM gateway, chuỗi fallback giữa các model.
-
-*Chi phí và hiệu năng*
-
-- [Cost Optimization](./docs/cost-optimization/) — chi phí đến từ đâu, chọn model, rút gọn context, batch, semantic cache.
-- [Latency](./docs/latency/) — TTFT, prefill và decode, chạy song song, giảm số lượt gọi nối tiếp.
-
-*Bảo mật và an toàn*
-
-- [Bảo mật LLM](./docs/llm-security/) — prompt injection trực tiếp và gián tiếp, rò rỉ dữ liệu, phân quyền cho tool và agent, guardrail.
-- [Guardrails](./docs/guardrails/) — moderation input và output, classifier, phát hiện PII, xử lý refusal.
-
-*Model và hạ tầng*
-
-- [Fine-tuning](./docs/fine-tuning/) — khi nào nên fine-tune, SFT, DPO, LoRA, distillation, chuẩn bị dữ liệu.
-- [Self-hosting LLM](./docs/self-hosting-llm/) — VRAM và quantization, vLLM, SGLang, llama.cpp, chọn GPU.
-- [Deploying AI Systems](./docs/deploying-ai-systems/) — model serving, batching, autoscaling, observability, cost và capacity planning.
+| [**Streaming**](./docs/streaming/) | SSE hoạt động thế nào, event model của OpenAI, Claude, Gemini và engine tự host, stream qua proxy và CDN, stream kèm tool call, JSON và reasoning, đứt kết nối, retry, resume và huỷ | 11/2026 |
+| [**Reasoning Models**](./docs/reasoning-models/) | Thinking token, effort và budget trên OpenAI, Claude, Gemini, Grok và model open-weight, tác vụ nào đáng bật reasoning, reasoning trong hội thoại nhiều lượt, kết hợp tool use và structured output, chi phí và eval | 11/2026 |
+| [**Multimodal**](./docs/multimodal/) | Model đọc ảnh, PDF và âm thanh thế nào, chi phí token của ảnh theo provider, tiền xử lý ảnh, pipeline xử lý tài liệu, OCR chuyên dụng, trích xuất có cấu trúc, eval cho tác vụ vision | 11/2026 |
+| [**Evaluation**](./docs/evaluation/) | Golden dataset, grader bằng code và LLM-as-judge, phương sai và cỡ mẫu, regression test khi đổi prompt hoặc model, eval trong CI, eval online | 11/2026 |
+| [**LLM Observability**](./docs/llm-observability/) | Trace và span cho lượt gọi model, metric riêng của LLM, OpenTelemetry GenAI, theo dõi chi phí, feedback người dùng, phát hiện drift, alert | 11/2026 |
+| [**Agents**](./docs/agents/) | Workflow hay agent, các pattern workflow, quản lý context và memory, orchestrator–worker, sandbox và computer use, framework, điều kiện dừng và ngân sách, human-in-the-loop, eval và vận hành agent | 11/2026 |
+| [**RAG nâng cao**](./docs/advanced-rag/) | Query rewriting, reranking, contextual retrieval, GraphRAG, metadata filtering, RAG đa phương thức, trích dẫn nguồn, cập nhật index, phân quyền tài liệu | 11/2026 |
+| [**MCP**](./docs/mcp/) | Host, client, server, tools và resources, vòng đời request, transport stdio và Streamable HTTP, authorization OAuth, SDK, MCP connector của provider, thiết kế, deploy và bảo mật MCP server | 11/2026 |
+| [**Model Routing**](./docs/model-routing/) | Rate limit, retry và backoff, routing theo độ khó và chi phí, LLM gateway, chuỗi fallback giữa các model và provider | 11/2026 |
+| [**Cost Optimization**](./docs/cost-optimization/) | Chi phí đến từ đâu, đo chi phí theo request và feature, prompt caching, Batch API, chọn model, rút gọn context, semantic cache, hạn mức theo tenant | 11/2026 |
+| [**Latency**](./docs/latency/) | TTFT, prefill và decode, streaming, chế độ nhanh của provider, chạy song song, speculative decoding, timeout và hedging, giảm số lượt gọi nối tiếp | 11/2026 |
+| [**Bảo mật LLM**](./docs/llm-security/) | Prompt injection trực tiếp và gián tiếp, rò rỉ dữ liệu, phân quyền cho tool và agent, tách nguồn tin cậy, kiểm soát output, threat modeling, red teaming | 11/2026 |
+| [**Guardrails**](./docs/guardrails/) | Moderation input và output, classifier open-weight, phát hiện PII cho tiếng Việt, guardrail khi stream, xử lý refusal, chọn ngưỡng | 11/2026 |
+| [**Fine-tuning**](./docs/fine-tuning/) | Khi nào nên fine-tune, SFT, DPO, LoRA và QLoRA, distillation, fine-tune qua API và open-weight, chuẩn bị dữ liệu, eval trước và sau, serving LoRA adapter | 11/2026 |
+| [**Self-hosting LLM**](./docs/self-hosting-llm/) | VRAM cho weights và KV cache, quantization, vLLM, SGLang, llama.cpp, chọn GPU, benchmark trên tải thật, so chi phí với API | 11/2026 |
+| [**Deploying AI Systems**](./docs/deploying-ai-systems/) | Các tầng của hệ thống AI, đo công suất bằng tải open-loop, capacity planning, GPU trên Kubernetes, graceful shutdown, autoscaling, routing cho LLM, vector database production, alert theo SLO, xử lý sự cố | 11/2026 |
 
 ## Cách đọc
 
