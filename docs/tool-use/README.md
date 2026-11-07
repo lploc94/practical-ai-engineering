@@ -234,7 +234,7 @@ Server tool tiện vì bạn không phải tự dựng search hay sandbox, nhưn
 - **Trộn server tool và client tool.** Nếu cùng một lượt có cả client tool call và server tool call chưa chạy, Claude trả `stop_reason: "tool_use"` mà chưa thực thi server tool. Bạn gửi kết quả client tool, giữ nguyên `tools`, và server tool chạy ở request sau [20][24].
 - **Tính tiền theo lần gọi, cộng token.** Web search của Claude là 10 USD / 1.000 lượt tìm, cộng token nội dung; lượt lỗi không tính tiền [24]. OpenAI web search là 10 USD / 1.000 lượt, cộng token nội dung tìm được tính theo giá model [7]. OpenAI có `max_tool_calls` để giới hạn tổng số lần gọi built-in tool trong một response; tham số này **không** áp dụng cho function tool của bạn [8].
 - **MCP qua provider dễ làm phình context.** OpenAI nhập danh sách tool từ MCP server thành một item `mcp_list_tools`. Chừng nào item này còn trong context, API không tải lại danh sách ở mỗi lượt; xoá nó khỏi context sẽ buộc tải lại và tăng độ trễ [4]. Grok ghi rõ nếu không đặt `allowed_tools`, mọi tool của server đều vào context [35].
-- **Approval mặc định khác nhau.** OpenAI mặc định yêu cầu approval trước khi chia sẻ dữ liệu với MCP server (`require_approval`), và `authorization` không được lưu nên phải gửi lại ở mỗi request [4]. Grok không hỗ trợ `require_approval` [35]. Gemini chỉ nhận MCP server qua Streamable HTTP, không SSE, và tên server không được chứa dấu `-` [28].
+- **Approval mặc định khác nhau.** OpenAI mặc định yêu cầu approval trước khi chia sẻ dữ liệu với MCP server (`require_approval`), và `authorization` không được lưu nên phải gửi lại ở mỗi request [4]. Grok không hỗ trợ `require_approval` [35]. Remote MCP của Gemini (trong Interactions API) chỉ nhận server Streamable HTTP, không SSE, và tên server không được chứa dấu `-` [28].
 
 Thiết kế và bảo mật MCP server có tài liệu riêng ở [MCP](../mcp/).
 
@@ -256,7 +256,7 @@ Ba chi tiết ít được nhắc:
 
 - **Lỗi hay xuất hiện khi model gọi song song nhiều tool.** Một báo cáo cộng đồng ghi gpt-5 "thường gọi 5–10 tool song song", và lỗi thiếu reasoning item xuất hiện khi code chia nhỏ hoặc sắp xếp lại các item đó [9]. Khi streaming, dùng reasoning item từ sự kiện `response.output_item.done`; bản trong `response.output_item.added` có thể chưa đủ `encrypted_content` [8].
 - **Gemini chỉ gắn signature vào function call đầu tiên** trong một batch song song; các call sau không có. Code tự "chuẩn hoá" bằng cách copy signature sang mọi call, hoặc tách batch thành nhiều lượt, đều làm vỡ quy tắc [30].
-- **Claude 5.1 trở lên kiểm tra prefix của thinking block.** Nếu bạn sửa bất cứ thứ gì *trước* block đó (system prompt, tools, message cũ), block bị coi là "bound to a different conversation" và request trả `400`. Cách xử lý là giữ lịch sử chỉ-thêm (append-only), hoặc bật `prefix_mismatch_behavior: "drop_block"` với beta header tương ứng [22].
+- **Claude 5.1 trở lên kiểm tra prefix của thinking block.** Nếu bạn sửa bất cứ thứ gì *trước* block đó (system prompt, tools, message cũ), block bị coi là "bound to a different conversation" và request trả `400`. Cách xử lý là giữ lịch sử chỉ-thêm (append-only), hoặc đặt `thinking.block_binding.prefix_mismatch_behavior: "drop_block"` kèm beta header `thinking-binding-controls-2026-08-01` để API bỏ block không khớp thay vì báo lỗi [22].
 
 Quy tắc an toàn cho mọi provider: **lưu nguyên response của provider, và dựng request tiếp theo từ chính các object đó**, không phải từ bản rút gọn trong database của bạn. Bảng đầy đủ hơn theo từng thế hệ model có ở [Multi-turn Conversation §3.7](../multi-turn-conversation/#37-reasoning-và-thinking-blocks).
 
@@ -457,7 +457,7 @@ Khi có hàng trăm tool, đánh dấu phần lớn là `defer_loading: true` v�
 - Bạn vẫn gửi đủ định nghĩa mọi tool ở mỗi request; tiết kiệm nằm ở phần model phải đọc, không ở payload [17].
 - Vì tool được nạp nằm trong messages chứ không ở đầu prefix, cache của tools và system được giữ [16].
 
-Anthropic công bố trên bộ eval MCP: Opus 4 tăng từ 49% lên 74%, Opus 4.5 từ 79,5% lên 88,1% khi bật tool search; cấu hình 58 tool giảm từ khoảng 55.000 token xuống khoảng 8.700 token [26]. Lợi ích không chỉ là tiết kiệm token: ít tool trong tầm nhìn hơn thì model chọn đúng hơn.
+Anthropic công bố trên bộ eval MCP: Opus 4 tăng từ 49% lên 74%, Opus 4.5 từ 79,5% lên 88,1% khi bật tool search; trong ví dụ của họ, tool definitions chiếm khoảng 77.000 token khi nạp hết lên đầu, còn khoảng 8.700 token khi chỉ nạp tool search và vài tool tìm được, giảm 85% [26]. Lợi ích không chỉ là tiết kiệm token: ít tool trong tầm nhìn hơn thì model chọn đúng hơn.
 
 ### `input_examples`
 
@@ -866,7 +866,7 @@ Tool chạy với quyền của backend, còn yêu cầu đến từ một model
 
 ### Prompt injection qua tool result
 
-Model không phân biệt được chỉ dẫn của bạn với chỉ dẫn nằm trong dữ liệu nó đọc. Benchmark AgentDojo (97 tác vụ, 629 test case bảo mật) đo tỉ lệ tấn công thành công có chủ đích: GPT-4o 53,1%, Claude 3 Opus 12,9%; và utility của GPT-4o giảm từ 69% xuống 45% khi bị tấn công [68]. Các model mới đã tốt hơn, nhưng không model nào đạt 0%.
+Model không phân biệt được chỉ dẫn của bạn với chỉ dẫn nằm trong dữ liệu nó đọc. Benchmark AgentDojo (97 tác vụ, 629 test case bảo mật) đo tỉ lệ tấn công thành công có chủ đích (targeted ASR): GPT-4o 47,69%, Claude 3 Opus 11,29%; utility của GPT-4o giảm từ 69,00% xuống 50,08% khi bị tấn công (Table 3) [68]. Các model mới đã tốt hơn, nhưng không model nào đạt 0%.
 
 Simon Willison gọi tên tổ hợp nguy hiểm là **lethal trifecta**: agent có quyền truy cập dữ liệu riêng tư, tiếp xúc với nội dung không tin cậy, và có cách gửi dữ liệu ra ngoài. Có đủ ba yếu tố thì kẻ tấn công có thể lấy dữ liệu; ông lưu ý guardrail chặn được 95% vẫn là "điểm trượt" với bài toán bảo mật [71]. Với chatbot đơn hàng: đọc review sản phẩm (không tin cậy) + tra thông tin khách (riêng tư) + gửi email (kênh ra ngoài) là đủ ba.
 

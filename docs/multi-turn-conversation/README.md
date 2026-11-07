@@ -487,7 +487,7 @@ Sau compaction, lưu toàn bộ `response.content` vào lịch sử. Mảng này
 ### Các chi tiết dễ bỏ sót
 
 - **Lookback 20 vị trí**: mỗi breakpoint chỉ dò ngược tối đa 20 vị trí để tìm entry cũ. Một chuỗi `tool_use` liên tiếp tính là một vị trí, một chuỗi `tool_result` liên tiếp cũng vậy. Nếu một lượt thêm hơn 20 vị trí nội dung khác (tool loop tuần tự dài, nhiều ảnh), request sau không tìm thấy cache cũ. Cách xử lý: thêm breakpoint trung gian khoảng mỗi 15 vị trí.
-- **Request song song**: cache entry chỉ đọc được sau khi response đầu tiên **bắt đầu stream**. Gửi N request cùng prefix cùng lúc thì cả N đều trả giá đầy đủ. Với fan-out, gửi 1 request, chờ token đầu tiên, rồi mới gửi N−1 request còn lại.
+- **Request song song**: cache entry chỉ dùng được sau khi response đầu tiên bắt đầu ("after the first response starts"), dù có stream hay không. Gửi N request cùng prefix cùng lúc thì cả N đều trả giá đầy đủ. Với fan-out, tài liệu khuyên gửi 1 request, chờ response đầu tiên, rồi mới gửi N−1 request còn lại.
 - **Pre-warm**: gửi request với `max_tokens: 0` để ghi cache mà không sinh output, rồi trả về ngay. Đặt `cache_control` ở block cuối dùng chung với traffic thật (system hoặc tools), không đặt ở placeholder user message. Thinking và effort phải giống traffic thật, vì chúng được render vào prompt.
 - **Keep-alive cho Fable 5.1**: vì đọc cache chỉ 0.025×, khi user im lặng 5–60 phút, gửi lại request trước với `max_tokens: 0` ngay trước khi TTL 5 phút hết thường rẻ hơn dùng TTL 1 giờ.
 - **Cache diagnostics** (beta `cache-diagnosis-2026-04-07`): gửi header ở **mọi** request và truyền `diagnostics.previous_message_id`. Response cho biết hai request khác nhau ở đâu (model, system, tools hay lịch sử messages). Thiếu header ở request trước thì không có fingerprint để so.
@@ -1034,7 +1034,7 @@ Một sub-agent đọc 30 file cho một câu hỏi độc lập thường chỉ
 
 **Routing key.** Với OpenAI và xAI, đặt `prompt_cache_key` / `x-grok-conv-id` theo conversation ID. Với system prompt dài dùng chung cho nhiều phiên trên OpenAI, có thể dùng key theo phiên bản prompt cho request đầu của mỗi phiên, nhưng giữ dưới khoảng 15 request/phút cho mỗi key với model trước GPT-5.6.
 
-**Request song song cùng prefix.** Với Claude, cache chỉ đọc được sau khi request ghi nó bắt đầu stream. N worker song song trên cùng context sẽ cùng trả giá đầy đủ. Gửi một request trước, chờ token đầu tiên, rồi mới fan out. Với provider implicit, hiệu ứng tương tự có thể xảy ra vì cache cần thời gian để được ghi.
+**Request song song cùng prefix.** Với Claude, cache chỉ dùng được sau khi response của request ghi nó đã bắt đầu. N worker song song trên cùng context sẽ cùng trả giá đầy đủ. Gửi một request trước, chờ response của nó, rồi mới fan out. Với provider implicit, hiệu ứng tương tự có thể xảy ra vì cache cần thời gian để được ghi.
 
 **User nghỉ giữa chừng.** Hội thoại với người thật có khoảng nghỉ dài hơn nhiều so với agent loop.
 

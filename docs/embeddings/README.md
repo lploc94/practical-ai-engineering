@@ -4620,7 +4620,7 @@ Log lại đủ thông tin để debug retrieval quality **mà không vi phạm 
 
 | Tool | Open-source? | Trace RAG pipeline | Drift monitoring | Self-host | Managed |
 |------|-------------|-------------------|-----------------|-----------|---------|
-| **LangSmith** | ❌ | ✅ Native (LangChain) | ✅ | ❌ | ✅ |
+| **LangSmith** | ❌ | ✅ Native (LangChain) | ✅ | ⚠️ Chỉ gói Enterprise | ✅ |
 | **Arize Phoenix** | ✅ | ✅ | ✅ Embedding drift | ✅ | ✅ |
 | **Langfuse** | ✅ | ✅ | ⚠️ Basic | ✅ | ✅ |
 | **Datadog LLM Obs** | ❌ | ✅ | ✅ | ❌ | ✅ |
