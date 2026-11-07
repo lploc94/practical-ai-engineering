@@ -1,0 +1,44 @@
+rule_files:
+  - slo-rules.yaml
+evaluation_interval: 1m
+tests:
+  # 1. mỗi phút 100 request, 20 request chậm hơn 2,5 giây (20% > 14,4%): sau 1 giờ phải page
+  - interval: 1m
+    input_series:
+      - series: 'vllm:time_to_first_token_seconds_bucket{le="2.5", model_name="m"}'
+        values: '0+80x90'
+      - series: 'vllm:time_to_first_token_seconds_count{model_name="m"}'
+        values: '0+100x90'
+    alert_rule_test:
+      - eval_time: 70m
+        alertname: TTFTBudgetBurnFast
+        exp_alerts:
+          - exp_labels:
+              severity: page
+  # 2. 5% request chậm (burn rate 5): không page
+  - interval: 1m
+    input_series:
+      - series: 'vllm:time_to_first_token_seconds_bucket{le="2.5", model_name="m"}'
+        values: '0+95x90'
+      - series: 'vllm:time_to_first_token_seconds_count{model_name="m"}'
+        values: '0+100x90'
+    alert_rule_test:
+      - eval_time: 70m
+        alertname: TTFTBudgetBurnFast
+        exp_alerts: []
+  # 3. 1 giờ xấu rồi 10 phút đã hồi phục: cửa sổ 5 phút tắt alert dù cửa sổ 1 giờ còn cao
+  - interval: 1m
+    input_series:
+      - series: 'vllm:time_to_first_token_seconds_bucket{le="2.5", model_name="m"}'
+        values: '0+80x60 4800+100x30'
+      - series: 'vllm:time_to_first_token_seconds_count{model_name="m"}'
+        values: '0+100x60 6000+100x30'
+    alert_rule_test:
+      - eval_time: 70m
+        alertname: TTFTBudgetBurnFast
+        exp_alerts: []
+    promql_expr_test:
+      - expr: llm:ttft_slow:ratio_rate1h > bool 0.144
+        eval_time: 70m
+        exp_samples:
+          - value: 1

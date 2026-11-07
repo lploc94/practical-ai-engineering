@@ -1,0 +1,16 @@
+groups:
+  - name: llm-slo
+    rules:
+      - record: llm:ttft_slow:ratio_rate5m
+        expr: |
+          1 - sum(rate(vllm:time_to_first_token_seconds_bucket{le="2.5"}[5m]))
+            / sum(rate(vllm:time_to_first_token_seconds_count[5m]))
+      - record: llm:ttft_slow:ratio_rate1h
+        expr: |
+          1 - sum(rate(vllm:time_to_first_token_seconds_bucket{le="2.5"}[1h]))
+            / sum(rate(vllm:time_to_first_token_seconds_count[1h]))
+      - alert: TTFTBudgetBurnFast
+        # SLO 99% request có TTFT dưới 2,5 giây: budget 1%, burn rate 14,4
+        expr: llm:ttft_slow:ratio_rate1h > 14.4 * 0.01 and llm:ttft_slow:ratio_rate5m > 14.4 * 0.01
+        labels:
+          severity: page

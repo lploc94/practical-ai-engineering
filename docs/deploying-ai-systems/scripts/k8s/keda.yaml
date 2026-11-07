@@ -1,0 +1,43 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: gpt-oss-20b
+  namespace: llm
+spec:
+  scaleTargetRef:
+    name: gpt-oss-20b
+  minReplicaCount: 2
+  maxReplicaCount: 8
+  pollingInterval: 15
+  fallback:                # Prometheus lỗi 3 lần liên tiếp: giữ số replica hiện tại, tối thiểu 4
+    failureThreshold: 3
+    replicas: 4
+    behavior: currentReplicasIfHigher
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          policies:
+            - type: Pods
+              value: 2
+              periodSeconds: 60
+        scaleDown:
+          stabilizationWindowSeconds: 600   # pod mới mất vài phút mới Ready: đừng gỡ vội
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 120
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus.monitoring.svc:9090
+        # tổng request đang chạy + đang chờ trên toàn pool; metricType mặc định AverageValue
+        # nên số replica mong muốn = tổng / threshold
+        query: >-
+          sum(vllm:num_requests_running{model_name="openai/gpt-oss-20b"})
+          + sum(vllm:num_requests_waiting{model_name="openai/gpt-oss-20b"})
+        # ví dụ: replica đạt SLO với 24 request đồng thời (đo ở §3.1), chừa 25% headroom:
+        # 24 × 0,75 = 18
+        threshold: "18"
+        ignoreNullValues: "false"   # mặc định true: mất target thì không báo lỗi

@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpt-oss-20b
+  namespace: llm
+spec:
+  # không khai replicas: KEDA/HPA quản lý số replica; giữ trường này thì mỗi lần
+  # kubectl apply kéo số pod về giá trị trong file
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # thêm pod mới trước, chỉ gỡ pod cũ khi pod mới Ready
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: gpt-oss-20b
+  template:
+    metadata:
+      labels:
+        app: gpt-oss-20b
+    spec:
+      # preStop 15 s + drain 90 s + dọn dẹp 15 s; phải lớn hơn --shutdown-timeout
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: vllm
+          image: vllm/vllm-openai:v0.33.0   # khi chạy thật, ghim theo digest
+          command: ["vllm", "serve"]
+          args:
+            - /models/gpt-oss-20b            # weights tải sẵn vào volume, đúng một revision
+            - --served-model-name=openai/gpt-oss-20b
+            - --max-model-len=32768
+            - --max-num-seqs=64
+            - --max-num-batched-tokens=8192
+            - --max-num-queued-reqs=96       # 64 đang chạy + 32 chờ; vượt thì trả 503 ngay
+            - --shutdown-timeout=90          # mặc định 0: SIGTERM là huỷ ngay request đang chạy
+          env:
+            - name: HF_HUB_OFFLINE           # không gọi Hugging Face lúc khởi động
+              value: "1"
+          ports:
+            - name: http
+              containerPort: 8000
+          resources:
+            limits:
+              nvidia.com/gpu: "1"            # GPU chỉ khai ở limits
+              memory: 48Gi
+            requests:
+              cpu: "4"
+              memory: 48Gi
+          startupProbe:                      # tối đa 60 × 10 s = 10 phút để nạp model
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:                     # /health trả 503 khi engine chết
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          lifecycle:
+            preStop:                         # chờ load balancer gỡ pod rồi mới SIGTERM
+              exec:
+                command: ["sleep", "15"]
+          volumeMounts:
+            - name: models
+              mountPath: /models
+              readOnly: true
+            - name: vllm-cache               # cache torch.compile; emptyDir chỉ giữ qua lần container restart
+              mountPath: /root/.cache/vllm
+            - name: shm
+              mountPath: /dev/shm
+      volumes:
+        - name: models
+          persistentVolumeClaim:
+            claimName: models-gpt-oss-20b
+            readOnly: true
+        - name: vllm-cache
+          emptyDir: {}
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpt-oss-20b
+  namespace: llm
+  labels:
+    app: gpt-oss-20b
+spec:
+  selector:
+    app: gpt-oss-20b
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: gpt-oss-20b
+  namespace: llm
+spec:
+  maxUnavailable: 1        # drain node hay nâng cấp cluster chỉ gỡ từng pod một
+  selector:
+    matchLabels:
+      app: gpt-oss-20b
