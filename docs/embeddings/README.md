@@ -338,6 +338,8 @@ Mỗi thế hệ model cải thiện một khía cạnh của biểu diễn. Đ�
 
 Hai vector có thể cùng hướng nhưng khác độ dài. Cosine bỏ qua khác biệt về độ dài; dot product giữ lại nó; L2 đo khoảng cách giữa hai điểm. Lựa chọn này ảnh hưởng đến thứ hạng tìm kiếm, kết quả phân cụm và gợi ý. Jaccard xử lý một trường hợp khác: độ trùng lặp giữa các tập hợp từ.
 
+![Query q và ba tài liệu: A ngắn và B dài cùng hướng, C lệch hướng hơn. Cosine xếp A ngang B, dot product xếp B cao nhất và A thấp nhất, L2 xếp A gần nhất và B xa nhất](images/similarity-metrics.svg)
+
 ### Bảng so sánh tổng quan
 
 | Metric | Công thức | Range | Ưu điểm | Nhược điểm |
@@ -809,6 +811,8 @@ Sau khi documents hoặc passages đã được encode và lưu sẵn, bài toá
 #### HNSW (Hierarchical Navigable Small World)
 
 **Cách hoạt động**: Xây một **multi-layer graph** trên tập vectors. Layer cao nhất chỉ có vài nodes (long-range connections), layer thấp nhất có tất cả nodes (short-range connections). Search bắt đầu từ layer cao → nhảy nhanh đến vùng gần đúng → xuống layer thấp → tìm chính xác trong vùng lân cận.
+
+![HNSW bắt đầu ở tầng trên thưa, nhảy tới láng giềng gần query nhất, hết đường thì xuống tầng dưới; ở tầng 0 xét kỹ láng giềng để lấy top-K, chỉ duyệt vài node thay vì toàn bộ vector](images/hnsw-search.svg)
 
 **Tại sao hay dùng?** Vì HNSW thường cho latency thấp và recall cao trong nhiều use case search thực tế. Đổi lại, nó tốn RAM và không phải lựa chọn rẻ nhất khi corpus rất lớn. (Chi tiết tuning params `m`, `ef_construction`, `ef_search` → xem [HNSW Tuning Parameters](#hnsw-tuning-parameters) ở §3.2)
 
@@ -2163,6 +2167,8 @@ $$
 
 **So sánh với single-vector:** khi cả trang bị nén vào **một** vector (thường bằng cách lấy trung bình hoặc pooling các vùng), tín hiệu của ba ô nhỏ kể trên bị **pha loãng** bởi hàng trăm vùng khác trên trang (logo, footer, đoạn văn không liên quan). Đây gọi là hiện tượng *pooling dilution*: chi tiết nhỏ nhưng quyết định bị trung bình hóa đến mức không còn nổi bật.
 
+![Câu hỏi doanh thu quý 3 miền Nam: mỗi token khớp với một patch ở một chỗ khác nhau trên trang và MaxSim cộng ba điểm khớp tốt nhất; single-vector lấy trung bình cả trang nên ba vùng này bị pha loãng](images/colpali-maxsim.svg)
+
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'background':'#1f1f1f','primaryColor':'#2f2f33','primaryTextColor':'#f8fafc','primaryBorderColor':'#e5e7eb','secondaryColor':'#4b6270','secondaryTextColor':'#f8fafc','secondaryBorderColor':'#e5e7eb','tertiaryColor':'#6b4128','tertiaryTextColor':'#f8fafc','tertiaryBorderColor':'#f3e8d8','lineColor':'#d4d4d8','textColor':'#f8fafc','mainBkg':'#2f2f33','clusterBkg':'#26272b','clusterBorder':'#d4d4d8','edgeLabelBackground':'#1f1f1f','nodeTextColor':'#f8fafc','fontFamily':'Inter, Segoe UI, sans-serif','fontSize':'16px'}}}%%
 flowchart LR
@@ -2874,6 +2880,8 @@ Hai câu hỏi gần nhau trong không gian embedding chưa chắc dùng chung �
 | "Chính sách đổi trả **hiện tại**?" (cache từ tháng trước) | Cùng câu hỏi | Câu hỏi giống hệt nhưng **sự thật đã đổi** |
 
 Nâng ngưỡng, chẳng hạn lên 0.95, giảm trúng nhầm nhưng cũng làm giảm hit rate; mỗi request vẫn tốn một lần embed và tìm vector. Hạ ngưỡng tăng khả năng dùng lại cache, đồng thời tăng lỗi. Những cặp diễn đạt lại cùng ý và những cặp cần đáp án khác nhau có thể nằm xen kẽ trong cùng khoảng điểm.
+
+![Cosine của các cặp dùng chung đáp án và các cặp cần đáp án khác nằm xen kẽ; với số liệu giả định, nâng ngưỡng từ 0.90 lên 0.95 giảm trúng nhầm từ 5 xuống 2 nhưng bỏ lỡ 14 trên 20 cặp dùng lại được](images/cache-threshold.svg)
 
 **Số liệu tham khảo.** Paper **GPT Semantic Cache** (2024) báo cáo giảm tới 68.8% lời gọi API, hit rate 61.6%–68.8% tùy loại câu hỏi, và tỷ lệ hit đúng (positive hit rate) trên 97% trên tập câu hỏi kiểu chăm sóc khách hàng. Hãy đọc con số này đúng cách: kể cả khi "trên 97% đúng", **cứ khoảng 30 lần trả từ cache thì có thể có một lần trả lời sai** — chấp nhận được với FAQ, không chấp nhận được với tư vấn y tế.
 
@@ -4809,6 +4817,8 @@ Hai hệ quả kỹ thuật quan trọng:
 
 - **Batch càng lớn, càng nhiều negative, tín hiệu học càng tốt.** Nhưng batch lớn tốn bộ nhớ GPU. Kỹ thuật **gradient caching** (trong sentence-transformers: `CachedMultipleNegativesRankingLoss`) chạy forward theo mini-batch nhỏ nhưng tính loss trên toàn bộ batch lớn, cho phép batch hiệu dụng hàng trăm đến hàng nghìn trên GPU hạn chế.
 - **Trùng lặp trong batch tạo ra "false negative".** Nếu hai cặp trong batch có cùng query (hoặc cùng tài liệu), model bị phạt vì đặt hai thứ *thực sự liên quan* gần nhau. Cần sampler loại bỏ trùng lặp (`BatchSamplers.NO_DUPLICATES`).
+
+![Ma trận 4 query nhân 4 tài liệu trong một batch: đường chéo là cặp đúng được kéo lại gần, các ô khác là negative bị đẩy ra xa; hai query có cùng tài liệu đúng tạo ra hai ô false negative](images/in-batch-negatives.svg)
 
 ### Dữ liệu huấn luyện: Lấy cặp (query, positive) từ đâu?
 

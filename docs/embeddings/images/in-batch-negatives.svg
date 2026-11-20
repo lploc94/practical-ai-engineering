@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 786 428" width="786" height="428" role="img" aria-label="Ma trận 4 query nhân 4 tài liệu trong một batch: đường chéo là cặp đúng được kéo lại gần, các ô còn lại là negative bị đẩy ra xa; hai query có cùng tài liệu đúng tạo ra hai ô false negative"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="786" height="428" rx="12"/><text class="title" x="20" y="38">In-batch negatives: tài liệu đúng của query khác làm negative</text><rect class="blue" x="20" y="59" width="14" height="14" rx="3"/><text class="sub" x="40" y="70">positive: kéo lại gần</text><rect class="tok" x="211" y="59" width="14" height="14" rx="3"/><text class="sub" x="231" y="70">negative: đẩy ra xa</text><rect class="hatch" x="388" y="59" width="14" height="14" rx="3"/><text class="sub" x="408" y="70">false negative: đẩy nhầm cặp liên quan</text><text class="row mid" x="284.0" y="102">d1</text><text class="sub mid" x="284.0" y="119">HD đặt lại mật khẩu</text><text class="row mid" x="418.0" y="102">d2</text><text class="sub mid" x="418.0" y="119">HD hủy gói cước</text><text class="row mid" x="552.0" y="102">d3</text><text class="sub mid" x="552.0" y="119">Giờ làm việc</text><text class="row mid" x="686.0" y="102">d4</text><text class="sub mid" x="686.0" y="119">HD hủy gói cước (= d2)</text><text class="row" x="20" y="148">q1</text><text class="sub" x="20" y="165">đổi mật khẩu?</text><rect class="blue" x="220" y="128" width="128" height="46" rx="6"/><text class="cap mid" x="284.0" y="156.0">kéo gần</text><rect class="tok" x="354" y="128" width="128" height="46" rx="6"/><text class="cap mid" x="418.0" y="156.0">đẩy xa</text><rect class="tok" x="488" y="128" width="128" height="46" rx="6"/><text class="cap mid" x="552.0" y="156.0">đẩy xa</text><rect class="tok" x="622" y="128" width="128" height="46" rx="6"/><text class="cap mid" x="686.0" y="156.0">đẩy xa</text><text class="row" x="20" y="200">q2</text><text class="sub" x="20" y="217">hủy gói cước?</text><rect class="tok" x="220" y="180" width="128" height="46" rx="6"/><text class="cap mid" x="284.0" y="208.0">đẩy xa</text><rect class="blue" x="354" y="180" width="128" height="46" rx="6"/><text class="cap mid" x="418.0" y="208.0">kéo gần</text><rect class="tok" x="488" y="180" width="128" height="46" rx="6"/><text class="cap mid" x="552.0" y="208.0">đẩy xa</text><rect class="hatch" x="622" y="180" width="128" height="46" rx="6"/><text class="cap mid halo" x="686.0" y="208.0">đẩy xa (sai)</text><text class="row" x="20" y="252">q3</text><text class="sub" x="20" y="269">giờ mở cửa?</text><rect class="tok" x="220" y="232" width="128" height="46" rx="6"/><text class="cap mid" x="284.0" y="260.0">đẩy xa</text><rect class="tok" x="354" y="232" width="128" height="46" rx="6"/><text class="cap mid" x="418.0" y="260.0">đẩy xa</text><rect class="blue" x="488" y="232" width="128" height="46" rx="6"/><text class="cap mid" x="552.0" y="260.0">kéo gần</text><rect class="tok" x="622" y="232" width="128" height="46" rx="6"/><text class="cap mid" x="686.0" y="260.0">đẩy xa</text><text class="row" x="20" y="304">q4</text><text class="sub" x="20" y="321">ngừng gói cước?</text><rect class="tok" x="220" y="284" width="128" height="46" rx="6"/><text class="cap mid" x="284.0" y="312.0">đẩy xa</text><rect class="hatch" x="354" y="284" width="128" height="46" rx="6"/><text class="cap mid halo" x="418.0" y="312.0">đẩy xa (sai)</text><rect class="tok" x="488" y="284" width="128" height="46" rx="6"/><text class="cap mid" x="552.0" y="312.0">đẩy xa</text><rect class="blue" x="622" y="284" width="128" height="46" rx="6"/><text class="cap mid" x="686.0" y="312.0">kéo gần</text><text class="cap" x="20" y="362">Mỗi hàng là bài phân loại 4 lựa chọn; mỗi query có B − 1 = 3 negative mà không cần gán nhãn.</text><text class="cap2" x="20" y="386">q2 và q4 trùng tài liệu đúng: hai ô sọc dạy model đẩy xa một cặp thực sự liên quan.</text></svg>
