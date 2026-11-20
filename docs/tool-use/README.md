@@ -75,7 +75,7 @@ Tài liệu liên quan: [Structured Output](../structured-output/) (strict tool,
 
 | | OpenAI (Responses) | Claude | Gemini | Grok | vLLM / SGLang |
 |---|---|---|---|---|---|
-| Ép gọi tool | `required`, function cụ thể, `allowed_tools` | `any` / `tool`, **trừ** Opus 5.5, Sonnet 5.5, Fable 5.1, Mythos 5.1 | `ANY` (+ `allowed_function_names` để chỉ định) | `required`, function cụ thể | `required`, named |
+| Ép gọi tool | `required`, function cụ thể, `allowed_tools` | `any` / `tool`, **trừ** Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2, Mythos 5.1, 5.2 | `ANY` (+ `allowed_function_names` để chỉ định) | `required`, function cụ thể | `required`, named |
 | Song song mặc định | Bật | Bật | Bật | Bật | Tuỳ parser; llama.cpp tắt |
 | Strict schema | Tự chuẩn hoá khi bỏ trống `strict` (Chat Completions: tắt) | `strict: true`, tối đa 20 tool | `VALIDATED` (không ép gọi; text vẫn hợp lệ) | Có | `strict` / `--tool-strict-level` |
 | Tool search / nạp trễ | `tool_search` + `defer_loading` (gpt-5.4+) | Tool search tool + `defer_loading` (tới 10.000 tool) | Không có tương đương | Không | Không |
@@ -196,7 +196,7 @@ Những điều ít được ghi trong ví dụ:
 
 **Ép gọi tool được cài đặt bằng prefill hoặc constrained decoding.** Claude ghi rằng với `any` / `tool`, API prefill lượt assistant để ép tool call, nên model không viết được câu dẫn hay giải thích nào trước `tool_use` [13]. Ở vLLM, `required` và named function mặc định dùng structured outputs backend; `auto` mặc định parse tool call từ văn bản tự do, nên "arguments đôi khi có thể sai format" [43]. vLLM bổ sung ràng buộc cho `auto` khi có tool đặt `strict: true` hoặc server đặt `--tool-strict-level`, nhưng vẫn không ép gọi tool ([§2.7](#27-self-hosted-vllm-sglang-llamacpp-ollama)). Cùng một model, `auto` và `required` có thể cho độ tin cậy schema khác nhau tuỳ cấu hình strict.
 
-**Ép gọi tool xung đột với thinking.** Model buộc phải bắt đầu bằng tool call thì không có chỗ để suy luận trước. Claude từ chối `any` / `tool` khi bật manual extended thinking; với adaptive thinking trên Opus 5 và Haiku 5.5, request được chấp nhận nhưng response bắt đầu thẳng bằng `tool_use`, không có `thinking` block [13]. Trên Claude Opus 5.5, Sonnet 5.5, Fable 5.1 và Mythos 5.1, forced tool use bị bỏ hẳn: request trả `400` với thông báo `tool_choice: type "tool" and "any" are not supported for this model.` [22]. Qwen ở thinking mode cũng chỉ ghi nhận `auto` / `none` trong một số trang docs ([§2.6](#26-các-provider-trung-quốc)).
+**Ép gọi tool xung đột với thinking.** Model buộc phải bắt đầu bằng tool call thì không có chỗ để suy luận trước. Claude từ chối `any` / `tool` khi bật manual extended thinking; với adaptive thinking trên Opus 5 và Haiku 5.5, request được chấp nhận nhưng response bắt đầu thẳng bằng `tool_use`, không có `thinking` block [13]. Trên Claude Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2 và Mythos 5.1, 5.2, forced tool use bị bỏ hẳn: request trả `400` với thông báo `tool_choice: type "tool" and "any" are not supported for this model.` [22]. Qwen ở thinking mode cũng chỉ ghi nhận `auto` / `none` trong một số trang docs ([§2.6](#26-các-provider-trung-quốc)).
 
 Nếu bạn đang dùng mẹo cũ "ép gọi tool `record_result` để lấy JSON", hãy chuyển sang structured output của response ([Structured Output §1.2](../structured-output/#12-phổ-các-mức-đảm-bảo)).
 
@@ -439,7 +439,7 @@ Với lỗi, Claude ghi rằng model thường thử lại 2–3 lần với tha
 
 ### `tool_choice` và model mới
 
-`auto` là mặc định khi có tools; `any` và `tool` ép gọi; `none` cấm gọi; `disable_parallel_tool_use: true` đặt **bên trong** `tool_choice` [11][13]. Trên Claude Opus 5.5, Sonnet 5.5, Fable 5.1 và Mythos 5.1, `any` / `tool` trả `400`, kể cả trên endpoint đếm token [22]. Anthropic đề xuất dùng `auto` kết hợp strict tool để input luôn đúng schema, hoặc structured outputs nếu cần chính response có dạng JSON cố định [22].
+`auto` là mặc định khi có tools; `any` và `tool` ép gọi; `none` cấm gọi; `disable_parallel_tool_use: true` đặt **bên trong** `tool_choice` [11][13]. Trên Claude Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2 và Mythos 5.1, 5.2, `any` / `tool` trả `400`, kể cả trên endpoint đếm token [22]. Anthropic đề xuất dùng `auto` kết hợp strict tool để input luôn đúng schema, hoặc structured outputs nếu cần chính response có dạng JSON cố định [22].
 
 ### Strict tool use
 
@@ -826,7 +826,7 @@ def after_execute(call, result):
 
 ### Khi chạm giới hạn
 
-Dừng vòng lặp rồi trả lỗi chung cho người dùng sẽ lãng phí phần việc đã làm. Cách tốt hơn: gửi thêm một request với `tool_choice: "none"` (giữ nguyên `tools` để không mất cache), kèm chỉ dẫn tóm tắt những gì đã tìm được và những gì còn dang dở. Người dùng nhận được câu trả lời một phần thay vì "đã có lỗi xảy ra". Riêng Claude Opus 5.5, Sonnet 5.5, Fable 5.1 và Mythos 5.1 vẫn nhận `none`, chỉ không nhận `any` / `tool` [22].
+Dừng vòng lặp rồi trả lỗi chung cho người dùng sẽ lãng phí phần việc đã làm. Cách tốt hơn: gửi thêm một request với `tool_choice: "none"` (giữ nguyên `tools` để không mất cache), kèm chỉ dẫn tóm tắt những gì đã tìm được và những gì còn dang dở. Người dùng nhận được câu trả lời một phần thay vì "đã có lỗi xảy ra". Riêng Claude Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2 và Mythos 5.1, 5.2 vẫn nhận `none`, chỉ không nhận `any` / `tool` [22].
 
 ### Chi phí tăng theo bình phương số bước
 
@@ -996,7 +996,7 @@ Lưu raw request và response của provider (có kiểm soát truy cập và th
 | Mọi request của một hội thoại đều `400` | Lịch sử đã lưu chứa tool call mồ côi, hoặc phần đứng trước một thinking block bị sửa | Thêm kết quả lỗi cho call mồ côi; với Claude, đặt `drop_block` ở mọi request sau của hội thoại đó, hoặc bỏ block bị báo lỗi cùng mọi `thinking` / `redacted_thinking` sau nó [22][23b] |
 | `400` thiếu reasoning item (OpenAI) | Code dựng lại lịch sử, lọc mất reasoning item; tỉa lịch sử không theo nhóm | Gửi lại nguyên `resp.output`; tỉa cả nhóm [9] |
 | `400` thiếu thought signature (Gemini 3+) | Dựng lại part; copy signature sai; xen kẽ FC / FR | Gửi lại part nguyên văn; FC trước, FR sau [30] |
-| `400` `tool_choice ... not supported` (Claude) | `any` / `tool` trên Opus 5.5, Sonnet 5.5, Fable 5.1, Mythos 5.1 | `auto` + strict tool, hoặc structured outputs [22] |
+| `400` `tool_choice ... not supported` (Claude) | `any` / `tool` trên Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2, Mythos 5.1, 5.2 | `auto` + strict tool, hoặc structured outputs [22] |
 | `400` khi có text trong user message chứa tool result (Claude) | Text đứng trước `tool_result`; text trong lượt trả kết quả programmatic call | Đặt `tool_result` trước; với PTC chỉ gửi `tool_result` [12][18] |
 | Hit rate cache giảm mạnh khi bật tools | Thêm / bớt / sắp lại tool theo bước; framework lọc tools | Cố định tools; dùng `allowed_tools` / `tool_choice` |
 | Gọi cùng tool cùng tham số nhiều lần | Kết quả không đổi nhưng model không biết dừng; lỗi không ghi `retryable` | Phát hiện gọi trùng; ghi `retryable: false` |
@@ -1051,7 +1051,7 @@ Lưu raw request và response của provider (có kiểm soát truy cập và th
 ### Theo provider
 
 - [ ] **OpenAI**: Responses cho kết quả đa phương thức; `strict: true` tường minh; gửi lại reasoning item theo nhóm; `phase: "commentary"` cho preamble; `require_approval` cho MCP.
-- [ ] **Claude**: `tool_result` đứng đầu user message; không dùng `any` / `tool` trên model 5.5 / Fable 5.1 / Mythos 5.1; giữ thinking block rỗng; giới hạn strict 20 / 24 / 16; tool search khi nhiều tool.
+- [ ] **Claude**: `tool_result` đứng đầu user message; không dùng `any` / `tool` trên Opus 5.5 / Sonnet 5.5 / Fable 5.1, 5.2 / Mythos 5.1, 5.2; giữ thinking block rỗng; giới hạn strict 20 / 24 / 16; tool search khi nhiều tool.
 - [ ] **Gemini**: thought signature nguyên vị trí; FC trước FR sau; tắt automatic function calling cho tool có tác dụng phụ; `VALIDATED` khi cần đủ tham số required.
 - [ ] **Grok**: root `parameters` là object; tự cài approval nếu dùng MCP; gửi lại `encrypted_content`.
 - [ ] **DeepSeek / Kimi / MiniMax / GLM**: gửi lại `reasoning_content` / toàn bộ assistant message; DeepSeek strict qua `/beta`; ID Kimi dạng `functions.<tên>:<số>`.

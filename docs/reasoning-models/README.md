@@ -432,7 +432,7 @@ Mức mới có hiệu lực từ user turn tiếp theo có input mới. User tu
 
 ### Các giới hạn đi kèm thinking
 
-- **Forced tool use.** Manual extended thinking chỉ nhận `tool_choice` `auto` hoặc `none`. Adaptive thinking nhận forced tool use, *trừ* Opus 5.5, Sonnet 5.5, Fable 5.1 và Mythos 5.1: các model này trả 400 cho mọi request có `tool_choice` `any` hoặc `tool`. Trên các model đó, dùng `auto` kèm strict tool use hoặc structured outputs. Khi forced tool use được chấp nhận, response bắt đầu bằng tool call và không có thinking block [5].
+- **Forced tool use.** Manual extended thinking chỉ nhận `tool_choice` `auto` hoặc `none`. Adaptive thinking nhận forced tool use, *trừ* Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2 và Mythos 5.1, 5.2: các model này trả 400 cho mọi request có `tool_choice` `any` hoặc `tool`. Trên các model đó, dùng `auto` kèm strict tool use hoặc structured outputs. Khi forced tool use được chấp nhận, response bắt đầu bằng tool call và không có thinking block [5].
 - **Prefill.** Claude 4.6 trở lên trả 400 với assistant turn cuối được điền sẵn, dù bật thinking hay không [5].
 - **Sampling.** Trên Claude 5.x, Opus 4.7, 4.8 và Mythos Preview, `temperature`, `top_p`, `top_k` khác mặc định đều trả 400 trên mọi request. `top_p` mặc định là 0,99, nên `top_p: 1` cũng bị 400. Từ API version `2026-10-21`, gửi bất kỳ tham số nào trong ba tham số này đều trả 400 trên mọi model [5].
 - **Interleaved thinking.** Với adaptive thinking, suy luận xen giữa các tool call tự bật, không cần beta header. Manual mode trên Opus 4.5, Sonnet 4.5 cần header `interleaved-thinking-2025-05-14` [5].
@@ -741,7 +741,7 @@ Cách dựng bộ eval, grader và đọc kết quả có ý nghĩa thống kê 
 | Claude (model có preserved thinking): 400, hoặc không lỗi nhưng model vẫn đọc thinking đã mất hiệu lực, sau khi đổi system prompt hoặc tools giữa phiên | Prefix check của signature; kết quả tuỳ model | Append-only; đặt `prefix_mismatch_behavior: "error"` hoặc theo dõi `input_transformations` [9] |
 | Claude: 400 với `budget_tokens` | Model từ Opus 4.7 | Chuyển sang `adaptive` + `output_config.effort` [6] |
 | Claude: 400 với `thinking: {type: "disabled"}` | Opus 5.5, Sonnet 5.5, Fable, Mythos không tắt được | Hạ effort; Sonnet 5.5 dùng `between_tools` [5] |
-| Claude: 400 với `tool_choice: any` / `tool` | Manual thinking, hoặc Opus 5.5, Sonnet 5.5, Fable 5.1, Mythos 5.1 | `tool_choice: auto` + chỉ dẫn trong prompt, strict tool use hoặc structured outputs [5] |
+| Claude: 400 với `tool_choice: any` / `tool` | Manual thinking, hoặc Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2, Mythos 5.1, 5.2 | `tool_choice: auto` + chỉ dẫn trong prompt, strict tool use hoặc structured outputs [5] |
 | Claude: 400 với `temperature` / `top_p` | Model 5.x, Opus 4.7, 4.8; mọi model từ API version `2026-10-21` | Bỏ tham số [5] |
 | Claude: 400 `messages.N.output_config: Extra inputs are not permitted` | Dùng per-message effort thiếu beta header | Thêm `mid-conversation-output-config-2026-07-01` [7] |
 | Cache hit giảm sau khi chỉnh effort theo request | Effort là một phần của prompt được render | Giữ effort cố định trong hội thoại; dùng `configuration_update` hoặc per-message effort [1][7] |

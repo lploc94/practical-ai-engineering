@@ -10,7 +10,8 @@ import anthropic
 RETRY, NEXT, FATAL = "retry", "next", "fatal"
 
 # Model không nhận tool_choice any/tool (trang lỗi của Claude, tháng 11/2026).
-NO_FORCED_TOOL = {"claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-1", "claude-mythos-5-1"}
+NO_FORCED_TOOL = {"claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-1", "claude-mythos-5-1",
+                  "claude-fable-5-2", "claude-mythos-5-2"}
 
 
 def classify(err: anthropic.APIError) -> tuple[str, float | None]:

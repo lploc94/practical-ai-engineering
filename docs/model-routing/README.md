@@ -211,7 +211,7 @@ Trang lỗi của Claude liệt kê nhiều trường hợp cùng một request 
 
 - **Extended thinking.** `thinking: {"type": "enabled", "budget_tokens": N}` bị từ chối trên Claude 4.7 trở lên. Ngược lại, `{"type": "adaptive"}` bị từ chối trên Claude 4.5 và cũ hơn.
 - **Tắt thinking.** `{"type": "disabled"}` bị từ chối trên Fable 5.1, Fable 5, Mythos 5.1, Mythos 5 và Opus 5.5 vì thinking luôn bật. Sonnet 5.5 cũng từ chối `disabled` và dùng `{"type": "between_tools"}` để tắt thinking đầu lượt; gửi `between_tools` cho model nào khác Sonnet 5.5 đều bị `400`.
-- **Forced tool use.** Opus 5.5, Sonnet 5.5, Fable 5.1 và Mythos 5.1 từ chối `tool_choice: {"type": "any"}` và `{"type": "tool", ...}`, kể cả trên endpoint đếm token. Haiku 5.5 vẫn nhận forced tool use [1][6]. Chuỗi Opus 5.5 → Sonnet 5.5 cho một request ép gọi tool sẽ `400` ở cả hai bước.
+- **Forced tool use.** Opus 5.5, Sonnet 5.5, Fable 5.1, Fable 5.2, Mythos 5.1 và Mythos 5.2 từ chối `tool_choice: {"type": "any"}` và `{"type": "tool", ...}`, kể cả trên endpoint đếm token. Haiku 5.5 vẫn nhận forced tool use [1][6]. Chuỗi Opus 5.5 → Sonnet 5.5 cho một request ép gọi tool sẽ `400` ở cả hai bước.
 - **Prefill.** Claude 4.6 trở lên từ chối message cuối là assistant [1].
 - **Computer use.** Haiku 5.5 từ chối `computer_20250124` và dùng `computer_toolset_20260801` [6].
 - **Sampling.** Từ API version `2026-10-21`, request gửi `temperature`, `top_p` hoặc `top_k` bị `400` trên mọi model, kể cả khi giá trị bằng mặc định [9]. SDK Python 2.6.0 mặc định gửi version này và đã bỏ ba tham số khỏi `messages.create`. Gateway hay thư viện trung gian (LiteLLM và các thư viện tương tự) còn chèn `temperature` vào request Claude sẽ gây lỗi; tài liệu migration của Anthropic nhắc kiểm cấu hình của chúng [9].
@@ -398,7 +398,8 @@ import anthropic
 RETRY, NEXT, FATAL = "retry", "next", "fatal"
 
 # Model không nhận tool_choice any/tool (trang lỗi của Claude, tháng 11/2026).
-NO_FORCED_TOOL = {"claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-1", "claude-mythos-5-1"}
+NO_FORCED_TOOL = {"claude-opus-5-5", "claude-sonnet-5-5", "claude-fable-5-1", "claude-mythos-5-1",
+                  "claude-fable-5-2", "claude-mythos-5-2"}
 
 
 def classify(err: anthropic.APIError) -> tuple[str, float | None]:

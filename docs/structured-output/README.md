@@ -612,7 +612,7 @@ Với dữ liệu nhạy cảm: khi bật ZDR, prompt và output không được
 Trước structured outputs, hai cách phổ biến để lấy JSON từ Claude là prefill `{` vào lượt assistant và ép gọi tool bằng `tool_choice: {"type": "tool", "name": "..."}`. Cả hai đang bị loại bỏ:
 
 - Prefill trả 400 `This model does not support assistant message prefill.` trên Opus 4.6+, Sonnet 4.6+, Sonnet 5 / 5.5. Sonnet 4.5, Haiku 4.5 và model cũ hơn vẫn nhận [12][13].
-- `tool_choice` loại `any` hoặc `tool` trả 400 trên Fable 5.1, Opus 5.5, Sonnet 5.5 [12][13].
+- `tool_choice` loại `any` hoặc `tool` trả 400 trên Fable 5.1, 5.2, Mythos 5.1, 5.2, Opus 5.5, Sonnet 5.5 [12][13][13a].
 
 Cách thay thế: dùng `output_config.format` khi chỉ cần JSON, hoặc `tool_choice: {"type": "auto"}` cùng `strict: true` và prompt nói rõ khi nào gọi tool.
 
@@ -1262,7 +1262,7 @@ user ──► agent loop ──► tool call (arguments: JSON theo input schema
           ──► final answer (JSON theo response schema)                  ◄── response format
 ```
 
-**Tool arguments.** Với tool thay đổi dữ liệu như `transfer_money`, arguments sai kiểu có thể dẫn đến thao tác sai, nên bật strict khi provider hỗ trợ. Cần tính cả giới hạn số tool và cách chọn tool: Claude nhận tối đa 20 strict tools mỗi request, OpenAI nhận 350 tools; Claude Opus 5.5, Sonnet 5.5 và Fable 5.1 không cho ép `tool_choice` loại `tool` / `any` ([§2.3](#23-claude-anthropic)), Qwen không có `required`, MiniMax chỉ có `auto`. Nếu workflow cần model luôn trả dữ liệu cho một bước cụ thể, có thể dùng response format ở bước đó rồi để code xử lý kết quả.
+**Tool arguments.** Với tool thay đổi dữ liệu như `transfer_money`, arguments sai kiểu có thể dẫn đến thao tác sai, nên bật strict khi provider hỗ trợ. Cần tính cả giới hạn số tool và cách chọn tool: Claude nhận tối đa 20 strict tools mỗi request, OpenAI nhận 350 tools; Claude Opus 5.5, Sonnet 5.5, Fable 5.1, 5.2 và Mythos 5.1, 5.2 không cho ép `tool_choice` loại `tool` / `any` ([§2.3](#23-claude-anthropic)), Qwen không có `required`, MiniMax chỉ có `auto`. Nếu workflow cần model luôn trả dữ liệu cho một bước cụ thể, có thể dùng response format ở bước đó rồi để code xử lý kết quả.
 
 **Tool results với MCP.** Từ spec 2025-06-18, MCP tool có thể khai báo `outputSchema`. Khi có, server **phải** trả kết quả khớp schema trong `structuredContent`, client **nên** validate, và để tương thích ngược, server nên trả thêm bản JSON đã serialize trong một `TextContent` block [67]:
 
@@ -1499,6 +1499,7 @@ Dùng checklist này khi giao AI agent dựng hoặc sửa pipeline structured o
 | 11 | Strict tool use | [platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use) |
 | 12 | Claude Opus 5.5 migration guide | [platform.claude.com/docs/en/models/opus-5-5/migration-guide](https://platform.claude.com/docs/en/models/opus-5-5/migration-guide) |
 | 13 | Claude Sonnet 5.5 migration guide | [platform.claude.com/docs/en/models/sonnet-5-5/migration-guide](https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide) |
+| 13a | Claude API errors: Forced tool use not supported | [platform.claude.com/docs/en/api/errors#forced-tool-use-not-supported](https://platform.claude.com/docs/en/api/errors#forced-tool-use-not-supported) |
 | 14 | Handling stop reasons | [platform.claude.com/docs/en/build-with-claude/handling-stop-reasons](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons) |
 
 ## Google Gemini
