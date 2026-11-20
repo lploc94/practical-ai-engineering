@@ -28,7 +28,7 @@ Chỉ làm ảnh động khi bỏ chuyển động đi thì người đọc mấ
 ## Quy tắc thiết kế
 
 1. **Congruence.** Việc gì xảy ra đồng thời thì hiện đồng thời, việc gì tuần tự thì hiện từng bước. Chuyển động phải khớp với cơ chế thật.
-2. **Mỗi bước chỉ có một thay đổi.** Giữa các bước có khoảng dừng. Trạng thái cuối giữ ít nhất 2–3 giây trước khi lặp lại, để người xem quan sát toàn cảnh.
+2. **Mỗi bước chỉ có một thay đổi.** Giữa các bước có khoảng dừng. Trạng thái cuối giữ ít nhất 2–3 giây trước khi lặp lại, để người xem quan sát toàn cảnh. Chú thích đổi theo từng bước phải hiện đủ lâu để đọc hết: không quá khoảng 15 ký tự mỗi giây, mức thường dùng cho phụ đề.
 3. **Chỉ vẽ thứ phục vụ ý chính.** Không icon trang trí, gradient, bóng đổ hay easing cầu kỳ. Khi nhiều đường nối làm hình rối, gom chúng thành một ký hiệu như khung bao hoặc ngoặc.
 4. **Màu có nghĩa và nhất quán giữa các tài liệu** (bảng màu bên dưới). Không dùng màu chỉ để làm đẹp.
 5. **Chữ ngắn, đặt cạnh phần hình nó mô tả.** Mỗi pha có một tiêu đề và tối đa hai dòng chú thích. Phần giải thích dài để trong đoạn văn, không chép vào hình.
