@@ -34,51 +34,45 @@ Mở API ra gọi thử một model thì không khó. Phần khó đến sau: ch
 
 ## Cách đọc
 
-Mỗi tài liệu viết để đọc độc lập, không cần đọc theo thứ tự giữa các chủ đề. Bên trong, nội dung thường chia ba phần:
+Mỗi tài liệu viết để đọc độc lập, không cần đọc theo thứ tự giữa các chủ đề. Bên trong, nội dung chia ba phần:
 
-1. **Nền tảng** — cơ chế và lý do đằng sau, đủ để bạn tự suy luận khi gặp trường hợp tài liệu không nhắc tới.
-2. **Tra cứu** — tham số, giới hạn và khác biệt giữa các provider hoặc công cụ.
-3. **Thiết kế & vận hành** — đánh đổi khi đưa vào production, failure mode thường gặp, checklist.
+1. **Nền tảng**: cơ chế và lý do đằng sau, đủ để bạn tự suy luận khi gặp trường hợp tài liệu không nhắc tới.
+2. **Theo provider và công cụ**: tham số, giới hạn và khác biệt giữa các provider, engine hoặc công cụ. Tên phần đổi theo chủ đề, ví dụ "Streaming theo provider" hay "Inference engine và phần cứng".
+3. **Thiết kế và vận hành**: đánh đổi khi đưa vào production, failure mode thường gặp, checklist.
 
-Nếu đang cần giải quyết một vấn đề cụ thể, bắt đầu từ phần **TL;DR** ở đầu tài liệu hoặc mục **failure modes thường gặp** ở Phần 3.
+Nếu đang cần giải quyết một vấn đề cụ thể, bắt đầu từ bảng **Tra cứu nhanh** ngay sau mục lục, hoặc mục **Failure modes thường gặp** gần cuối phần thiết kế và vận hành.
+
+Ba tài liệu có cấu trúc khác:
+
+- **Decision Models** có thêm một phần hướng dẫn theo bài toán ứng dụng, nên thiết kế và vận hành là Phần 4.
+- **Embeddings** chia thành Nền tảng, Hệ thống và ứng dụng, Vận hành và tối ưu. Bảng tra cứu ở đầu tài liệu có tên *TL;DR — Cheat Sheet*.
+- **Under Attack** là runbook, xếp theo thời gian từ lúc phát hiện tấn công. Lỗi hay gặp nằm ở Phụ lục 3.
+
+Hình minh họa nằm cạnh đoạn văn nó giải thích. Hình chỉ bổ sung, đoạn văn vẫn đủ ý khi hình không tải được. Ảnh động có khung tĩnh khi bạn bật chế độ giảm chuyển động của hệ điều hành.
 
 ## Nguyên tắc biên soạn
 
 - **Dựa trên nguồn gốc.** Nội dung đối chiếu với tài liệu chính thức, bài báo nghiên cứu và benchmark; nguồn được liệt kê trong từng tài liệu.
 - **Ghi rõ thời điểm.** Giá, giới hạn và tham số API thay đổi nhanh. Mỗi tài liệu ghi tháng cập nhật, và những chỗ chưa xác minh được đánh dấu tại chỗ.
 - **Tiếng Việt, giữ thuật ngữ gốc.** Thuật ngữ kỹ thuật và tên field giữ nguyên tiếng Anh để bạn dễ đối chiếu với docs và code.
+- **Code và số liệu kiểm lại được.** Code ví dụ trong thư mục `scripts/` của từng chủ đề có test đi kèm. Hình minh họa được sinh bằng script đặt cạnh hình, và các con số trong hình được đối chiếu với nội dung tài liệu.
 - **Ưu tiên quyết định hơn định nghĩa.** Mục tiêu là giúp bạn chọn đúng và biết vì sao, không chỉ biết khái niệm.
 
 ## Cấu trúc repo
 
 ```text
 docs/
-  embeddings/
-  multi-turn-conversation/
-  structured-output/
-  under-attack/
-  tool-use/
-  streaming/
-  reasoning-models/
-  decision-models/
-  prompt-engineering/
-  multimodal/
-  evaluation/
-  llm-observability/
-  agents/
-  advanced-rag/
-  mcp/
-  model-routing/
-  cost-optimization/
-  latency/
-  llm-security/
-  guardrails/
-  fine-tuning/
-  self-hosting-llm/
-  deploying-ai-systems/
+  README.md             danh sách chủ đề và quy ước
+  ILLUSTRATIONS.md      quy tắc làm hình minh họa
+  assets/svgkit.py      bảng màu và helper dùng chung cho các script sinh hình
+  scripts/              công cụ cho cả repo, ví dụ kiểm tra link
+  <chủ-đề>/
+    README.md           tài liệu chính
+    images/             hình SVG và script make_*.py sinh ra chúng
+    scripts/            code ví dụ chạy được và test (chỉ ở một số chủ đề)
 ```
 
-Mỗi chủ đề là một thư mục `kebab-case` dưới `docs/`, tài liệu chính là `README.md` để GitHub hiển thị ngay khi mở thư mục. Khi một chủ đề lớn dần, các phần phụ như glossary, references hay hình ảnh được tách ra trong cùng thư mục.
+Mỗi chủ đề là một thư mục `kebab-case` dưới `docs/`, tài liệu chính là `README.md` để GitHub hiển thị ngay khi mở thư mục. Danh sách đầy đủ ở bảng [Có gì trong repo](#có-gì-trong-repo) phía trên. Muốn sửa một hình thì sửa script `make_*.py` cạnh nó rồi chạy lại, không sửa file SVG bằng tay.
 
 ## Bản quyền
 
