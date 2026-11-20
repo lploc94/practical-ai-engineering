@@ -34,6 +34,8 @@ Runbook này dùng khi bạn **nghi ngờ đang bị tấn công**: site chậm,
 
 Trước khi bấm bất cứ thứ gì, cần trả lời một câu: **traffic tấn công có đi qua Cloudflare không?** Mọi rule trên Cloudflare chỉ có tác dụng với traffic đi qua Cloudflare. Nếu kẻ tấn công đã biết IP origin và đánh thẳng vào đó, bật Under Attack Mode chẳng thay đổi gì.
 
+![Botnet đi qua Cloudflare bị DDoS ruleset và custom rule lọc trước khi tới origin (Nhánh A); kẻ tấn công biết IP origin đánh thẳng vào server, không qua lớp nào của Cloudflare nên rule Cloudflare không có tác dụng (Nhánh B)](images/traffic-paths.svg)
+
 **Trên Cloudflare** — mở zone → **Security → Analytics** (dashboard cũ: **Security → Overview / Analytics**). Số request có tăng vọt cùng lúc với sự cố không?
 
 **Trên origin** — xem ai đang kết nối vào:
@@ -179,7 +181,9 @@ Hệ quả thực tế:
 
 Chọn ngưỡng: lấy mức cao nhất một người dùng thật có thể tạo trong một chu kỳ, nhân 3–5. Nếu không có số liệu, bắt đầu cao rồi hạ dần; một ngưỡng quá thấp sẽ chặn người thật đứng chung NAT (văn phòng, mạng di động).
 
-Counter của rate limiting được đếm **riêng tại từng data center** Cloudflare, không đếm gộp toàn mạng. Botnet trải khắp thế giới có thể vượt "ngưỡng" tổng mà không bị chặn ở đâu.
+Counter của rate limiting được đếm **riêng tại từng data center** Cloudflare, không đếm gộp toàn mạng. Với rule đếm theo IP, điều này ít ảnh hưởng vì traffic của một IP bình thường chỉ tới một data center. Nó quan trọng khi rule đếm theo characteristic mà nhiều client cùng có (header, ASN, JA4... ở Enterprise): botnet trải khắp thế giới có thể vượt "ngưỡng" tổng mà không bị chặn ở đâu.
+
+![Rule 100 request trong 10 giây đếm theo JA4, botnet dùng chung một JA4 gửi 80, 70 và 90 request vào ba data center: không counter nào vượt 100 nên không bị chặn, dù tổng 240 request đã vượt ngưỡng (số liệu giả định)](images/ratelimit-per-colo.svg)
 
 ### A5. Phút 25+: Giảm tải origin
 
@@ -259,6 +263,8 @@ Chú ý:
 - Script chỉ đụng tới cổng 80/443. **Kiểm tra SSH và các cổng quản trị khác** — nếu đang mở cho cả internet, chúng cũng là mục tiêu. Giới hạn SSH theo IP quản trị, hoặc chuyển sang Cloudflare Tunnel + Access.
 - Bảng có priority `-10` nên chạy trước ufw / firewalld. Lệnh `drop` có hiệu lực ngay cả khi firewall khác cho phép.
 - Allowlist IP Cloudflare chỉ chứng minh request **đi qua mạng Cloudflare**, không chứng minh đi qua **zone của bạn**. Kẻ tấn công có thể dùng tài khoản Cloudflare riêng trỏ vào IP của bạn. Để chặn trường hợp này, cần Tunnel, hoặc Authenticated Origin Pulls với **certificate của riêng bạn** (zone-level hoặc per-hostname). Xem [Phụ lục 2](#bảo-vệ-origin-chọn-cách-nào).
+
+![Firewall chỉ nhận IP Cloudflare: traffic đánh thẳng từ IP lạ bị drop, nhưng kẻ tấn công dùng zone trong tài khoản Cloudflare riêng trỏ vào IP origin vẫn mang IP Cloudflare nên lọt qua mà không qua rule nào của zone bạn; chặn đường này cần Tunnel hoặc Authenticated Origin Pulls với certificate riêng](images/allowlist-gap.svg)
 
 ### B2. Nếu đường truyền đã nghẽn: gọi nhà cung cấp
 

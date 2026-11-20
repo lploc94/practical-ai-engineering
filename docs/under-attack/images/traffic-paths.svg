@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 420" width="860" height="420" role="img" aria-label="Botnet đi qua Cloudflare bị DDoS ruleset và custom rule lọc trước khi tới origin; kẻ tấn công biết IP origin đánh thẳng vào server, không đi qua lớp nào của Cloudflare nên rule Cloudflare không có tác dụng"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="860" height="420" rx="12"/><text class="title" x="20" y="38">Rule Cloudflare chỉ lọc traffic đi qua Cloudflare</text><rect class="blue" x="500" y="27" width="14" height="14" rx="3"/><text class="sub" x="520" y="38">đã qua rule của zone</text><rect class="red" x="684" y="27" width="14" height="14" rx="3"/><text class="sub" x="704" y="38">traffic tấn công</text><text class="cap2" x="20" y="62">Biết IP origin thì kẻ tấn công không cần đi qua Cloudflare.</text><rect class="tok" x="20" y="113.0" width="170" height="54" rx="7"/><text class="row mid" x="105.0" y="137">Người dùng thật</text><text class="sub mid" x="105.0" y="155">trình duyệt, app</text><rect class="tok" x="20" y="198.0" width="170" height="54" rx="7"/><text class="row mid" x="105.0" y="222">Botnet</text><text class="sub mid" x="105.0" y="240">HTTP flood</text><rect class="tok" x="20" y="293.0" width="170" height="54" rx="7"/><text class="row mid" x="105.0" y="317">Kẻ biết IP origin</text><text class="sub mid" x="105.0" y="335">SYN/UDP/HTTP flood</text><rect class="blue" x="300" y="100" width="250" height="170" rx="9"/><text class="row mid" x="425.0" y="126">Cloudflare (zone của bạn)</text><text class="sub mid" x="425.0" y="148">DDoS ruleset, custom rule</text><text class="sub mid" x="425.0" y="165">rate limiting, Under Attack</text><rect class="hatch" x="324" y="203" width="140" height="44" rx="6"/><text class="cap mid halo" x="394.0" y="230">chặn / challenge</text><rect class="tok" x="680" y="150" width="160" height="200" rx="9"/><text class="row mid" x="760.0" y="176">Origin</text><text class="sub mid" x="760.0" y="194">server vật lý</text><path class="lblue" marker-end="url(#ablue)" d="M190,140H296"/><path class="lred" marker-end="url(#ared)" d="M190,225H320"/><text class="sub halo" x="204" y="217">Nhánh A</text><path class="lblue" marker-end="url(#ablue)" d="M550,180H676"/><text class="sub mid" x="615.0" y="170">phần đã lọc</text><path class="lred" marker-end="url(#ared)" d="M190,320H676"/><text class="sub halo" x="204" y="312">Nhánh B</text><text class="cap mid" x="425.0" y="310">đánh thẳng vào IP origin</text><text class="cap" x="20" y="376">Nhánh A: bật Under Attack, viết rule trên Cloudflare.</text><text class="cap" x="20" y="400">Nhánh B: rule Cloudflare vô dụng; phải chặn ngay trên origin (firewall), hoặc nhờ nhà cung cấp chặn phía trên.</text></svg>

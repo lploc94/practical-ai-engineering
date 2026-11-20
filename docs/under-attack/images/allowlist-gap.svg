@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" width="880" height="430" role="img" aria-label="Firewall chỉ nhận IP Cloudflare: traffic đánh thẳng từ IP lạ bị drop, nhưng kẻ tấn công dùng zone trong tài khoản Cloudflare riêng trỏ vào IP origin vẫn mang IP Cloudflare nên lọt qua mà không qua rule nào của zone bạn; chặn đường này cần Tunnel hoặc Authenticated Origin Pulls với certificate riêng"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="880" height="430" rx="12"/><text class="title" x="20" y="38">Allowlist IP Cloudflare: kiểm IP nguồn, không kiểm zone</text><text class="cap2" x="20" y="62">Firewall trên origin chỉ cho IP Cloudflare vào 80/443 (script B1).</text><rect class="blue" x="20" y="75" width="14" height="14" rx="3"/><text class="sub" x="40" y="86">đã qua rule của zone bạn</text><rect class="red" x="232" y="75" width="14" height="14" rx="3"/><text class="sub" x="252" y="86">traffic tấn công</text><rect class="hatch" x="388" y="75" width="14" height="14" rx="3"/><text class="sub" x="408" y="86">bị drop</text><rect class="tok" x="20" y="103.0" width="170" height="54" rx="7"/><text class="row mid" x="105.0" y="127">Người dùng thật</text><text class="sub mid" x="105.0" y="145">vào domain của bạn</text><rect class="tok" x="20" y="198.0" width="170" height="54" rx="7"/><text class="row mid" x="105.0" y="222">Kẻ tấn công</text><text class="sub mid" x="105.0" y="240">đánh thẳng IP origin</text><rect class="tok" x="20" y="293.0" width="170" height="54" rx="7"/><text class="row mid" x="105.0" y="317">Kẻ tấn công</text><text class="sub mid" x="105.0" y="335">zone riêng trỏ vào IP bạn</text><rect class="blue" x="250" y="103.0" width="190" height="54" rx="7"/><text class="row mid" x="345.0" y="127">Zone của bạn</text><text class="sub mid" x="345.0" y="145">rule của bạn chạy ở đây</text><rect class="tok" x="250" y="293.0" width="190" height="54" rx="7"/><text class="row mid" x="345.0" y="317">Zone của kẻ tấn công</text><text class="sub mid" x="345.0" y="335">cũng trên Cloudflare</text><line class="lfg" x1="560" y1="82" x2="560" y2="360" style="stroke-width:4"/><text class="sub mid" x="560" y="380">firewall origin</text><rect class="tok" x="690" y="90" width="170" height="270" rx="9"/><text class="row mid" x="775.0" y="221.0">Origin</text><text class="sub mid" x="775.0" y="239.0">cổng 80/443</text><path class="lblue" marker-end="url(#ablue)" d="M190,130H246"/><path class="lblue" marker-end="url(#ablue)" d="M440,130H686"/><text class="sub mid halo" x="500.0" y="120">IP Cloudflare</text><text class="sub mid halo" x="625.0" y="120">nhận</text><path class="lred" marker-end="url(#ared)" d="M190,225H486"/><text class="sub mid halo" x="340.0" y="215">IP không phải Cloudflare</text><rect class="hatch" x="490" y="207" width="70" height="36" rx="6"/><text class="cap mid halo" x="525.0" y="230">drop</text><path class="lred" marker-end="url(#ared)" d="M190,320H246"/><path class="lred" marker-end="url(#ared)" d="M440,320H686"/><text class="sub mid halo" x="500.0" y="310">IP Cloudflare</text><text class="sub mid halo" x="625.0" y="310">lọt qua</text><text class="cap" x="20" y="410">Đường dưới không qua rule nào của bạn. Chặn nó bằng Tunnel, hoặc Authenticated Origin Pulls với certificate riêng.</text></svg>
