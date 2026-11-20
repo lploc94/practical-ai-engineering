@@ -163,6 +163,8 @@ Những chỉ số sau không có trong spec, phải tự tính:
 
 Ghi thẳng `input_tokens` của Claude vào `gen_ai.usage.input_tokens` sẽ làm cache hit rate vượt 100% và chi phí lệch. Ghi `candidatesTokenCount` của Gemini làm output token, bạn bỏ sót toàn bộ phần thinking, trong khi Google tính tiền output là tổng của output và thinking (xem [Reasoning Models](../reasoning-models/)). Hàm `normalize_usage` ở [§2.6](#26-tự-xây-trên-opentelemetry) làm việc này. Bài [Multi-turn §3.11](../multi-turn-conversation/#311-observability-cho-cache) có bảng tên field cache cho thêm DeepSeek, Qwen và các API tương thích OpenAI.
 
+![Với số liệu giả định, Claude trả input_tokens 500, cache_read_input_tokens 9.000 và cache_creation_input_tokens 500: ghi thẳng input_tokens làm cache hit rate thành 1.800%, cộng cả phần cache thì input là 10.000 và hit rate 90%. Gemini trả candidatesTokenCount 400 và thoughtsTokenCount 1.600: ghi thẳng candidates bỏ sót phần thinking, chuẩn hoá thì output là 2.000](images/usage-normalize.svg)
+
 ## 1.4 Chất lượng là một tín hiệu cần quan sát
 
 Latency và lỗi đo được tự động. Chất lượng thì không: không có field nào trong response cho biết câu trả lời đúng. Nhưng chất lượng vẫn phải là một đường trên dashboard, nếu không bạn chỉ biết nó giảm khi người dùng phàn nàn.
@@ -586,6 +588,8 @@ Che bằng regex bắt được định dạng có cấu trúc (email, số th�
 
 Với LLM, nên giữ 100% trace có lỗi, bị cắt, bị từ chối, thiếu usage, và lấy mẫu phần còn lại. Wrapper ở [§2.6](#26-tự-xây-trên-opentelemetry) đặt `app.llm.keep=true` cho các trường hợp đó ngay trong lúc request chạy, để Collector chỉ cần một policy. Feedback tiêu cực thì khác: nó đến sau, wrapper không biết, và cần cơ chế riêng (đoạn cuối mục này).
 
+![Tail sampling chờ decision_wait 30 giây kể từ khi Collector nhận span đầu tiên rồi mới quyết định: trace có lượt bị cắt mang app.llm.keep nên được giữ, trace bình thường rơi ngoài mẫu 5% nên bị bỏ; feedback tiêu cực cho trace đó đến vài giờ sau, khi trace đã bị bỏ. Head sampling thì quyết định ngay lúc trace bắt đầu, khi chưa biết trace sẽ bị cắt](images/tail-sampling.svg)
+
 ```yaml
 processors:
   tail_sampling:
@@ -630,6 +634,8 @@ Mẫu dùng cho chấm điểm online phải lấy **sau khi đã che PII**, vì
 - `gen_ai.invoke_agent.tool_calls`: số lượt gọi tool trong một run [4].
 
 Phân phối của hai metric sau là cách rẻ nhất để phát hiện agent lặp: p50 là 4 lượt gọi model mà p99 lên 60 thì có những run đang chạy vòng. Đặt giới hạn cứng trong code (xem [Tool Use §3.5](../tool-use/#35-giới-hạn-vòng-lặp-timeout-và-chi-phí)) và alert khi tỉ lệ run chạm giới hạn tăng.
+
+![Histogram 1.000 agent run giả định: đa số gọi model 2 đến 10 lượt nên p50 là 4; 20 run (2%) chạy vòng tới giới hạn 60 lượt nên p99 là 60. Bỏ 20 run đó thì p50 vẫn là 4, chỉ p99 lộ ra vòng lặp](images/agent-calls.svg)
 
 Những thứ hay thiếu trên trace agent:
 
