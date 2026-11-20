@@ -48,31 +48,7 @@ Ba tài liệu có cấu trúc khác:
 - **Embeddings** chia thành Nền tảng, Hệ thống và ứng dụng, Vận hành và tối ưu. Bảng tra cứu ở đầu tài liệu có tên *TL;DR — Cheat Sheet*.
 - **Under Attack** là runbook, xếp theo thời gian từ lúc phát hiện tấn công. Lỗi hay gặp nằm ở Phụ lục 3.
 
-Hình minh họa nằm cạnh đoạn văn nó giải thích. Hình chỉ bổ sung, đoạn văn vẫn đủ ý khi hình không tải được. Ảnh động có khung tĩnh khi bạn bật chế độ giảm chuyển động của hệ điều hành.
-
-## Nguyên tắc biên soạn
-
-- **Dựa trên nguồn gốc.** Nội dung đối chiếu với tài liệu chính thức, bài báo nghiên cứu và benchmark; nguồn được liệt kê trong từng tài liệu.
-- **Ghi rõ thời điểm.** Giá, giới hạn và tham số API thay đổi nhanh. Mỗi tài liệu ghi tháng cập nhật, và những chỗ chưa xác minh được đánh dấu tại chỗ.
-- **Tiếng Việt, giữ thuật ngữ gốc.** Thuật ngữ kỹ thuật và tên field giữ nguyên tiếng Anh để bạn dễ đối chiếu với docs và code.
-- **Code và số liệu kiểm lại được.** Code ví dụ trong thư mục `scripts/` của từng chủ đề có test đi kèm. Hình minh họa được sinh bằng script đặt cạnh hình, và các con số trong hình được đối chiếu với nội dung tài liệu.
-- **Ưu tiên quyết định hơn định nghĩa.** Mục tiêu là giúp bạn chọn đúng và biết vì sao, không chỉ biết khái niệm.
-
-## Cấu trúc repo
-
-```text
-docs/
-  README.md             danh sách chủ đề và quy ước
-  ILLUSTRATIONS.md      quy tắc làm hình minh họa
-  assets/svgkit.py      bảng màu và helper dùng chung cho các script sinh hình
-  scripts/              công cụ cho cả repo, ví dụ kiểm tra link
-  <chủ-đề>/
-    README.md           tài liệu chính
-    images/             hình SVG và script make_*.py sinh ra chúng
-    scripts/            code ví dụ chạy được và test (chỉ ở một số chủ đề)
-```
-
-Mỗi chủ đề là một thư mục `kebab-case` dưới `docs/`, tài liệu chính là `README.md` để GitHub hiển thị ngay khi mở thư mục. Danh sách đầy đủ ở bảng [Có gì trong repo](#có-gì-trong-repo) phía trên. Muốn sửa một hình thì sửa script `make_*.py` cạnh nó rồi chạy lại, không sửa file SVG bằng tay.
+Đầu mỗi tài liệu ghi tháng của bản hiện tại. Giá, giới hạn và tham số API thay đổi nhanh, nên với số liệu quan trọng hãy đối chiếu lại với nguồn ở mục **Nguồn tham khảo** cuối bài. Thuật ngữ kỹ thuật và tên field giữ nguyên tiếng Anh để bạn dễ đối chiếu với docs và code. Code ví dụ chạy được nằm trong thư mục `scripts/` của từng chủ đề.
 
 ## Bản quyền
 
