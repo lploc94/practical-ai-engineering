@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 490" width="980" height="490" role="img" aria-label="Input guardrail chạy trước thì chữ đầu tiên tới khách muộn thêm toàn bộ thời gian guardrail; chạy song song với lần sinh thì gần như không thêm gì, nhưng bị chặn thì token đã sinh vẫn tính tiền và tool có thể đã chạy. Ba output guardrail độc lập chạy song song thì xong sau guardrail chậm nhất, không phải sau tổng của ba"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="980" height="490" rx="12"/><text class="title" x="20" y="38">Guardrail cộng thêm bao nhiêu thời gian, tuỳ cách xếp</text><rect class="orange" x="20" y="55" width="14" height="14" rx="3"/><text class="sub" x="40" y="66">model đang sinh</text><rect class="tok" x="169" y="55" width="14" height="14" rx="3"/><text class="sub" x="189" y="66">guardrail chạy</text><path class="lblue" d="M680,55V71"/><text class="sub" x="688" y="66">chữ đầu tiên tới khách</text><text class="row" x="20" y="104">Input guardrail</text><text class="cap" x="20" y="140">chạy trước, tuần tự</text><rect class="tok" x="210.0" y="124" width="128.8" height="22" rx="4"/><text class="sub mid" x="274.4" y="139.0">guardrail</text><rect class="orange" x="338.8" y="124" width="515.3" height="22" rx="4"/><text class="sub mid" x="596.5" y="139.0">model sinh</text><path class="lblue" d="M510.6,118V152"/><text class="sub tblue" x="515.6" y="117">chữ đầu</text><path class="lfg" d="M210.0,156v5H338.8v-5"/><text class="sub" x="210.0" y="176">chữ đầu muộn thêm toàn bộ thời gian guardrail</text><text class="cap" x="20" y="220">song song lần sinh</text><rect class="tok" x="210.0" y="204" width="128.8" height="18" rx="4"/><text class="sub mid" x="274.4" y="217.0">guardrail</text><rect class="orange" x="210.0" y="226" width="515.3" height="18" rx="4"/><text class="sub mid" x="467.6" y="239.0">model sinh</text><path class="lblue" d="M381.8,198V250"/><text class="sub tblue" x="386.8" y="197">chữ đầu</text><text class="sub" x="735.3" y="216">bị chặn thì huỷ lần sinh:</text><text class="sub" x="735.3" y="232">token đã sinh vẫn tính tiền,</text><text class="sub" x="735.3" y="248">tool có thể đã chạy</text><line class="grid" x1="20" y1="282" x2="950" y2="282"/><text class="row" x="20" y="312">Ba output guardrail độc lập, sau khi có câu trả lời</text><text class="cap" x="20" y="348">lần lượt</text><rect class="tok" x="210.0" y="332" width="154.6" height="22" rx="4"/><text class="sub mid" x="287.3" y="347.0">moderation</text><rect class="tok" x="364.6" y="332" width="12.9" height="22" rx="4"/><text class="sub mid" x="371.0" y="327">PII</text><rect class="tok" x="377.5" y="332" width="257.6" height="22" rx="4"/><text class="sub mid" x="506.3" y="347.0">policy check</text><path class="lfg" d="M635.1,328V358"/><text class="sub" x="641.1" y="348">xong sau tổng ba lần</text><text class="cap" x="20" y="398">song song</text><rect class="tok" x="210.0" y="382" width="154.6" height="18" rx="4"/><text class="sub mid" x="287.3" y="395.0">moderation</text><rect class="tok" x="210.0" y="403" width="12.9" height="18" rx="4"/><text class="sub" x="228.9" y="416.0">PII</text><rect class="tok" x="210.0" y="424" width="257.6" height="18" rx="4"/><text class="sub mid" x="338.8" y="437.0">policy check</text><path class="lfg" d="M467.6,378V446"/><text class="sub" x="473.6" y="427">xong sau lần chậm nhất</text><text class="cap2" x="20" y="474">Độ dài các thanh là giả định, chỉ để so hình dạng. PII ngắn nhất: §2.4 đo khoảng 1,7 ms.</text></svg>

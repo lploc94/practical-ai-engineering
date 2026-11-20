@@ -114,6 +114,8 @@ NeMo Guardrails chia rail thành năm loại theo vị trí: **input** (trước
 
 **Guardrail trên hành động** chạy trước khi tool có tác dụng phụ được thực thi. Nếu bot có tool `issue_refund`, đừng dùng classifier để quyết có hoàn tiền hay không. Điều kiện hoàn tiền là dữ liệu đơn hàng (ngày giao dự kiến, ngày giao thật, trạng thái thanh toán), nên code của tool phải kiểm các điều kiện đó và giới hạn số tiền, bất kể model nói gì. Quy tắc chung: điều gì kiểm được bằng code thì kiểm bằng code; classifier dành cho những gì chỉ có thể phán đoán từ ngôn ngữ. Giới hạn quyền tool và xác nhận của người dùng có ở [Bảo mật LLM §2.1](../llm-security/#21-giới-hạn-quyền-least-privilege-cho-tool-và-agent) và [§2.3](../llm-security/#23-xác-nhận-của-con-người-cho-hành-động-nhạy-cảm).
 
+![Input guardrail chỉ thấy câu hỏi nên phải cho qua câu hỏi hợp lệ về hoàn tiền; output guardrail thấy đúng câu khách sẽ đọc nên chặn được câu hứa hoàn tiền 100% trước khi hiện; hành động hoàn tiền do code của tool kiểm theo dữ liệu đơn hàng và trần số tiền, không dựa vào classifier](images/guardrail-positions.svg)
+
 Framework không tự động đặt guardrail ở mọi vị trí. Trong OpenAI Agents SDK, input guardrail chỉ chạy cho agent đầu tiên trong chuỗi, output guardrail chỉ chạy cho agent tạo ra output cuối, còn tool guardrail chạy trên mỗi lần gọi function tool có gắn guardrail [17]. Handoff không đi qua tool guardrail. Hosted tool (`WebSearchTool`, `FileSearchTool`, `HostedMCPTool`, `CodeInterpreterTool`, `ImageGenerationTool`) và built-in execution tool (`ComputerTool`, `ShellTool`, `ApplyPatchTool`, `LocalShellTool`) cũng không dùng pipeline này [17]. Một agent ở giữa chuỗi vì vậy có thể sinh nội dung mà không guardrail nào xem.
 
 ## 1.3 Precision và recall: chặn nhầm cũng có giá
@@ -462,6 +464,8 @@ Mỗi guardrail nằm trên đường người dùng chờ đều cộng thêm �
 
 **Chọn model cho classifier theo độ trễ.** Trang tổng quan model của Anthropic xếp Haiku 5.5 ở mức "Fastest" về độ trễ tương đối ([Latency §2.3](../latency/#23-chọn-model-và-chế-độ-nhanh-fast-mode-priority-tier)); effort thấp giảm thêm thời gian suy luận. Model reasoning như gpt-oss-safeguard tốn thời gian hơn classifier thường [12]. Đo từng guardrail như một tầng riêng ([Latency §3.1](../latency/#31-đo-độ-trễ-từng-tầng-trong-pipeline)).
 
+![Input guardrail chạy trước thì chữ đầu tiên tới khách muộn thêm toàn bộ thời gian guardrail; chạy song song với lần sinh thì gần như không thêm gì, nhưng bị chặn thì token đã sinh vẫn tính tiền và tool có thể đã chạy; ba output guardrail độc lập chạy song song xong sau guardrail chậm nhất, không phải sau tổng của ba](images/guardrail-latency.svg)
+
 | Bố trí | Thêm vào TTFT | Rủi ro |
 |---|---|---|
 | Input guardrail chạy trước, tuần tự | Toàn bộ thời gian guardrail | Không |
@@ -485,7 +489,9 @@ Output rail của NeMo khi stream có bốn tham số dưới `rails.output.stre
 | `context_size` | 50 | Số token của chunk trước được đưa kèm chunk sau để rail thấy câu bị cắt ngang |
 | `stream_first` | `True` | `True`: client nhận token trước khi rail chạy trên chunk đó |
 
-Giá trị mặc định `stream_first: True` nghĩa là người dùng đọc được chunk trước khi nó được kiểm. Nếu rail chặn, stream dừng với một object lỗi JSON (`{"error": {...}}`), nhưng phần đã gửi vẫn nằm trên màn hình [16]. Với `stream_first: False`, người dùng không bao giờ thấy nội dung bị chặn, đổi lại TTFT tăng thêm thời gian chạy rail cho mỗi chunk [16]. Nếu bạn dùng NeMo để chặn cam kết sai chính sách, mặc định không đủ.
+Giá trị mặc định `stream_first: True` nghĩa là người dùng đọc được chunk trước khi nó được kiểm. Nếu rail chặn, stream dừng với một object lỗi JSON (`{"error": {...}}`), nhưng phần đã gửi vẫn nằm trên màn hình [16]. Với `stream_first: False`, người dùng không bao giờ thấy nội dung bị chặn, đổi lại TTFT tăng thêm thời gian chạy rail cho mỗi chunk [16]. Nếu bạn dùng NeMo để chặn cam kết sai chính sách, mặc định không đủ. Cách ngược lại, mà code bên dưới hiện thực, là giữ chữ tới hết câu, kiểm rồi mới phát: câu vi phạm bị chặn khi còn đang giữ nên không bao giờ tới màn hình, đổi lại mỗi đoạn chỉ hiện sau khi model sinh tới hết câu và `check` chạy xong.
+
+![Ba câu, câu thứ ba hứa hoàn tiền. Stream ngay rồi kiểm sau như mặc định stream_first: True của NeMo: câu thứ ba đã hiện trên màn hình trước khi bị chặn. Giữ tới hết câu, kiểm rồi mới phát như guarded_text: hai câu đầu hiện sau khi được duyệt, câu thứ ba bị chặn khi còn đang giữ và không bao giờ hiện](images/stream-buffer.svg)
 
 ### Code: phát theo câu sau khi đã kiểm
 
