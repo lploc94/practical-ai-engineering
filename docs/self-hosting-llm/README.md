@@ -140,6 +140,8 @@ Hàm tính ở [§3.1](#31-chọn-model-theo-tác-vụ-và-phần-cứng) xử l
 
 **PagedAttention.** KV cache của mỗi request tăng dần và không biết trước độ dài. Cấp sẵn một vùng liên tục cho độ dài tối đa thì phí phần lớn. vLLM chia KV cache thành các block cố định như trang bộ nhớ ảo, cấp theo nhu cầu, gần như không phí, và cho phép các request dùng chung block khi có chung prefix; nhờ batch được nhiều hơn, throughput tăng 2–4 lần ở cùng độ trễ so với FasterTransformer và Orca [1]. Hệ quả thực tế: số request đồng thời phụ thuộc tổng token đang có, không phải `max_model_len` × số request.
 
+![Cấp KV cache liền theo độ dài tối đa thì ba request giữ hết chỗ dù chỉ dùng chưa nửa, request khác phải chờ; cấp theo block thì chỉ chiếm phần đang dùng và thêm được request](images/paged-kv.svg)
+
 ## 1.3 Prefill, decode và vì sao batching quan trọng
 
 Mỗi request qua hai giai đoạn [17]:
@@ -166,6 +168,10 @@ Ba hệ quả:
 - **Weights nhỏ hơn thì decode nhanh hơn**, gần tỉ lệ thuận. Đây là lý do lượng tử hoá tăng tốc ngay cả khi GPU có đủ bộ nhớ.
 - **GPU có băng thông cao decode nhanh hơn**, bất kể TFLOPS. H200 (4,8 TB/s) và H100 SXM (3,35 TB/s) cùng thế hệ tính toán, khác băng thông [24].
 - **Một request không dùng hết GPU.** Trong một bước decode, đọc weights một lần phục vụ được nhiều request cùng lúc. Batching tăng tổng throughput cho tới khi chạm giới hạn tính toán hoặc hết KV cache; cái giá là mỗi request chậm đi.
+
+**Continuous batching.** Batching kiểu cũ (static) ghép một nhóm request, chạy tới khi request dài nhất xong rồi mới nhận nhóm mới: request xong sớm không trả về được, slot của nó ngồi không, request mới đến phải chờ cả nhóm. Orca đề xuất xếp lịch theo từng bước của model (iteration-level scheduling): mỗi bước chỉ chạy một lượt trên batch hiện tại, nên request xong thì rời batch ngay và request đang chờ vào thế chỗ ở bước kế tiếp [45]. vLLM và llama-server đều làm vậy mặc định (llama-server gọi là `--cont-batching`, bật sẵn) [8][14]. Độ dài output càng chênh lệch giữa các request thì static batching càng để nhiều slot ngồi không.
+
+![Ba slot, request dài nhất cần 6 bước: static batching đợi nó xong mới nhận hai request đang chờ, xong sau 9 bước; continuous batching cho chúng vào ngay khi slot trống, xong sau 6 bước](images/continuous-batching.svg)
 
 Đo trên cùng máy, Qwen2.5-3B Q4_K_M, 16 request mỗi mức, prompt trung bình 565 token, 128 token output, tắt cache prompt:
 
@@ -468,6 +474,8 @@ Với các config thật, giả định `utilization` 0,9 và 2 GiB overhead m�
 | gpt-oss-120b MXFP4, 1× H100 | 60,8 GiB | 1,13 GiB | 8,9 GiB | 7 (129.363 token) |
 | gpt-oss-20b MXFP4, 1× RTX 5090 | 12,8 GiB | 0,75 GiB | 13,9 GiB | 18 (302.743 token) |
 
+![Llama 3.3 70B FP8: weights 65,7 GiB gần lấp đầy một H100, chỉ còn 4,0 GiB cho KV cache, không đủ một chuỗi 32k; thêm GPU thứ hai thì phần KV tăng lên 73,7 GiB vì weights không tăng](images/vram-budget.svg)
+
 Đọc bảng:
 
 - **Llama 3.1 8B BF16 trên một L4 không chạy nổi một chuỗi 32k**: còn 3,3 GiB cho KV, khoảng 27.000 token. vLLM với `--max-model-len 32768` sẽ từ chối khởi động; phải giảm context, dùng FP8 (weights còn 7,5 GiB) hoặc lượng tử hoá KV.
@@ -678,13 +686,13 @@ Truy cập tháng 11/2026.
 | [5] | [vLLM: Tool Calling](https://docs.vllm.ai/en/latest/features/tool_calling/) | `--enable-auto-tool-choice`, các parser, Qwen2.5 dùng `hermes` |
 | [6] | [vLLM: Production Metrics](https://docs.vllm.ai/en/latest/usage/metrics/) và [`vllm/v1/metrics/loggers.py`](https://github.com/vllm-project/vllm/blob/main/vllm/v1/metrics/loggers.py) | Endpoint `/metrics`, tên metric, dòng log `Preemptions: N` |
 | [7] | [vLLM: Quantization](https://docs.vllm.ai/en/latest/features/quantization/) | Bảng hỗ trợ theo GPU, FP8 W8A8 trên Ada/Hopper |
-| [8] | [vLLM: Installation](https://docs.vllm.ai/en/latest/getting_started/installation/) và [PyPI](https://pypi.org/project/vllm/) | Phần cứng hỗ trợ; bản 0.33.0 |
+| [8] | [vLLM: Installation](https://docs.vllm.ai/en/latest/getting_started/installation/) và [PyPI](https://pypi.org/project/vllm/) | Phần cứng hỗ trợ; bản 0.33.0; continuous batching (mô tả trên PyPI) |
 | [9] | [vLLM: Benchmark CLI](https://docs.vllm.ai/en/latest/benchmarking/cli/) | `vllm bench serve`, khuyến nghị GuideLLM |
 | [10] | [Zheng và cộng sự, SGLang (arXiv 2312.07104)](https://arxiv.org/abs/2312.07104) | RadixAttention, throughput tới 6,4 lần |
 | [11] | [SGLang docs: Server Arguments, Structured Outputs, Quantization](https://docs.sglang.ai/) và [README](https://github.com/sgl-project/sglang) | Bản 0.5.23, `--mem-fraction-static`, `--enable-metrics`, XGrammar mặc định, phần cứng, NVFP4 |
 | [12] | [TensorRT-LLM: TensorRT backend removal](https://github.com/NVIDIA/TensorRT-LLM/blob/main/docs/source/legacy/tensorrt-backend-removal.md), [Quantization](https://github.com/NVIDIA/TensorRT-LLM/blob/main/docs/source/features/quantization.md), [Quick start](https://github.com/NVIDIA/TensorRT-LLM/blob/main/docs/source/quick-start-guide.md) | Backend PyTorch duy nhất từ 1.3.0rc21 (`setup.py` của `v1.3.0rc20` còn `trtllm-build`, của `v1.3.0rc21` thì không; trang removal có ở tag `v1.4.0rc3`, không có ở `v1.2.1`; `setup.py` của `v1.2.1` vẫn khai báo `trtllm-build`), `trtllm-serve`, FP4/FP8; PyPI: 1.2.1 stable, 1.4.0rc3 |
 | [13] | [Hugging Face TGI README](https://github.com/huggingface/text-generation-inference) | Chế độ bảo trì, khuyến nghị thay thế |
-| [14] | [llama.cpp: server README](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md) và [releases](https://github.com/ggml-org/llama.cpp/releases) | `-np`, `-c`, `--kv-unified`, `--jinja`, grammar, `json_schema`; build b12180 |
+| [14] | [llama.cpp: server README](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md) và [releases](https://github.com/ggml-org/llama.cpp/releases) | `-np`, `-c`, `--kv-unified`, `--cont-batching` (bật mặc định), `--jinja`, grammar, `json_schema`; build b12180 |
 | [15] | [llama.cpp: quantize README](https://github.com/ggml-org/llama.cpp/blob/master/tools/quantize/README.md) và [build docs](https://github.com/ggml-org/llama.cpp/blob/master/docs/build.md) | Kiểu GGUF, Metal mặc định trên macOS |
 | [16] | [Ollama: FAQ](https://docs.ollama.com/faq), [Context length](https://docs.ollama.com/context-length), [OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility), [Structured outputs](https://docs.ollama.com/capabilities/structured-outputs), [releases](https://github.com/ollama/ollama/releases) | `OLLAMA_NUM_PARALLEL`, context mặc định, `keep_alive`, `OLLAMA_MAX_LOADED_MODELS`; bản 0.40.15 |
 | [17] | [Agrawal và cộng sự, Sarathi-Serve (arXiv 2403.02310)](https://arxiv.org/abs/2403.02310) | Prefill và decode, chunked prefill |
@@ -715,3 +723,4 @@ Truy cập tháng 11/2026.
 | [42] | [Mistral Small 3.1 model card](https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503) | `license: apache-2.0` |
 | [43] | `config.json` và Hugging Face API (`safetensors.total`) của [Qwen2.5-3B-Instruct](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct), [Qwen3-8B](https://huggingface.co/Qwen/Qwen3-8B), [Qwen3-32B](https://huggingface.co/Qwen/Qwen3-32B), [Llama-3.1-8B-Instruct](https://huggingface.co/unsloth/Llama-3.1-8B-Instruct) và [Llama-3.3-70B-Instruct](https://huggingface.co/unsloth/Llama-3.3-70B-Instruct) (bản mirror, repo gốc của Meta yêu cầu đăng nhập), [gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b), [gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b); test thêm với [Gemma 3 27B](https://huggingface.co/unsloth/gemma-3-27b-it), [Gemma 2 9B](https://huggingface.co/unsloth/gemma-2-9b-it), [Qwen3.5-35B-A3B](https://huggingface.co/Qwen/Qwen3.5-35B-A3B), [Mistral-7B-Instruct-v0.1](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1) | Số lớp, KV head, head_dim, sliding window, số expert, số tham số, dung lượng checkpoint |
 | [44] | Dung lượng `nvidia-smi` báo: L4 trong [Docker docs: GPU access](https://docs.docker.com/engine/containers/gpu/); H100 80GB HBM3 trong [NVIDIA DGX BasePOD deployment guide](https://docs.nvidia.com/dgx-basepod/deployment-guide-dgx-basepod/latest/container.html); H200 trong [Ori: Installing NVIDIA Drivers (SXM)](https://docs.ori.co/super-computers/nvidia-drivers-sxm/); RTX 5090 trong [NVIDIA open-gpu-kernel-modules issue #862](https://github.com/NVIDIA/open-gpu-kernel-modules/issues/862) | 23.034, 81.559, 143.771, 32.607 MiB |
+| [45] | [Yu và cộng sự, Orca: A Distributed Serving System for Transformer-Based Generative Models (OSDI 2022)](https://www.usenix.org/conference/osdi22/presentation/yu) | Iteration-level scheduling: request xong rời batch, request mới vào mà không đợi cả batch |

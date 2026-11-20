@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420" role="img" aria-label="Llama 3.3 70B FP8 trên H100: weights chiếm 65,7 GiB. Một GPU chỉ còn 4,0 GiB cho KV cache, không đủ một chuỗi 32k token; hai GPU còn 73,7 GiB, đủ 7 chuỗi 32k, vì weights không tăng theo số GPU"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="900" height="420" rx="12"/><text class="title" x="20" y="38">Llama 3.3 70B FP8: KV cache là phần còn lại</text><rect class="blue" x="20" y="61" width="14" height="14" rx="3"/><text class="sub" x="40" y="72">weights</text><rect class="tok" x="113" y="61" width="14" height="14" rx="3"/><text class="sub" x="133" y="72">overhead</text><rect class="orange" x="213" y="61" width="14" height="14" rx="3"/><text class="sub" x="233" y="72">KV cache</text><rect class="slot" x="313" y="61" width="14" height="14" rx="3"/><text class="sub" x="333" y="72">10% không dùng</text><text class="row" x="20" y="140">1× H100</text><text class="sub" x="20" y="158">79,6 GiB</text><rect class="blue" x="171.0" y="120" width="274.4" height="44" rx="5"/><text class="lbl" style="font-size:13px" x="308.2" y="147">weights 65,7 GiB</text><rect class="tok" x="447.4" y="120" width="6.4" height="44" rx="5"/><rect class="orange" x="455.8" y="120" width="14.7" height="44" rx="5"/><rect class="slot" x="472.5" y="120" width="31.5" height="44" rx="5"/><text class="row" x="20" y="250">2× H100</text><text class="sub" x="20" y="268">159,3 GiB</text><rect class="blue" x="171.0" y="230" width="274.4" height="44" rx="5"/><text class="lbl" style="font-size:13px" x="308.2" y="257">weights 65,7 GiB</text><rect class="tok" x="447.4" y="230" width="14.8" height="44" rx="5"/><rect class="orange" x="464.2" y="230" width="307.8" height="44" rx="5"/><text class="lbl" style="font-size:13px" x="618.1" y="257">KV 73,7 GiB</text><rect class="slot" x="774.0" y="230" width="65.0" height="44" rx="5"/><line class="lorange" x1="551.0" y1="142.0" x2="469.1" y2="142.0" marker-end="url(#aorange)"/><text class="cap" x="557.0" y="138" style="font-weight:600">KV 4,0 GiB: không đủ một chuỗi 32k</text><text class="sub" x="557.0" y="156">khoảng 13.000 token cho mọi request</text><line class="axis" x1="505.3" y1="276" x2="505.3" y2="284"/><line class="axis" x1="547.3" y1="276" x2="547.3" y2="284"/><line class="axis" x1="589.4" y1="276" x2="589.4" y2="284"/><line class="axis" x1="631.4" y1="276" x2="631.4" y2="284"/><line class="axis" x1="673.5" y1="276" x2="673.5" y2="284"/><line class="axis" x1="715.6" y1="276" x2="715.6" y2="284"/><line class="axis" x1="757.6" y1="276" x2="757.6" y2="284"/><text class="sub" x="463.2" y="300">mỗi vạch = một chuỗi 32k (10 GiB KV): 7 chuỗi</text><line class="axis" x1="170" y1="326" x2="840" y2="326"/><line class="axis" x1="170.0" y1="326" x2="170.0" y2="331"/><text class="sub mid" x="170.0" y="346">0</text><line class="axis" x1="338.2" y1="326" x2="338.2" y2="331"/><text class="sub mid" x="338.2" y="346">40</text><line class="axis" x1="506.5" y1="326" x2="506.5" y2="331"/><text class="sub mid" x="506.5" y="346">80</text><line class="axis" x1="674.7" y1="326" x2="674.7" y2="331"/><text class="sub mid" x="674.7" y="346">120</text><line class="axis" x1="843.0" y1="326" x2="843.0" y2="331"/><text class="sub mid" x="843.0" y="346">160</text><text class="sub end" x="840" y="364">GiB</text><text class="cap2" x="20" y="406">Giả định: utilization 0,9, overhead 2 GiB mỗi GPU, KV BF16. Weights chia đều cho hai GPU.</text></svg>
