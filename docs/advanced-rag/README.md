@@ -109,6 +109,8 @@ Pipeline có ba tầng, mỗi tầng có một việc và một metric:
 
 Đặt hai con số cạnh nhau là biết vấn đề nằm ở đâu. Recall@50 bằng 0,85 nhưng Recall@10 sau rerank chỉ 0,70: retrieval ổn, rerank hoặc số đoạn đưa vào prompt là chỗ cần sửa. Recall@50 bằng 0,50: sửa reranker không giúp được gì, vì một nửa số đáp án chưa bao giờ tới được reranker; phải sửa chunk, embedding, hoặc thêm BM25.
 
+![Trường hợp A: Recall@50 bằng 0,85 và Recall@10 sau rerank bằng 0,70, nên 15% đáp án rơi ở rerank và cần sửa rerank hoặc số đoạn đưa vào prompt. Trường hợp B: Recall@50 bằng 0,50, một nửa đáp án không tới reranker nên phải sửa chunk, embedding hoặc thêm BM25](images/stage-recall.svg)
+
 Một hệ quả ít được chú ý: **các tầng đánh đổi lẫn nhau**. Lấy 150 candidate thay vì 50 tăng recall nhưng làm reranker chậm hơn và đắt hơn. Đưa 20 đoạn vào prompt thay vì 5 tăng khả năng có đáp án trong context, nhưng mỗi đoạn thêm là thêm nhiễu cho model. Bài contextual retrieval của Anthropic thử 5, 10 và 20 chunk và thấy 20 cho kết quả tốt nhất trên bộ dữ liệu của họ, kèm lưu ý rằng nhiều thông tin hơn có thể làm model phân tâm và nên tự thử trên use case của mình [21]. Đó là số của một bộ dữ liệu, không phải hằng số.
 
 ## 1.3 Long context có thay thế được RAG không
@@ -262,6 +264,8 @@ Model card của Qwen3-Reranker có một chi tiết nên kiểm tra trước kh
 ## 2.3 Contextual retrieval và chunk có ngữ cảnh
 
 Chunk "Điều khoản này không áp dụng cho đơn hàng dưới 500.000 đồng" không nói "điều khoản này" là gì. Embedding của nó không chứa tên chính sách, BM25 không có từ khoá nào để khớp. Contextual retrieval của Anthropic sửa bằng cách cho LLM viết một đoạn ngữ cảnh ngắn cho từng chunk, dựa trên toàn bộ tài liệu, rồi ghép đoạn đó vào đầu chunk trước khi embed và trước khi đưa vào index BM25 [21].
+
+![Chunk “Điều khoản này không áp dụng cho đơn hàng dưới 500.000 đồng” không có chữ “hoàn tiền” hay “Pro”; LLM đọc cả tài liệu rồi viết một câu ngữ cảnh nêu đó là mục 3 của chính sách hoàn tiền gói Pro, ghép vào đầu chunk, và bản ghép này đi vào cả index embedding lẫn BM25](images/contextual-chunk.svg)
 
 **Kết quả** (1 − recall@20, trung bình nhiều domain, embedding Gemini Text 004) [21]:
 
@@ -598,6 +602,8 @@ Azure AI Search mô tả mẫu cơ bản: một trường kiểu `Collection(Edm
 3. Kiểm tra lại quyền với hệ thống nguồn cho các tài liệu trả về, nếu ACL trong index có thể đã cũ.
 4. Lấy dư rồi lọc, khi bước 3 loại nhiều.
 5. Chỉ tài liệu qua cả hai lớp mới đi vào reranker, cache và context.
+
+![Lọc trong prompt: tài liệu mật vẫn vào context nên model đã đọc nó và nội dung có thể lộ. Lọc trong truy vấn: nhóm của người dùng lấy từ hệ thống định danh, search với filter nhóm, kiểm tra lại với hệ thống nguồn, nên chỉ tài liệu được phép mới tới reranker, cache và context](images/acl-filter.svg)
 
 ```python
 def retrieve_for_user(search, can_read, query: str, user, *, k: int,

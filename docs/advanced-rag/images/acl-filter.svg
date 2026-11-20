@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 420" width="860" height="420" role="img" aria-label="Lọc trong prompt: tài liệu mật vẫn vào context, model đã đọc nên nội dung có thể lộ. Lọc trong truy vấn: lấy nhóm của người dùng từ hệ thống định danh, search với filter nhóm, kiểm tra lại với hệ thống nguồn, nên chỉ tài liệu được phép mới tới reranker, cache và context"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="860" height="420" rx="12"/><text class="title" x="20" y="36">Filter quyền phải nằm trong truy vấn, không nằm trong prompt</text><text class="cap2" x="20" y="58">Ví dụ: retrieval tìm được A, B và một tài liệu mật người dùng không được đọc.</text><rect class="blue" x="20" y="77" width="14" height="14" rx="3"/><text class="sub" x="40" y="88">người dùng được đọc</text><rect class="hatch" x="197" y="77" width="14" height="14" rx="3"/><text class="sub" x="217" y="88">không được đọc</text><text class="row" x="20" y="128">Lọc trong prompt</text><rect class="tok" x="20" y="140" width="150" height="64" rx="7"/><text class="row mid" x="95.0" y="167">Search</text><text class="sub mid" x="95.0" y="187">không filter</text><rect class="slot" x="200" y="140" width="336" height="64" rx="7"/><text class="sub" x="212" y="158">context</text><rect class="blue" x="212" y="166" width="54" height="28" rx="5"/><text class="lbl halo" x="239.0" y="185.0">A</text><rect class="blue" x="274" y="166" width="54" height="28" rx="5"/><text class="lbl halo" x="301.0" y="185.0">B</text><rect class="hatch" x="336" y="166" width="54" height="28" rx="5"/><text class="lbl halo" x="363.0" y="185.0">mật</text><text class="sub" x="400" y="176">+ prompt “đừng</text><text class="sub" x="400" y="192">dùng tài liệu mật”</text><line class="lfg" x1="174" y1="172.0" x2="194" y2="172.0" marker-end="url(#afg)"/><rect class="tok" x="566" y="140" width="130" height="64" rx="7"/><text class="row mid" x="631.0" y="167">Model</text><text class="sub mid" x="631.0" y="187">đã đọc cả ba</text><line class="lfg" x1="540" y1="172.0" x2="560" y2="172.0" marker-end="url(#afg)"/><text class="cap" x="20" y="230">Nội dung mật có thể lộ qua tóm tắt, diễn giải hoặc prompt injection.</text><text class="row" x="20" y="278">Lọc trong truy vấn</text><rect class="tok" x="20" y="290" width="150" height="64" rx="7"/><text class="row mid" x="95.0" y="317">Nhóm của user</text><text class="sub mid" x="95.0" y="337">từ hệ thống định danh</text><rect class="tok" x="200" y="290" width="150" height="64" rx="7"/><text class="row mid" x="275.0" y="317">Search</text><text class="sub mid" x="275.0" y="337">filter theo nhóm</text><line class="lfg" x1="174" y1="322.0" x2="194" y2="322.0" marker-end="url(#afg)"/><rect class="tok" x="380" y="290" width="150" height="64" rx="7"/><text class="row mid" x="455.0" y="317">Kiểm tra lại</text><text class="sub mid" x="455.0" y="337">với hệ thống nguồn</text><line class="lfg" x1="354" y1="322.0" x2="374" y2="322.0" marker-end="url(#afg)"/><rect class="slot" x="560" y="290" width="260" height="64" rx="7"/><text class="sub" x="572" y="308">reranker, cache, context</text><rect class="blue" x="572" y="316" width="54" height="28" rx="5"/><text class="lbl halo" x="599.0" y="335.0">A</text><rect class="blue" x="634" y="316" width="54" height="28" rx="5"/><text class="lbl halo" x="661.0" y="335.0">B</text><line class="lfg" x1="534" y1="322.0" x2="554" y2="322.0" marker-end="url(#afg)"/><text class="cap" x="20" y="380">Tài liệu mật bị loại ở truy vấn hoặc ở bước kiểm tra lại, không tới reranker, cache hay context.</text></svg>

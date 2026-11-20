@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 450" width="860" height="450" role="img" aria-label="Chunk “Điều khoản này không áp dụng cho đơn hàng dưới 500.000 đồng” không nói đó là chính sách gì; LLM đọc cả tài liệu rồi viết một câu ngữ cảnh ghép vào đầu chunk, và bản ghép đó được đưa vào cả index embedding lẫn BM25"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="860" height="450" rx="12"/><text class="title" x="20" y="36">Contextual retrieval: ghép ngữ cảnh vào chunk trước khi index</text><text class="cap2" x="20" y="58">Ví dụ minh hoạ. Đoạn ngữ cảnh do LLM viết thường dài 50–100 token.</text><rect class="blue" x="20" y="79" width="14" height="14" rx="3"/><text class="sub" x="40" y="90">nguyên văn tài liệu</text><rect class="orange" x="197" y="79" width="14" height="14" rx="3"/><text class="sub" x="217" y="90">ngữ cảnh do LLM viết</text><rect class="tok" x="20" y="116" width="266" height="228" rx="7"/><text class="row" x="34" y="142">Chính sách hoàn tiền 2026</text><text class="sub" x="34" y="168">Mục 1. Phạm vi</text><text class="sub" x="34" y="202">Mục 2. Gói Basic</text><text class="sub" x="34" y="236">Mục 3. Gói Pro</text><rect class="blue" x="34" y="248" width="238" height="52" rx="5"/><text class="cap2" x="42" y="269" style="fill:var(--fg)">Điều khoản này không áp dụng</text><text class="cap2" x="42" y="287" style="fill:var(--fg)">cho đơn hàng dưới 500.000 đồng.</text><text class="sub" x="34" y="322">Chunk không có “hoàn tiền”, “Pro”.</text><rect class="tok" x="340" y="178" width="166" height="92" rx="7"/><text class="row mid" x="423.0" y="208">LLM</text><text class="sub mid" x="423.0" y="230">đọc cả tài liệu</text><text class="sub mid" x="423.0" y="248">(cache) + chunk</text><line class="lfg" x1="290" y1="224.0" x2="334" y2="224.0" marker-end="url(#afg)"/><text class="sub" x="560" y="130">Bản dùng để index</text><rect class="orange" x="560" y="140" width="280" height="52" rx="5"/><text class="cap2" x="570" y="161" style="fill:var(--fg)">Trích Chính sách hoàn tiền 2026, mục 3:</text><text class="cap2" x="570" y="179" style="fill:var(--fg)">điều kiện hoàn tiền của gói Pro.</text><rect class="blue" x="560" y="198" width="280" height="52" rx="5"/><text class="cap2" x="570" y="219" style="fill:var(--fg)">Điều khoản này không áp dụng</text><text class="cap2" x="570" y="237" style="fill:var(--fg)">cho đơn hàng dưới 500.000 đồng.</text><line class="lfg" x1="510" y1="224.0" x2="554" y2="224.0" marker-end="url(#afg)"/><line class="lfg" x1="625.0" y1="254" x2="625.0" y2="320" marker-end="url(#afg)"/><rect class="tok" x="560" y="326" width="130" height="44" rx="7"/><text class="row mid" x="625.0" y="354">Embedding</text><line class="lfg" x1="775.0" y1="254" x2="775.0" y2="320" marker-end="url(#afg)"/><rect class="tok" x="710" y="326" width="130" height="44" rx="7"/><text class="row mid" x="775.0" y="354">BM25</text><text class="cap" x="20" y="402">Cùng một bản ghép đi vào cả hai index: BM25 giờ khớp được “hoàn tiền”, “gói Pro”.</text><text class="cap" x="20" y="426">Chỉ tốn thêm lúc index; lúc truy vấn không có bước nào mới.</text></svg>
