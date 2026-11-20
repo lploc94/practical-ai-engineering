@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 890 352" width="890" height="352" role="img" aria-label="Tool call được lưu mà không có tool result: nếu không sửa, mọi request sau đó của hội thoại đều trả 400; load_history thêm kết quả lỗi INTERRUPTED thì hội thoại chạy tiếp"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="890" height="352" rx="12"/><text class="title" x="20" y="38">Một exception làm hỏng cả hội thoại</text><rect class="blue" x="560" y="27" width="14" height="14" rx="3"/><text class="sub" x="580" y="38">kết quả lỗi được thêm</text><rect class="hatch" x="751" y="27" width="14" height="14" rx="3"/><text class="sub" x="771" y="38">request trả 400</text><text class="cap2" x="20" y="62">Lượt 2: đã lưu tool call, exception xảy ra trước khi lưu tool result.</text><text class="sub mid" x="216.0" y="106">lượt 1</text><text class="sub mid" x="362.0" y="106">lượt 2</text><text class="sub mid" x="508.0" y="106">lượt 3</text><text class="sub mid" x="654.0" y="106">lượt 4</text><text class="sub mid" x="800.0" y="106">lượt 5</text><text class="row" x="20" y="141">Không sửa</text><text class="sub" x="20" y="159">lịch sử</text><rect class="tok" x="150" y="118" width="132" height="54" rx="7"/><text class="row mid halo" x="216.0" y="141">OK</text><rect class="tok" x="296" y="118" width="132" height="54" rx="7"/><text class="row mid halo" x="362.0" y="141">tool call</text><text class="sub mid halo tred" x="362.0" y="160">crash, thiếu result</text><rect class="hatch" x="442" y="118" width="132" height="54" rx="7"/><text class="row mid halo" x="508.0" y="141">400</text><text class="sub mid halo " x="508.0" y="160">call mồ côi</text><rect class="hatch" x="588" y="118" width="132" height="54" rx="7"/><text class="row mid halo" x="654.0" y="141">400</text><text class="sub mid halo " x="654.0" y="160">call mồ côi</text><rect class="hatch" x="734" y="118" width="132" height="54" rx="7"/><text class="row mid halo" x="800.0" y="141">400</text><text class="sub mid halo " x="800.0" y="160">call mồ côi</text><text class="cap" x="150" y="198">Mọi request sau đó đều 400, dù lỗi gốc chỉ xảy ra một lần.</text><text class="row" x="20" y="271">load_history</text><text class="sub" x="20" y="289">vá call mồ côi</text><rect class="tok" x="150" y="248" width="132" height="54" rx="7"/><text class="row mid halo" x="216.0" y="271">OK</text><rect class="tok" x="296" y="248" width="132" height="54" rx="7"/><text class="row mid halo" x="362.0" y="271">tool call</text><text class="sub mid halo tred" x="362.0" y="290">crash, thiếu result</text><rect class="blue" x="442" y="248" width="132" height="54" rx="7"/><text class="row mid halo" x="508.0" y="271">OK</text><text class="sub mid halo " x="508.0" y="290">+ INTERRUPTED</text><rect class="tok" x="588" y="248" width="132" height="54" rx="7"/><text class="row mid halo" x="654.0" y="271">OK</text><rect class="tok" x="734" y="248" width="132" height="54" rx="7"/><text class="row mid halo" x="800.0" y="271">OK</text><text class="cap" x="150" y="328">Model đọc "chưa rõ đã thực hiện hay chưa" và kiểm tra trạng thái trước khi thử lại.</text></svg>

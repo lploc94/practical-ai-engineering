@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 812 392" width="812" height="392" role="img" aria-label="Gửi lại nguyên các item thì request hợp lệ; dựng lại lịch sử từ role, content, tool_calls làm rơi reasoning item đứng trước function_call và API trả 400"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="812" height="392" rx="12"/><text class="title" x="20" y="38">Request 2 của vòng lặp với reasoning model</text><rect class="blue" x="482" y="27" width="14" height="14" rx="3"/><text class="sub" x="502" y="38">item do API trả về</text><rect class="hatch" x="652" y="27" width="14" height="14" rx="3"/><text class="sub" x="672" y="38">bị bỏ mất</text><text class="cap2" x="20" y="62">OpenAI Responses API. Reasoning item không đọc được, nhưng function_call đi sau nó bắt buộc phải có nó.</text><path class="lmuted" d="M218,126 V120 H594 V126"/><text class="sub mid" x="406.0" y="114">output của response 1</text><text class="row" x="20" y="98">Gửi lại nguyên các item của response</text><rect class="tok" x="24" y="132" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="115.0" y="157.0">user</text><rect class="blue" x="218" y="132" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="309.0" y="149">reasoning</text><text class="sub mid" x="309.0" y="165">rs_… (mờ, có thể mã hoá)</text><rect class="blue" x="412" y="132" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="503.0" y="149">function_call</text><text class="sub mid" x="503.0" y="165">fc_…, call_id</text><rect class="tok" x="606" y="132" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="697.0" y="149">function_call_output</text><text class="sub mid" x="697.0" y="165">kết quả của code bạn</text><text class="cap" x="20" y="200">→ Hợp lệ: model tiếp tục từ phần suy luận đã làm.</text><text class="row" x="20" y="254">Dựng lại từ role, content, tool_calls</text><rect class="tok" x="24" y="270" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="115.0" y="295.0">user</text><rect class="hatch" x="218" y="270" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="309.0" y="295.0"></text><text class="lbl halo tred" style="font-size:13px" x="309.0" y="295.0">thiếu reasoning</text><rect class="blue" x="412" y="270" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="503.0" y="287">function_call</text><text class="sub mid" x="503.0" y="303">fc_…, call_id</text><rect class="tok" x="606" y="270" width="182" height="40" rx="7"/><text class="lbl" style="font-size:13px" x="697.0" y="287">function_call_output</text><text class="sub mid" x="697.0" y="303">kết quả của code bạn</text><text class="cap" x="20" y="338">→ 400:</text><text class="lbl tred" style="font-size:12px;text-anchor:start" x="72" y="338">Item 'fc_…' of type 'function_call' was provided without its required 'reasoning' item</text><text class="cap2" x="20" y="380">Claude (thinking block + signature) và Gemini 3+ (thought_signature) có quy tắc tương tự.</text></svg>

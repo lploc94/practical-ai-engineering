@@ -112,7 +112,9 @@ Ba hệ quả thường bị bỏ qua:
 
 **`id` là khoá nối giữa yêu cầu và kết quả.** Kết quả gửi lại phải mang đúng `tool_call_id` / `tool_use_id` / `call_id` mà model sinh. Với model open-weight, format của ID cũng là một phần của prompt mà model đã được huấn luyện. Kimi K2 kỳ vọng mọi ID trong lịch sử có dạng `functions.<tên>:<số thứ tự>`; khi lịch sử chứa ID kiểu khác, model có thể sinh ID sai và parser của vLLM bỏ cả tool call hợp lệ ([§2.7](#27-self-hosted-vllm-sglang-llamacpp-ollama)).
 
-**API stateless nên mỗi bước gửi lại toàn bộ lịch sử.** Một tác vụ cần 20 bước, mỗi tool result khoảng 2.000 token, thì request thứ *i* mang theo *i* kết quả. Tổng input token của riêng phần tool result là 2.000 × (1 + 2 + … + 20) = 420.000 token, gấp 10 lần lượng dữ liệu tool thực sự trả về. Chi phí tăng gần theo bình phương số bước. Prompt caching giảm giá phần lặp lại, nhưng không giảm độ dài context mà model phải đọc ([§3.3](#33-tool-result-là-prompt), [§3.5](#35-giới-hạn-vòng-lặp-timeout-và-chi-phí)).
+**API stateless nên mỗi bước gửi lại toàn bộ lịch sử.** Một tác vụ cần 20 bước, mỗi tool result khoảng 2.000 token, thì request thứ *i* mang theo *i* kết quả. Tổng input token của riêng phần tool result là 2.000 × (1 + 2 + … + 20) = 420.000 token, gấp 10,5 lần lượng dữ liệu tool thực sự trả về. Chi phí tăng gần theo bình phương số bước. Prompt caching giảm giá phần lặp lại, nhưng không giảm độ dài context mà model phải đọc ([§3.3](#33-tool-result-là-prompt), [§3.5](#35-giới-hạn-vòng-lặp-timeout-và-chi-phí)).
+
+![Biểu đồ cột 20 request, mỗi tool result 2.000 token: phần tool result trong input tăng từ 2.000 lên 40.000 token; tổng 420.000 token được gửi đi, gấp 10,5 lần 40.000 token tool thực sự trả về](images/resend-cost.svg)
 
 **Model không biết tool đã chạy hay chưa, ngoài những gì bạn nói với nó.** Nếu code của bạn lỗi giữa chừng và bỏ qua một tool call, model không có cách tự phát hiện. Nếu bạn trả `{"ok": true}` khi thao tác thực ra đã thất bại, model sẽ báo với người dùng là đã xong. Tool result là nguồn sự thật duy nhất của model về thế giới bên ngoài.
 
@@ -206,6 +208,8 @@ Nếu bạn đang dùng mẹo cũ "ép gọi tool `record_result` để lấy JS
 
 Khi khách hỏi "so sánh giúp tôi đơn DH-208431 và DH-208432", model có thể trả hai tool call trong cùng một response. Đó là **parallel tool calling**: hai yêu cầu được sinh cùng lúc, bạn có thể thực thi đồng thời, rồi gửi lại cả hai kết quả trong một lượt. Ngược lại, khi kết quả bước trước là input của bước sau (tìm đơn hàng gần nhất, rồi huỷ đơn đó), model phải gọi tuần tự qua nhiều lượt.
 
+![Gọi song song: hai get_order chạy cùng lúc và xong sau 2 request tới model. Gọi tuần tự: cancel_order cần mã đơn từ kết quả list_recent_orders nên phải qua 3 request, mỗi request gửi lại toàn bộ lịch sử](images/parallel-vs-sequential.svg)
+
 Parallel mặc định bật ở OpenAI, Claude, Gemini và Grok; llama.cpp tắt mặc định [44]. Một số quy tắc đóng gói kết quả:
 
 | Provider | Quy tắc |
@@ -251,6 +255,8 @@ Reasoning model suy luận trước mỗi tool call và tiếp tục suy luận 
 | Gemini 3+ | `thought_signature` trên function call part, đúng vị trí [30] | `400`; thông báo cộng đồng ghi nhận: "Function call is missing a thought_signature in functionCall parts" |
 | DeepSeek (thinking + tools) | `reasoning_content` của mọi lượt [37] | `400` |
 | Kimi, MiniMax, GLM | Toàn bộ assistant message gồm `reasoning_content` [39][40] | Mất tính liên tục của suy luận; Kimi K2.7 Code bắt buộc |
+
+![Với OpenAI Responses API, gửi lại nguyên các item của response thì request hợp lệ; dựng lại lịch sử từ role, content, tool_calls làm rơi reasoning item đứng trước function_call và API trả 400](images/reasoning-item.svg)
 
 Ba chi tiết ít được nhắc:
 
@@ -755,6 +761,8 @@ Anthropic khuyên thông báo lỗi phải "actionable" và có ví dụ input �
 ### Lịch sử bị "nhiễm độc"
 
 Một lỗi ít được nhắc nhưng nghiêm trọng: code của bạn ném exception sau khi đã lưu assistant message có tool call nhưng trước khi lưu tool result. Lần sau người dùng nhắn tiếp, lịch sử chứa một tool call không có kết quả, và **mọi request từ đó trở đi đều trả `400`**. Cuộc hội thoại không dùng được nữa, dù lỗi ban đầu chỉ xảy ra một lần.
+
+![Tool call được lưu mà không có tool result: nếu không sửa, mọi request sau đó của hội thoại đều trả 400; nếu load_history thêm kết quả lỗi INTERRUPTED cho call mồ côi, hội thoại chạy tiếp](images/poisoned-history.svg)
 
 Phòng ngừa ở hai chỗ:
 
