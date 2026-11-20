@@ -319,13 +319,15 @@ Sonnet 5.5, system prompt và tool 6.000 token, 8 lượt, mỗi lượt ngườ
 
 Hội thoại càng dài, cache càng có lợi, vì phần gửi lại tăng theo bình phương số lượt còn phần ghi mới chỉ tăng tuyến tính. Ở 8 lượt, gần một nửa chi phí có cache (0,024 USD) là output; tới đây thì đòn bẩy tiếp theo là độ dài câu trả lời, không phải prompt.
 
+![Chi phí cộng dồn của hội thoại trên Sonnet 5.5: không cache tăng theo bình phương số lượt, tới 1,2320 USD ở 40 lượt; có cache gần như tuyến tính, 0,2277 USD, rẻ hơn 5,4 lần, so với 2,8 lần ở 8 lượt; output như nhau ở hai cách nên chiếm gần nửa chi phí có cache ở 8 lượt](images/cache-cumulative.svg)
+
 ### Hoà vốn và TTL
 
 - **Claude, TTL 5 phút:** ghi 1,25 lần, đọc 0,1 lần giá input (0,05 lần ở Opus 5.5 và Sonnet 5.5, 0,025 lần ở Fable 5.1), nên có lợi ngay từ lần đọc đầu tiên. TTL 1 giờ ghi 2 lần, hoà vốn sau hai lần đọc [1].
 - **OpenAI GPT-5.6 trở lên:** ghi 1,25 lần (TTL 30 phút) hoặc 2,5 lần (TTL 12 giờ, chỉ trên Responses API), đọc 0,1 lần (0,05 lần với GPT-6.1 Sol và Terra). Một lần ghi và một lần đọc tốn 1,35 lần, so với 2 lần khi không cache; mười request tốn 2,15 lần so với 10 lần [10]. Model trước GPT-5.6 không thu phí ghi cache [10].
 - **Gemini:** implicit caching bật sẵn với Gemini 2.5 trở lên, không cần cấu hình; ngưỡng tối thiểu 4.096 token với Gemini 4 Argon và các model 3.x, 2.048 token với Gemini 2.5. Với Gemini 4 (Argon trở lên), trong hội thoại nhiều lượt, request mới chỉ dùng được cache của toàn bộ request trước khi phần thêm vào từ 2.050 token trở lên; nhỏ hơn thì 2.050 token cuối của request trước bị xử lý lại với giá input thường [17]. Cache tường minh (`cachedContents`) không có trên Gemini 4 Argon và Interactions API, và có phí lưu trữ theo giờ ở các model hỗ trợ [16][17].
 
-Chọn TTL theo khoảng cách giữa các request, không theo trung bình. Anthropic đo trên một agent phân loại bug có chèn khoảng nghỉ mô phỏng người dùng: TTL 1 giờ đáng dùng khi khoảng 1 trong 20 lượt đến sau một khoảng nghỉ từ 5 phút đến 1 giờ, và ít khoảng nghỉ dài quá 1 giờ; điểm hoà vốn tính từ token là khoảng 1 trong 30 lượt trên Sonnet 5.5 và Opus 5.5 [2]. Với Fable 5.1, Opus 5.5 và Sonnet 5.5, giữ cache 5 phút ấm bằng request `max_tokens: 0` gửi mỗi 4 phút có thể rẻ hơn TTL 1 giờ khi khoảng nghỉ chỉ vài phút [2]. Request `max_tokens: 0` bị từ chối khi request có `thinking.type: "enabled"`, structured output, hoặc ép gọi tool [2].
+Chọn TTL theo khoảng cách giữa các request, không theo trung bình. Anthropic đo trên một agent phân loại bug có chèn khoảng nghỉ mô phỏng người dùng: TTL 1 giờ đáng dùng khi khoảng 1 trong 20 lượt đến sau một khoảng nghỉ từ 5 phút đến 1 giờ, và ít khoảng nghỉ dài quá 1 giờ; điểm hoà vốn tính từ token là khoảng 1 trong 30 lượt trên Sonnet 5.5 và Opus 5.5 [2]. Với Fable 5.1, Opus 5.5 và Sonnet 5.5, giữ cache 5 phút ấm bằng request `max_tokens: 0` gửi mỗi 4 phút có thể rẻ hơn TTL 1 giờ khi khoảng nghỉ chỉ vài phút [2]. Request `max_tokens: 0` bị từ chối khi request có `thinking.type: "enabled"`, structured output, ép gọi tool, hoặc tham số `compaction` ở cấp request [2].
 
 ### Những thay đổi nhỏ có giá lớn
 
@@ -418,7 +420,9 @@ Quy trình gợi ý, dựa theo [2]:
 4. So trên **phần khó nhất** của tập (khoảng 10% tác vụ khó nhất), không chỉ trung vị. Hoá đơn được quyết định bởi các tác vụ model rẻ làm hỏng [2].
 5. Chạy lặp. Sai khác một hai tác vụ hay vài cent trung bình nằm trong nhiễu một lần chạy ([Evaluation §1.4](../evaluation/#14-phương-sai-chạy-bao-nhiêu-lần-cần-bao-nhiêu-mẫu)).
 
-**Chạy rẻ trước, chạy lại phần lỗi.** Khi kết quả kiểm tra được bằng code, chính sách rẻ nhất thường không phải một mức cố định. Trên tập con SWE-bench Pro với Opus 5.5: chạy mọi thứ ở `low` rồi chạy lại các bài lỗi ở `high` giải khoảng 97% với khoảng 0,17 USD mỗi bài, so với 95,3% và 0,29 USD khi chạy hết ở `high` (đã tính các lần thử rẻ thất bại) [2]. Điều kiện: cần tín hiệu lỗi đáng tin; checker cho qua bài sai thì lỗi lọt qua luôn [2]. Ý tưởng tương tự với nhiều model (cascade) ở [Decision models §3.7](../decision-models/#37-cascade-trích-xuất-dữ-liệu) và [Model routing §1.4](../model-routing/#14-routing-theo-độ-khó-theo-loại-tác-vụ-theo-chi-phí).
+**Chạy rẻ trước, chạy lại phần lỗi.** Khi kết quả kiểm tra được bằng code, chính sách rẻ nhất thường không phải một mức cố định. Trên tập con SWE-bench Pro với Opus 5.5: chạy mọi thứ ở `low` rồi chạy lại các bài lỗi ở `high` giải khoảng 97% với khoảng 0,17 USD mỗi bài, so với 95,3% và 0,29 USD khi chạy hết ở `high` (đã tính các lần thử rẻ thất bại) [2]. Dùng chính sách này để tiết kiệm, không phải để tăng điểm: phần tăng nhỏ chủ yếu đến từ lần thử thứ hai, vì chạy lại các bài lỗi của `high` ở `high` cũng đạt 96,9%, với 0,31 USD [2]. Điều kiện: cần tín hiệu lỗi đáng tin; checker cho qua bài sai thì lỗi lọt qua luôn [2]. Ý tưởng tương tự với nhiều model (cascade) ở [Decision models §3.7](../decision-models/#37-cascade-trích-xuất-dữ-liệu) và [Model routing §1.4](../model-routing/#14-routing-theo-độ-khó-theo-loại-tác-vụ-theo-chi-phí).
+
+![Opus 5.5 trên tập con SWE-bench Pro, chi phí mỗi tác vụ: low 87,4% với 0,11 USD, medium 92,8% với 0,21 USD, high 95,3% với 0,29 USD; chạy low rồi chạy lại 12,6% bài lỗi ở high giải khoảng 97% với khoảng 0,17 USD, rẻ hơn khoảng 40% so với chạy hết ở high mà tỉ lệ giải không thấp hơn](images/rerun-failures.svg)
 
 **Thêm model thứ hai là đòn bẩy cuối cùng.** Anthropic đo hai dạng: advisor (model rẻ chạy vòng lặp, hỏi model mạnh khi gặp quyết định khó) và orchestrator (model mạnh chia việc cho model rẻ). Trên benchmark code nội bộ, advisor cho thêm 1,7 điểm, ở rìa nhiễu, với khoảng 2,1 lần chi phí; ở hai benchmark khác, executor gần như không hỏi advisor và kết quả không hơn, có chỗ kém hơn [2]. Orchestrator chỉ thắng khi việc lớn hơn một context window hoặc là việc thường có đuôi chi phí dài [2]. Quét effort của một model trước; cặp model phải thắng toàn bộ đường cong điểm–chi phí của model đơn [2].
 
@@ -538,6 +542,8 @@ OWASP xếp "Unbounded Consumption" là LLM10 trong Top 10 cho ứng dụng LLM 
 
 Rate limit theo số request không đủ: một request 200.000 token với `max_tokens` 64.000 đắt gấp hàng trăm lần một request phân loại. Hạn mức nên tính bằng tiền. Cách làm: trước khi gọi, giữ chỗ chi phí tối đa có thể của request; sau khi gọi, thay bằng chi phí thật. Giữ chỗ trước để nhiều request đồng thời của cùng tenant không cùng lúc vượt hạn mức.
 
+![Hạn mức 1 USD, đã tiêu 0,10, một request đang chạy giữ chỗ 0,80: chỉ đếm số đã tiêu thì request mới 0,20 USD được cho qua và tổng có thể tới 1,10 USD; đếm cả phần giữ chỗ thì request mới bị chặn bằng BudgetExceeded](images/spend-hold.svg)
+
 ```python
 import threading
 from contextlib import contextmanager
@@ -624,7 +630,7 @@ Test đã chạy:
 1. Trần chi phí: Sonnet 5.5, 10.000 input ghi cache 5 phút, `max_tokens` 4.000 ra 0,065 USD; không cache ra 0,06 USD.
 2. Haiku 5.5: prompt 101.000 token dùng giá prompt dài; 99.000 token dùng giá thường, dù cộng `max_tokens` thì vượt 100.000 (ngưỡng chỉ tính trên prompt [1]).
 3. Sau khi gọi, phần giữ chỗ được thay bằng chi phí thật.
-4. Một request đang giữ chỗ 0,80 USD chặn request khác cần 0,20 USD khi hạn mức là 1 USD, dù chưa tiêu đồng nào.
+4. Hạn mức 1 USD, đã tiêu 0,10 USD: một request đang giữ chỗ 0,80 USD chặn request khác cần 0,20 USD, dù request giữ chỗ chưa có chi phí thật (0,10 + 0,80 + 0,20 = 1,10 USD vượt hạn mức).
 5. Exception trong lúc gọi mà không gán chi phí thì tính đủ phần giữ chỗ.
 6. Vượt hạn mức ném `BudgetExceeded` với thông báo có số liệu.
 7. Qua 00:00 UTC thì hạn mức làm mới, và số của ngày cũ bị xoá: chạy 1.000 ngày liên tiếp vẫn chỉ giữ một khoá. Request bắt đầu trước nửa đêm và xong sau nửa đêm không trừ vào hạn mức ngày mới, cũng không tạo lại khoá của ngày cũ.
@@ -740,7 +746,7 @@ Truy cập ngày 06/11/2026.
 | # | Nguồn | Nội dung dùng trong bài |
 |---|---|---|
 | [1] | [Claude: Pricing](https://platform.claude.com/docs/en/about-claude/pricing) | Giá model, hệ số cache, batch, fast mode, data residency, giá prompt dài của Haiku 5.5, token của tool, web search, tokenizer mới |
-| [2] | [Claude: Optimizing for cost and intelligence](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence) | Số đo của Anthropic về caching, TTL, token hygiene, batch, rà prompt, so model, effort, chạy lại phần lỗi, `max_tokens`, độ dài output, advisor, orchestrator |
+| [2] | [Claude: Optimizing for cost and intelligence](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence) | Số đo của Anthropic về caching, TTL, token hygiene, batch, rà prompt, so model, effort, chạy lại phần lỗi, `max_tokens`, độ dài output, advisor, orchestrator; các trường hợp request `max_tokens: 0` bị từ chối (kiểm lại ngày 20/11/2026) |
 | [3] | [Claude: Batch processing](https://platform.claude.com/docs/en/build-with-claude/batch-processing) | Giới hạn batch, thời hạn, cache trong batch, tham số không hỗ trợ |
 | [4] | [Claude: Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) | Cơ chế cache, pre-warming |
 | [5] | [Claude: Token counting](https://platform.claude.com/docs/en/build-with-claude/token-counting) | Đếm token miễn phí, là ước lượng, đếm theo model ID |

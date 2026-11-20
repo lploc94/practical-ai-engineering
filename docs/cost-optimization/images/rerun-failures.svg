@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" width="820" height="440" role="img" aria-label="Opus 5.5 trên tập con SWE-bench Pro: low 87,4% với 0,11 USD mỗi tác vụ, medium 92,8% với 0,21 USD, high 95,3% với 0,29 USD. Chạy low rồi chạy lại 12,6% bài lỗi ở high giải khoảng 97% với khoảng 0,17 USD: rẻ hơn khoảng 40% so với chạy hết ở high, tỉ lệ giải không thấp hơn"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="440" rx="12"/><text class="title" x="20" y="38">Chạy low trước, chạy lại bài lỗi ở high: rẻ hơn ≈40%, tỉ lệ giải không kém</text><text class="cap2" x="20" y="62">Opus 5.5 trên tập con SWE-bench Pro, số đo của Anthropic. Chi phí trên mỗi tác vụ, trục tung bắt đầu từ 85%.</text><line class="grid" x1="90" y1="350.0" x2="620" y2="350.0"/><text class="sub end" x="82" y="354.0">85%</text><line class="grid" x1="90" y1="265.3" x2="620" y2="265.3"/><text class="sub end" x="82" y="269.3">90%</text><line class="grid" x1="90" y1="180.7" x2="620" y2="180.7"/><text class="sub end" x="82" y="184.7">95%</text><line class="grid" x1="90" y1="96.0" x2="620" y2="96.0"/><text class="sub end" x="82" y="100.0">100%</text><text class="sub mid" x="90.0" y="368">0,00</text><text class="sub mid" x="241.4" y="368">0,10</text><text class="sub mid" x="392.9" y="368">0,20</text><text class="sub mid" x="544.3" y="368">0,30</text><line class="axis" x1="90" y1="350" x2="620" y2="350"/><text class="sub mid" x="355.0" y="386">Chi phí mỗi tác vụ (USD)</text><text class="sub" x="20" y="82">Tỉ lệ bài giải được</text><path class="lblue" d="M256.6,309.4 L408.0,217.9 L529.1,175.6"/><circle class="fblue" cx="256.6" cy="309.4" r="6"/><text class="cap halo" x="268.6" y="327.4"><tspan style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">low</tspan> 87,4% · 0,11</text><circle class="fblue" cx="408.0" cy="217.9" r="6"/><text class="cap halo" x="420.0" y="235.9"><tspan style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">medium</tspan> 92,8% · 0,21</text><circle class="fblue" cx="529.1" cy="175.6" r="6"/><text class="cap halo" x="541.1" y="193.6"><tspan style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">high</tspan> 95,3% · 0,29</text><line class="lorange dash" x1="262.6" y1="303.4" x2="338.4" y2="155.8" marker-end="url(#aorange)"/><rect class="orange" x="340.4" y="139.8" width="14" height="14" rx="2"/><text class="cap halo" x="333.4" y="120.8" style="text-anchor:end;font-weight:600">low, rồi chạy lại bài lỗi ở high</text><text class="cap halo" x="333.4" y="138.8" style="text-anchor:end">≈97% · ≈0,17</text><text class="sub halo end" x="292.0" y="232.1">12,6% bài lỗi ở low</text><line class="lfg dash" x1="529.1" y1="146.8" x2="359.4" y2="146.8" marker-end="url(#afg)"/><line class="axis dash" x1="529.1" y1="146.8" x2="529.1" y2="167.6"/><text class="sub halo" x="537.1" y="150.8">rẻ hơn ≈40% so với chạy hết ở high</text><text class="cap2" x="20" y="410">Chi phí của chính sách chạy lại đã gồm lần thử low thất bại. Điều kiện: có tín hiệu lỗi đáng tin (test, validator);</text><text class="cap2" x="20" y="428">bài lỗi mất hai lần thời gian chạy.</text></svg>
