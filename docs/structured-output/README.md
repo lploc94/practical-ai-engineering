@@ -171,6 +171,8 @@ Sau khi chọn token, automaton cập nhật trạng thái để tính tập tok
 - Bộ ràng buộc chỉ loại lựa chọn; nó không giải thích ý nghĩa của field cho model. Nếu model định trả một chuỗi nhưng schema yêu cầu số, model phải chọn trong số các token còn được phép. Con số đó chưa chắc đúng. Provider vì vậy thường chèn schema vào prompt để model đọc được cả tên field lẫn `description`.
 - Phần lớn token cố định có thể được sinh mà không cần gọi model. Sau `{"`, nếu chỉ còn một key hợp lệ là `anger`, engine có thể ghi luôn `anger":` thay vì chạy model qua từng token. SGLang gọi kỹ thuật này là *compressed FSM*, cộng đồng hay gọi là *jump-forward decoding* [51].
 
+![Constrained decoding từng bước: sau {"anger": token mở chuỗi bị che dù model chấm cao nhất (0,41), xác suất dồn sang các số 1–5 nên " 4" tăng từ 0,38 lên 0,81 và được chọn; sau đó chỉ còn } hợp lệ nên engine ghi luôn mà không chạy model](images/token-masking.svg)
+
 ### Từ schema đến automaton
 
 **Regex và schema phẳng** chuyển được thành máy trạng thái hữu hạn (FSM). Outlines (Willard & Louf, 2023) có đóng góp then chốt là xây sẵn một chỉ mục: với mỗi trạng thái FSM, token nào trong vocabulary hợp lệ. Lúc giải mã, việc che token chỉ còn là tra bảng [45].
@@ -276,6 +278,8 @@ Từ các kết quả này, một lựa chọn thiết kế cần kiểm thử l
 1. **Dùng reasoning model hoặc bật thinking.** Với Claude, OpenAI reasoning models, Gemini thinking, phần suy luận nằm ngoài vùng bị ràng buộc. Grammar chỉ áp dụng cho câu trả lời cuối, nên không cần thêm phần suy luận vào schema chỉ để model có bước này.
 2. **Đặt field suy luận trước field kết luận.** Vì nhiều provider sinh key theo thứ tự trong schema ([§2.1](#21-bức-tranh-chung)), một field `reasoning` hay `analysis` đặt trước `answer` cho model suy nghĩ rồi mới kết luận. Giữ field này ngắn, có giới hạn độ dài trong `description`, và lưu ý trên Claude, yêu cầu "lập luận từng bước" trong một property có thể bị từ chối ([§2.3](#23-claude-anthropic)).
 3. **Tách hai bước.** Bước một để model trả lời tự do, bước hai dùng một model rẻ chuyển câu trả lời sang schema. Tốn thêm một request nhưng cô lập hoàn toàn suy luận khỏi format.
+
+![Khi answer đứng đầu object, model chọn đáp án lúc ngữ cảnh mới chỉ có prompt; khi reasoning đứng trước, đáp án được chọn sau khi lập luận đã nằm trong ngữ cảnh](images/field-order.svg)
 
 Với trích xuất và phân loại đơn giản, ràng buộc format thường hữu ích vì câu trả lời đã nằm trong input. Khi tác vụ cần suy luận, hãy so sánh các cách bố trí trên cùng tập dữ liệu trước khi chọn.
 
@@ -1221,6 +1225,8 @@ partial:  {"title": "Báo cáo Q3", "rows": [{"name": "Hà Nội", "revenue": 12
 ```
 
 Trong chunk thứ hai, `120` có thể mới là phần đầu của `1200`. Field bắt buộc cũng có thể chưa đến, và chuỗi có thể dừng giữa một từ. Partial object vì vậy chỉ là bản tạm để hiển thị; chờ dữ liệu hoàn chỉnh và validate trước khi dùng cho quyết định của ứng dụng.
+
+![Ba chunk stream: parser đóng tạm ngoặc để có partial object sau mỗi chunk; revenue = 120 sau chunk 2 hoá ra là phần đầu của 1200, nên chỉ dùng object khi JSON đã hoàn chỉnh và validate](images/partial-json.svg)
 
 **Stream theo phần tử.** Với output là danh sách, chờ mỗi phần tử hoàn chỉnh rồi mới phát. Vercel `Output.array()` có `elementStream` làm đúng việc này [62]. Mỗi phần tử có thể validate riêng ngay khi đến.
 
