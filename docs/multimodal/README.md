@@ -102,6 +102,8 @@ Từ cơ chế này có ba hệ quả thực tế:
 
 **Có hai kiểu chia ảnh.** Kiểu cũ chia ảnh thành *tile* cố định (512 px của OpenAI thế hệ trước, 768 px của Gemini thế hệ trước), mỗi tile có giá token cố định. Kiểu mới đếm thẳng số patch nhỏ (28 px của Claude, 32 px của OpenAI GPT-5.x, 32 px sau khi gộp của Qwen3-VL) hoặc cấp một ngân sách token cố định theo mức độ chi tiết (Gemini 3). Hai kiểu cho kết quả rất khác với cùng một ảnh, nên con số "một ảnh tốn bao nhiêu" chỉ có nghĩa khi gắn với model cụ thể.
 
+![Cùng ảnh 1920×1080 trên Claude: tier standard thu ảnh về 1456×819 rồi chia 52 × 30 patch 28 px, tức 1.560 token; tier high-res giữ nguyên ảnh, 69 × 39 = 2.691 token, gấp 1,7 lần](images/patch-tiers.svg)
+
 Model open-weight cho thấy rõ cơ chế này. Với Qwen2.5-VL, mỗi vùng 28×28 pixel ứng với một token, và số token mỗi ảnh mặc định nằm trong khoảng 4 đến 16.384. Model card gợi ý đặt `min_pixels` và `max_pixels` (ví dụ 256×28×28 đến 1280×28×28) để giới hạn chi phí [16]. Qwen3-VL đổi sang patch 16 px gộp 2×2, tức mỗi token ứng với vùng 32×32 pixel, và tách ngân sách pixel của ảnh với video [15]. Provider đóng làm điều tương tự ở phía server, chỉ khác là bạn không chỉnh trực tiếp được.
 
 ## 1.2 Ảnh tốn bao nhiêu token
@@ -171,6 +173,8 @@ assert claude_image_tokens(3840, 2160, high_res=True) == 4784
 | 3840×2160 | Vượt 2.500 patch, thu nhỏ rồi tính lại | 4.784 | 1.120 |
 
 Cột OpenAI là phép tính từ công thức trong docs, chưa đối chiếu với request thật. Hai điều rút ra: (1) chi phí ảnh khác nhau tới vài lần giữa các provider với cùng một ảnh; (2) với OpenAI và Claude, thu nhỏ ảnh trước khi gửi là cách giảm chi phí trực tiếp nhất, còn với Gemini 3 thì chọn mức `media_resolution` mới là cách đó.
+
+![Token của ảnh 16:9 theo chiều rộng: Claude tăng theo diện tích rồi chạm trần, 1.560 token ở tier standard và 4.784 ở tier high-res, ảnh 1920×1080 tốn 1.560 và 2.691; Gemini 3 ở mức mặc định luôn 1.120 token bất kể kích thước](images/token-curve.svg)
 
 ### Quy ra tiền
 
@@ -495,6 +499,8 @@ Cách chọn dựa trên dữ liệu thật:
 2. **Kiểm tra chất lượng text layer**, không chỉ có hay không. Tỉ lệ ký tự lạ, tỉ lệ chữ tiếng Việt có dấu, số trang có text rỗng là các tín hiệu rẻ để phát hiện font nhúng hỏng.
 3. **Dùng VLM cho trang khó, không phải cho mọi trang.** Một báo cáo 200 trang có thể chỉ có 15 trang bảng phức tạp. Gửi 15 trang đó cho VLM, phần còn lại dùng text parse, rẻ hơn nhiều lần.
 4. **Giữ số trang và vị trí** trong mọi bước để trích dẫn được và để người kiểm tra mở đúng chỗ.
+
+![Tài liệu không có text layer hoặc text layer hỏng đi thẳng tới VLM; tài liệu có text layer sạch được xét theo trang: báo cáo 200 trang gửi 15 trang bảng phức tạp cho VLM, 185 trang còn lại parse thành text; mọi đường giữ số trang và vị trí](images/doc-routing.svg)
 
 Với dữ liệu nhạy cảm (hồ sơ y tế, giấy tờ tuỳ thân), pipeline chạy local (Docling, Marker, model open-weight) hoặc hợp đồng zero data retention với provider là yêu cầu trước khi bàn đến chất lượng.
 

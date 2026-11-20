@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" width="820" height="480" role="img" aria-label="Tài liệu không có text layer hoặc text layer hỏng đi thẳng tới VLM; tài liệu có text layer sạch được xét theo trang: báo cáo 200 trang gửi 15 trang bảng phức tạp cho VLM, 185 trang còn lại parse thành text; mọi đường giữ số trang và vị trí"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="480" rx="12"/><text class="title" x="20" y="38">Parse trước hay đưa thẳng cho VLM: chia theo tài liệu và theo trang</text><text class="cap2" x="20" y="62">Các bước kiểm tra rẻ chạy trước, VLM chỉ nhận phần parse không làm tốt.</text><rect class="blue" x="20" y="81" width="14" height="14" rx="3"/><text class="sub" x="40" y="92">đường parse: dùng text layer</text><rect class="orange" x="260" y="81" width="14" height="14" rx="3"/><text class="sub" x="280" y="92">đường VLM: gửi ảnh trang</text><g ><rect class="tok" x="20" y="122" width="130" height="62" rx="7"/></g><text class="row mid" x="85.0" y="149">Tài liệu</text><text class="sub mid" x="85.0" y="168">PDF, scan, ảnh chụp</text><g ><rect class="tok" x="186" y="122" width="170" height="62" rx="7"/></g><text class="row mid" x="271.0" y="149">Có text layer?</text><text class="sub mid" x="271.0" y="168">theo tài liệu, vài ms</text><g ><rect class="tok" x="392" y="122" width="190" height="62" rx="7"/></g><text class="row mid" x="487.0" y="149">Text layer sạch?</text><text class="sub mid" x="487.0" y="168">ký tự lạ, dấu, trang rỗng</text><g ><rect class="tok" x="618" y="122" width="182" height="62" rx="7"/></g><text class="row mid" x="709.0" y="149">Trang khó?</text><text class="sub mid" x="709.0" y="168">theo trang: bảng phức tạp</text><line class="lfg" x1="152" y1="153.0" x2="182" y2="153.0" marker-end="url(#afg)"/><line class="lfg" x1="358" y1="153.0" x2="388" y2="153.0" marker-end="url(#afg)"/><line class="lfg" x1="584" y1="153.0" x2="614" y2="153.0" marker-end="url(#afg)"/><text class="sub mid halo" x="371" y="144.0">có</text><text class="sub mid halo" x="600" y="144.0">có</text><g ><rect class="orange" x="186" y="262" width="396" height="62" rx="7"/></g><text class="row mid" x="384.0" y="289">Đưa thẳng cho VLM</text><text class="sub mid" x="384.0" y="308">ảnh trang + schema</text><g ><rect class="blue" x="618" y="262" width="182" height="62" rx="7"/></g><text class="row mid" x="709.0" y="289">Parse trước</text><text class="sub mid" x="709.0" y="308">Docling, Marker</text><line class="lorange" x1="271" y1="186" x2="271" y2="258" marker-end="url(#aorange)"/><text class="sub halo end" x="263" y="228">không: scan, ảnh chụp</text><line class="lorange" x1="487" y1="186" x2="487" y2="258" marker-end="url(#aorange)"/><text class="sub halo end" x="479" y="228">không: font nhúng hỏng</text><line class="lorange" x1="640" y1="186" x2="560" y2="258" marker-end="url(#aorange)"/><line class="lblue" x1="730" y1="186" x2="730" y2="258" marker-end="url(#ablue)"/><text class="sub halo" x="606" y="228">có: 15 trang</text><text class="sub halo" x="738" y="220">không:</text><text class="sub halo" x="738" y="236">185 trang</text><g ><rect class="tok" x="186" y="372" width="614" height="62" rx="7"/></g><text class="row mid" x="493.0" y="399">Trích xuất theo schema</text><text class="sub mid" x="493.0" y="418">giữ số trang và vị trí để trích dẫn, để người kiểm tra mở đúng chỗ</text><line class="lfg" x1="384" y1="326" x2="384" y2="368" marker-end="url(#afg)"/><line class="lfg" x1="709" y1="326" x2="709" y2="368" marker-end="url(#afg)"/><text class="cap2" x="20" y="466">Ví dụ ở §3.2: báo cáo 200 trang có 15 trang bảng phức tạp; chỉ 15 trang đó gửi ảnh cho VLM.</text></svg>
