@@ -131,6 +131,10 @@ Hai hệ quả thực tế:
 - **Ẩn suy luận không làm rẻ đi.** Claude với `display: "omitted"` trả `thinking` rỗng nhưng vẫn tính toàn bộ token suy luận [8]. Lợi ích duy nhất là chữ đầu tiên của câu trả lời đến sớm hơn khi stream, vì không phải chờ truyền phần tóm tắt [5].
 - **Số token suy luận phải vào log.** Không có field này thì không biết vì sao chi phí một request tăng gấp mười. Ví dụ minh hoạ trong docs Claude có 312 thinking token trên tổng 348 output token [8]: gần 90% output là phần người dùng không thấy.
 
+Suy luận được sinh trước câu trả lời, nên trần `max_tokens` thấp hơn lượng suy luận sẽ cắt request trước khi có chữ nào của câu trả lời ([§1.4](#14-effort-budget-và-adaptive-thinking), [§3.5](#35-chi-phí-và-độ-trễ-max_tokens-timeout-ước-lượng-ngân-sách)). Hình dưới dùng lại ví dụ 312/348 token của docs Claude, kèm một trần 256 token giả định.
+
+![Ví dụ trong docs Claude: 312 token suy luận sinh trước, 36 token câu trả lời sinh sau, gần 90% trong 348 output token là suy luận. Với max_tokens = 256 (giả định), request dừng với stop_reason max_tokens giữa lúc suy luận và không có chữ nào của câu trả lời](images/thinking-budget.svg)
+
 ### Thứ bạn nhận được: tóm tắt, rỗng, mã hoá hoặc toàn văn
 
 | Provider | Có chuỗi suy luận gốc qua API? | Nhận được gì |
@@ -235,6 +239,8 @@ Gateway hoặc thư viện đa provider thường tự ánh xạ effort theo cá
 
 Quy tắc an toàn khi bạn tự quản lịch sử với API stateless: **lưu nguyên response, gửi lại nguyên văn, để API tự lọc**. Với API stateful, dùng ID của lượt trước thay vì tự gửi lại; với Chat Completions, quy tắc này không áp dụng vì không có reasoning item để gửi. Docs Claude ghi rõ: qua các lượt, gửi lại mọi thứ, API tự bỏ những gì model không cần [5]. Docs OpenAI cũng nói gửi lại mọi reasoning item là cách đơn giản nhất, vì item không liên quan sẽ bị bỏ qua [1].
 
+![Claude: bạn luôn gửi lại mọi thinking block. Model keep-all đọc thinking của mọi lượt, nên thinking cũ tiếp tục tốn input hoặc cache read ở các lượt sau; với model last-turn-only, API tự bỏ thinking của các lượt trước và chỉ giữ thinking của lượt đang chạy trong tool loop](images/keep-all.svg)
+
 ### Ví dụ: tool loop với Claude, giữ nguyên block
 
 ```python
@@ -271,6 +277,8 @@ while True:
 ### Sửa lịch sử phía trước làm mất hiệu lực thinking block
 
 Từ Claude 5.1, `signature` của mỗi thinking block ghi lại prefix đã sinh ra nó: system, tools và mọi message trước đó. Khi bạn sửa phần lịch sử phía trước (đổi system prompt, đổi danh sách tool, sửa một message cũ), block đó và mọi block phía sau không còn hợp lệ [9]. Tuỳ thời điểm tạo tài khoản và cấu hình `thinking.block_binding.prefix_mismatch_behavior` (beta `thinking-binding-controls-2026-08-01`), API trả 400 hoặc bỏ block đó đi [9]. Chi tiết các thao tác an toàn và không an toàn ở [Multi-turn §3.7](../multi-turn-conversation/#37-reasoning-và-thinking-blocks).
+
+![Claude 5.1 trở lên: nối thêm message ở cuối giữ mọi thinking block hợp lệ; sửa user 2 làm mất hiệu lực thinking sinh sau nó nhưng thinking sinh trước vẫn hợp lệ; sửa system prompt làm mất hiệu lực mọi thinking block](images/prefix-binding.svg)
 
 Với OpenAI, suy luận chỉ tái sử dụng được trong cùng họ model: không mang được suy luận giữa họ GPT-5.6 và GPT-5.5 [1]. Với Claude, Fable 5.1 đọc được thinking của Opus 5 và (trên Claude API) Opus 5.5, nhưng chiều ngược lại thì không. Block không đọc được bị bỏ mà không báo lỗi và không tính tiền [5]. Gemini thì yêu cầu vẫn gửi lại thought block của model cũ khi đổi model giữa phiên, backend tự xử lý tương thích [11].
 
