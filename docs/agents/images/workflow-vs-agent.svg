@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 430" width="980" height="430" role="img" aria-label="Workflow: code nối ba lần gọi model theo thứ tự cố định nên đường đi biết trước. Agent: model tự chọn gọi tool nào và khi nào dừng. Khác biệt là ai quyết định bước kế tiếp"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="980" height="430" rx="12"/><text class="title" x="20" y="38">Workflow và agent: ai quyết định bước kế tiếp</text><rect class="orange" x="680" y="27" width="14" height="14" rx="3"/><text class="sub" x="700" y="38">lần gọi model</text><rect class="tok" x="815" y="27" width="14" height="14" rx="3"/><text class="sub" x="835" y="38">code, tool, dữ liệu</text><line class="grid" x1="470" y1="70" x2="470" y2="410"/><text class="row" x="30" y="86">Workflow</text><text class="sub" x="30" y="104">trích xuất hoá đơn: 3 lần gọi theo thứ tự cố định</text><rect class="orange" x="110" y="130" width="250" height="46" rx="7"/><text class="cap mid" x="235.0" y="158.0">Lần gọi 1</text><rect class="orange" x="110" y="196" width="250" height="46" rx="7"/><text class="cap mid" x="235.0" y="224.0">Lần gọi 2</text><rect class="orange" x="110" y="262" width="250" height="46" rx="7"/><text class="cap mid" x="235.0" y="290.0">Lần gọi 3</text><path class="lfg " d="M235.0,178L235.0,192" marker-end="url(#afg)"/><path class="lfg " d="M235.0,244L235.0,258" marker-end="url(#afg)"/><path class="lfg" d="M100,136H92V302H100"/><text class="sub end" x="86" y="217.0">code</text><text class="sub end" x="86" y="233.0">nối</text><text class="cap" x="30" y="408">Đường đi biết trước: test từng nhánh như code.</text><text class="row" x="500" y="86">Agent</text><text class="sub" x="500" y="104">chatbot hỗ trợ: 2 tool, model tự chọn gọi gì</text><rect class="orange" x="510" y="196" width="150" height="46" rx="7"/><text class="cap mid" x="585.0" y="216">Model</text><text class="sub mid" x="585.0" y="233">chọn bước tiếp</text><rect class="tok" x="750" y="140" width="190" height="46" rx="7"/><text class="cap mid" x="845.0" y="160">tra đơn hàng</text><text class="sub mid" x="845.0" y="177">tool</text><rect class="tok" x="750" y="252" width="190" height="46" rx="7"/><text class="cap mid" x="845.0" y="272">đọc chính sách</text><text class="sub mid" x="845.0" y="289">tool</text><path class="lorange" d="M662,204L744,156.0" marker-end="url(#aorange)"/><path class="lfg dash" d="M748,170.0L668,214" marker-end="url(#afg)"/><path class="lorange" d="M662,224L744,268.0" marker-end="url(#aorange)"/><path class="lfg dash" d="M748,282.0L668,234" marker-end="url(#afg)"/><text class="sub torange halo end" x="710" y="146">gọi tool</text><text class="sub halo end" x="710" y="302">kết quả</text><path class="lorange" d="M585.0,244L585.0,314" marker-end="url(#aorange)"/><rect class="tok" x="500" y="318" width="170" height="46" rx="7"/><text class="cap mid" x="585.0" y="338">trả lời</text><text class="sub mid" x="585.0" y="355">hoàn tiền hay không</text><text class="sub" x="682" y="338">dừng khi model không</text><text class="sub" x="682" y="354">gọi tool nào nữa</text><text class="cap" x="500" y="408">Đường đi do model chọn: chấm kết quả cuối.</text></svg>

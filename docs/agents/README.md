@@ -98,6 +98,8 @@ Anthropic chia hệ thống dùng LLM thành hai loại [1]. *Workflow* là hệ
 
 Tiêu chí phân biệt không phải là có LLM hay không, cũng không phải là có tool hay không. Tiêu chí là **ai quyết định bước kế tiếp**. Một pipeline trích xuất hoá đơn gọi model ba lần theo thứ tự cố định là workflow, dù mỗi lần gọi đều dùng tool. Một chatbot hỗ trợ tự chọn tra đơn hàng, đọc chính sách, rồi quyết định có hoàn tiền không là agent, dù chỉ có hai tool.
 
+![Workflow: code nối ba lần gọi model theo thứ tự cố định nên đường đi biết trước. Agent: model tự chọn gọi tool tra đơn hàng hay đọc chính sách, và dừng khi không gọi tool nào nữa. Khác biệt là ai quyết định bước kế tiếp](images/workflow-vs-agent.svg)
+
 Khác biệt này quyết định cách test. Workflow có đường đi biết trước, nên test từng nhánh được như code thường. Agent không có đường đi biết trước, nên phải chấm kết quả cuối và độ ổn định qua nhiều lần chạy ([§3.6](#36-eval-cho-agent)).
 
 Anthropic khuyên tìm giải pháp đơn giản nhất và chỉ thêm độ phức tạp khi cần; với nhiều ứng dụng, tối ưu một lần gọi model bằng retrieval và ví dụ trong prompt là đủ [1]. Hướng dẫn của OpenAI nêu ba dấu hiệu một tác vụ đáng làm agent [2]:
@@ -270,6 +272,8 @@ Các nguyên tắc thiết kế tool đã có ở [Tool Use §3.1–3.3](../tool
 ### Hệ thống research của Anthropic
 
 Anthropic công bố chi tiết hệ thống research nhiều agent của họ [10]. Lead agent lập kế hoạch rồi sinh các sub-agent tìm kiếm song song; một agent riêng gắn trích dẫn ở cuối. Trên bộ eval research nội bộ, hệ thống gồm Claude Opus 4 làm lead và Claude Sonnet 4 làm sub-agent tốt hơn một agent Claude Opus 4 đơn lẻ 90,2% [10].
+
+![Lead agent lập kế hoạch rồi sinh các sub-agent chạy song song; mỗi sub-agent tìm kiếm trong context riêng và chỉ gửi bản tóm tắt, thường 1.000 đến 2.000 token, về context của lead; một agent riêng gắn trích dẫn trước khi trả báo cáo](images/orchestrator-workers.svg)
 
 Cái giá đi kèm:
 
@@ -602,6 +606,8 @@ def _run_tools(state, calls, executors, needs_approval, decisions, remaining_s):
         results.append({"type": "tool_result", "tool_use_id": c["id"], "content": out, "is_error": err})
     return results
 ```
+
+![Process chết sau khi refund đã chạy. Lưu checkpoint trước khi chạy tool: resume chạy lại đúng toolu_1 với cùng khoá, phía nhận trả kết quả cũ, hoàn tiền 1 lần. Chỉ lưu sau khi chạy tool: resume gọi lại model, toolu_2 mang khoá mới, hoàn tiền 2 lần](images/checkpoint-resume.svg)
 
 Những quyết định trong đoạn code này, và lý do:
 
