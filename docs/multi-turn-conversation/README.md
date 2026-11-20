@@ -471,10 +471,12 @@ Những thao tác làm mất hiệu lực mọi thinking block phía sau:
 - Sửa, sắp xếp lại, hoặc xoá một lượt cũ trong khi giữ các lượt sau, kể cả xoá tool result cũ ở phía client.
 - Chèn text theo từng request vào một lượt cũ (reminder, dòng trạng thái, số token) rồi xoá hoặc dựng lại ở request sau.
 - Dựng lại `system` hoặc `tools` giữa các request trong cùng phiên.
-- Xoá một thinking block không nằm ở đầu chuỗi.
+- Bỏ một thinking block nằm giữa các thinking block được giữ lại.
 - Ảnh hoặc tài liệu ở lượt cũ được tham chiếu qua URL mà trả về byte khác ở request sau.
 
-Những thao tác vẫn an toàn: nối thêm (kể cả system message giữa phiên), xoá một dãy thinking blocks từ đầu (cũ nhất trước), đổi tham số ngoài `system` / `tools` / `messages` (như `max_tokens`, `tool_choice`), thêm / bớt / di chuyển marker `cache_control`, và dọn context phía server (context editing, compaction).
+Những thao tác vẫn an toàn: nối thêm (kể cả system message giữa phiên), bỏ thinking blocks ở hai đầu chuỗi (cũ nhất hoặc mới nhất) hoặc bỏ tất cả (theo điều kiện bên dưới), đổi tham số ngoài `system` / `tools` / `messages` (như `max_tokens`, `tool_choice`), thêm / bớt / di chuyển marker `cache_control`, và dọn context phía server (context editing, compaction).
+
+Khi bỏ thinking blocks, phần còn lại phải là một dãy liền. Các thinking block đứng liền nhau trong một lượt được kiểm tra cùng nhau, nên bỏ cả nhóm hoặc giữ cả nhóm. Block đã bỏ thì không gửi lại ở request sau. Khi tool call còn mở (đang chờ `tool_result`), phải gửi lại thinking của lượt đó.
 
 Cache reuse và kiểm tra signature cùng phụ thuộc vào việc giữ nguyên prefix. Tuy vậy, chúng cần được kiểm tra riêng: cache hit cho biết có phần được tái dùng; signature còn ràng buộc thinking block với lịch sử đã sinh ra nó.
 
@@ -1294,72 +1296,73 @@ Danh sách này dùng khi review conversation manager hoặc giao agent kiểm t
 | 6 | Preserved thinking | [platform.claude.com/docs/en/build-with-claude/preserved-thinking](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking) |
 | 7 | Prefix checks on thinking blocks | [platform.claude.com/docs/en/build-with-claude/preserved-thinking/prefix-checks](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/prefix-checks) |
 | 8 | Fix a thinking block bound to a different conversation | [platform.claude.com/docs/en/build-with-claude/preserved-thinking/fix-bound-to-a-different-conversation](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/fix-bound-to-a-different-conversation) |
+| 9 | Change tools or instructions without failing the prefix check | [platform.claude.com/docs/en/build-with-claude/preserved-thinking/change-tools-or-instructions](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/change-tools-or-instructions) |
 
 ## OpenAI
 
 | # | Resource | URL |
 |---|----------|-----|
-| 9 | Prompt caching guide | [developers.openai.com/api/docs/guides/prompt-caching](https://developers.openai.com/api/docs/guides/prompt-caching) |
-| 10 | Conversation state | [developers.openai.com/api/docs/guides/conversation-state](https://developers.openai.com/api/docs/guides/conversation-state) |
-| 11 | Pricing | [developers.openai.com/api/docs/pricing](https://developers.openai.com/api/docs/pricing) |
-| 12 | Cookbook — Short-term memory management with sessions | [github.com/openai/openai-cookbook/.../session_memory.ipynb](https://github.com/openai/openai-cookbook/blob/main/examples/agents_sdk/session_memory.ipynb) |
+| 10 | Prompt caching guide | [developers.openai.com/api/docs/guides/prompt-caching](https://developers.openai.com/api/docs/guides/prompt-caching) |
+| 11 | Conversation state | [developers.openai.com/api/docs/guides/conversation-state](https://developers.openai.com/api/docs/guides/conversation-state) |
+| 12 | Pricing | [developers.openai.com/api/docs/pricing](https://developers.openai.com/api/docs/pricing) |
+| 13 | Cookbook — Short-term memory management with sessions | [github.com/openai/openai-cookbook/.../session_memory.ipynb](https://github.com/openai/openai-cookbook/blob/main/examples/agents_sdk/session_memory.ipynb) |
 
 ## Provider Trung Quốc
 
 | # | Resource | URL |
 |---|----------|-----|
-| 13 | DeepSeek — KV cache | [api-docs.deepseek.com/guides/kv_cache](https://api-docs.deepseek.com/guides/kv_cache) |
-| 14 | DeepSeek — Thinking mode | [api-docs.deepseek.com/guides/thinking_mode](https://api-docs.deepseek.com/guides/thinking_mode) |
-| 15 | DeepSeek — Pricing | [api-docs.deepseek.com/quick_start/pricing](https://api-docs.deepseek.com/quick_start/pricing/) |
-| 16 | DeepSeek — Anthropic API | [api-docs.deepseek.com/guides/anthropic_api](https://api-docs.deepseek.com/guides/anthropic_api) |
-| 17 | Alibaba Model Studio — Context cache | [alibabacloud.com/help/en/model-studio/context-cache](https://www.alibabacloud.com/help/en/model-studio/context-cache) |
-| 18 | Alibaba Model Studio — Pricing | [alibabacloud.com/help/en/model-studio/model-pricing](https://www.alibabacloud.com/help/en/model-studio/model-pricing) |
-| 19 | Kimi — Pricing | [platform.kimi.com/docs/pricing/chat](https://platform.kimi.com/docs/pricing/chat) |
-| 20 | Kimi — Thinking model guide | [platform.kimi.com/docs/guide/use-kimi-k2-thinking-model](https://platform.kimi.com/docs/guide/use-kimi-k2-thinking-model) |
-| 21 | Z.ai — Context caching | [docs.z.ai/guides/capabilities/cache](https://docs.z.ai/guides/capabilities/cache) |
-| 22 | Z.ai — Thinking mode | [docs.z.ai/guides/capabilities/thinking-mode](https://docs.z.ai/guides/capabilities/thinking-mode) |
-| 23 | Z.ai — Pricing | [docs.z.ai/guides/overview/pricing](https://docs.z.ai/guides/overview/pricing) |
-| 24 | MiniMax — Prompt caching | [platform.minimax.io/docs/api-reference/text-prompt-caching](https://platform.minimax.io/docs/api-reference/text-prompt-caching) |
-| 25 | MiniMax — Text generation | [platform.minimax.io/docs/guides/text-generation](https://platform.minimax.io/docs/guides/text-generation) |
-| 26 | Volcengine Ark — Context cache | [docs.volcengine.com/docs/82379/1398933](https://docs.volcengine.com/docs/82379/1398933?lang=zh) |
-| 27 | Volcengine Ark — Model pricing | [docs.volcengine.com/docs/ark/model-pricing](https://docs.volcengine.com/docs/ark/model-pricing?lang=zh) |
+| 14 | DeepSeek — KV cache | [api-docs.deepseek.com/guides/kv_cache](https://api-docs.deepseek.com/guides/kv_cache) |
+| 15 | DeepSeek — Thinking mode | [api-docs.deepseek.com/guides/thinking_mode](https://api-docs.deepseek.com/guides/thinking_mode) |
+| 16 | DeepSeek — Pricing | [api-docs.deepseek.com/quick_start/pricing](https://api-docs.deepseek.com/quick_start/pricing/) |
+| 17 | DeepSeek — Anthropic API | [api-docs.deepseek.com/guides/anthropic_api](https://api-docs.deepseek.com/guides/anthropic_api) |
+| 18 | Alibaba Model Studio — Context cache | [alibabacloud.com/help/en/model-studio/context-cache](https://www.alibabacloud.com/help/en/model-studio/context-cache) |
+| 19 | Alibaba Model Studio — Pricing | [alibabacloud.com/help/en/model-studio/model-pricing](https://www.alibabacloud.com/help/en/model-studio/model-pricing) |
+| 20 | Kimi — Pricing | [platform.kimi.com/docs/pricing/chat](https://platform.kimi.com/docs/pricing/chat) |
+| 21 | Kimi — Thinking model guide | [platform.kimi.com/docs/guide/use-kimi-k2-thinking-model](https://platform.kimi.com/docs/guide/use-kimi-k2-thinking-model) |
+| 22 | Z.ai — Context caching | [docs.z.ai/guides/capabilities/cache](https://docs.z.ai/guides/capabilities/cache) |
+| 23 | Z.ai — Thinking mode | [docs.z.ai/guides/capabilities/thinking-mode](https://docs.z.ai/guides/capabilities/thinking-mode) |
+| 24 | Z.ai — Pricing | [docs.z.ai/guides/overview/pricing](https://docs.z.ai/guides/overview/pricing) |
+| 25 | MiniMax — Prompt caching | [platform.minimax.io/docs/api-reference/text-prompt-caching](https://platform.minimax.io/docs/api-reference/text-prompt-caching) |
+| 26 | MiniMax — Text generation | [platform.minimax.io/docs/guides/text-generation](https://platform.minimax.io/docs/guides/text-generation) |
+| 27 | Volcengine Ark — Context cache | [docs.volcengine.com/docs/82379/1398933](https://docs.volcengine.com/docs/82379/1398933?lang=zh) |
+| 28 | Volcengine Ark — Model pricing | [docs.volcengine.com/docs/ark/model-pricing](https://docs.volcengine.com/docs/ark/model-pricing?lang=zh) |
 
 ## xAI
 
 | # | Resource | URL |
 |---|----------|-----|
-| 28 | Prompt caching — How it works | [docs.x.ai/developers/advanced-api-usage/prompt-caching/how-it-works](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/how-it-works) |
-| 29 | Prompt caching — Maximizing cache hits | [docs.x.ai/developers/advanced-api-usage/prompt-caching/maximizing-cache-hits](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/maximizing-cache-hits) |
-| 30 | Prompt caching — Multi-turn | [docs.x.ai/developers/advanced-api-usage/prompt-caching/multi-turn](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/multi-turn) |
-| 31 | Prompt caching — Usage and pricing | [docs.x.ai/developers/advanced-api-usage/prompt-caching/usage-and-pricing](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/usage-and-pricing) |
-| 32 | Pricing | [docs.x.ai/developers/pricing](https://docs.x.ai/developers/pricing) |
-| 33 | Reasoning | [docs.x.ai/developers/model-capabilities/text/reasoning](https://docs.x.ai/developers/model-capabilities/text/reasoning) |
-| 34 | May 15 retirement | [docs.x.ai/developers/migration/may-15-retirement](https://docs.x.ai/developers/migration/may-15-retirement) |
+| 29 | Prompt caching — How it works | [docs.x.ai/developers/advanced-api-usage/prompt-caching/how-it-works](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/how-it-works) |
+| 30 | Prompt caching — Maximizing cache hits | [docs.x.ai/developers/advanced-api-usage/prompt-caching/maximizing-cache-hits](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/maximizing-cache-hits) |
+| 31 | Prompt caching — Multi-turn | [docs.x.ai/developers/advanced-api-usage/prompt-caching/multi-turn](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/multi-turn) |
+| 32 | Prompt caching — Usage and pricing | [docs.x.ai/developers/advanced-api-usage/prompt-caching/usage-and-pricing](https://docs.x.ai/developers/advanced-api-usage/prompt-caching/usage-and-pricing) |
+| 33 | Pricing | [docs.x.ai/developers/pricing](https://docs.x.ai/developers/pricing) |
+| 34 | Reasoning | [docs.x.ai/developers/model-capabilities/text/reasoning](https://docs.x.ai/developers/model-capabilities/text/reasoning) |
+| 35 | May 15 retirement | [docs.x.ai/developers/migration/may-15-retirement](https://docs.x.ai/developers/migration/may-15-retirement) |
 
 ## Google Gemini
 
 | # | Resource | URL |
 |---|----------|-----|
-| 35 | Context caching | [aistudio.google.com/docs/caching](https://aistudio.google.com/docs/caching) |
-| 36 | Pricing | [aistudio.google.com/docs/pricing](https://aistudio.google.com/docs/pricing) |
-| 37 | Thinking — Thought signatures (Interactions API) | [aistudio.google.com/docs/thinking#signatures](https://aistudio.google.com/docs/thinking#signatures) |
-| 38 | Thought signatures (generateContent, Legacy) | [ai.google.dev/gemini-api/docs/generate-content/thought-signatures](https://ai.google.dev/gemini-api/docs/generate-content/thought-signatures) |
-| 39 | Gemini 3 developer guide (generateContent) | [ai.google.dev/gemini-api/docs/generate-content/gemini-3](https://ai.google.dev/gemini-api/docs/generate-content/gemini-3) |
-| 40 | Interactions API — Data storage and retention | [aistudio.google.com/docs/interactions-overview#data-storage-retention](https://aistudio.google.com/docs/interactions-overview#data-storage-retention) |
-| 41 | Full docs dump (dùng để tra `cachedContents`, migration sang Gemini 4 Argon) | [aistudio.google.com/llms-full.txt](https://aistudio.google.com/llms-full.txt) |
+| 36 | Context caching | [aistudio.google.com/docs/caching](https://aistudio.google.com/docs/caching) |
+| 37 | Pricing | [aistudio.google.com/docs/pricing](https://aistudio.google.com/docs/pricing) |
+| 38 | Thinking — Thought signatures (Interactions API) | [aistudio.google.com/docs/thinking#signatures](https://aistudio.google.com/docs/thinking#signatures) |
+| 39 | Thought signatures (generateContent, Legacy) | [ai.google.dev/gemini-api/docs/generate-content/thought-signatures](https://ai.google.dev/gemini-api/docs/generate-content/thought-signatures) |
+| 40 | Gemini 3 developer guide (generateContent) | [ai.google.dev/gemini-api/docs/generate-content/gemini-3](https://ai.google.dev/gemini-api/docs/generate-content/gemini-3) |
+| 41 | Interactions API — Data storage and retention | [aistudio.google.com/docs/interactions-overview#data-storage-retention](https://aistudio.google.com/docs/interactions-overview#data-storage-retention) |
+| 42 | Full docs dump (dùng để tra `cachedContents`, migration sang Gemini 4 Argon) | [aistudio.google.com/llms-full.txt](https://aistudio.google.com/llms-full.txt) |
 
 ## Papers, nghiên cứu và bài kỹ thuật
 
 | # | Resource | URL |
 |---|----------|-----|
-| 42 | Laban et al. — LLMs Get Lost In Multi-Turn Conversation (2025) | [arxiv.org/abs/2505.06120](https://arxiv.org/abs/2505.06120) |
-| 43 | Liu et al. — Lost in the Middle (2023) | [arxiv.org/abs/2307.03172](https://arxiv.org/abs/2307.03172) |
-| 44 | Chroma — Context Rot (07/2025) | [trychroma.com/research/context-rot](https://www.trychroma.com/research/context-rot) |
-| 45 | Manus — Context Engineering for AI Agents (07/2025) | [manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) |
-| 46 | vLLM — Automatic prefix caching | [docs.vllm.ai/en/stable/design/prefix_caching](https://docs.vllm.ai/en/stable/design/prefix_caching/) |
-| 47 | SGLang (RadixAttention) | [github.com/sgl-project/sglang](https://github.com/sgl-project/sglang) |
-| 48 | Qwen3 issue #1826 — empty think block breaks KV reuse | [github.com/QwenLM/Qwen3/issues/1826](https://github.com/QwenLM/Qwen3/issues/1826) |
-| 49 | vLLM forum — multi-turn cache reuse with default templates | [discuss.vllm.ai/t/.../2955](https://discuss.vllm.ai/t/decode-kv-writeback-can-multi-turn-chat-preserve-cache-reuse-with-default-templates/2955) |
+| 43 | Laban et al. — LLMs Get Lost In Multi-Turn Conversation (2025) | [arxiv.org/abs/2505.06120](https://arxiv.org/abs/2505.06120) |
+| 44 | Liu et al. — Lost in the Middle (2023) | [arxiv.org/abs/2307.03172](https://arxiv.org/abs/2307.03172) |
+| 45 | Chroma — Context Rot (07/2025) | [trychroma.com/research/context-rot](https://www.trychroma.com/research/context-rot) |
+| 46 | Manus — Context Engineering for AI Agents (07/2025) | [manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus) |
+| 47 | vLLM — Automatic prefix caching | [docs.vllm.ai/en/stable/design/prefix_caching](https://docs.vllm.ai/en/stable/design/prefix_caching/) |
+| 48 | SGLang (RadixAttention) | [github.com/sgl-project/sglang](https://github.com/sgl-project/sglang) |
+| 49 | Qwen3 issue #1826 — empty think block breaks KV reuse | [github.com/QwenLM/Qwen3/issues/1826](https://github.com/QwenLM/Qwen3/issues/1826) |
+| 50 | vLLM forum — multi-turn cache reuse with default templates | [discuss.vllm.ai/t/.../2955](https://discuss.vllm.ai/t/decode-kv-writeback-can-multi-turn-chat-preserve-cache-reuse-with-default-templates/2955) |
 
 ---
 

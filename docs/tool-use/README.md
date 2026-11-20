@@ -262,7 +262,7 @@ Ba chi tiết ít được nhắc:
 
 - **Lỗi hay xuất hiện khi model gọi song song nhiều tool.** Một báo cáo cộng đồng ghi gpt-5 "thường gọi 5–10 tool song song", và lỗi thiếu reasoning item xuất hiện khi code chia nhỏ hoặc sắp xếp lại các item đó [9]. Khi streaming, dùng reasoning item từ sự kiện `response.output_item.done`; bản trong `response.output_item.added` có thể chưa đủ `encrypted_content` [8].
 - **Gemini chỉ gắn signature vào function call đầu tiên** trong một batch song song; các call sau không có. Code tự "chuẩn hoá" bằng cách copy signature sang mọi call, hoặc tách batch thành nhiều lượt, đều làm vỡ quy tắc [30].
-- **Claude 5.1 trở lên kiểm tra prefix của thinking block.** Nếu bạn sửa bất cứ thứ gì *trước* block đó (system prompt, tools, message cũ), block bị coi là "bound to a different conversation" và request trả `400`. Cách xử lý là giữ lịch sử chỉ-thêm (append-only), hoặc đặt `thinking.block_binding.prefix_mismatch_behavior: "drop_block"` kèm beta header `thinking-binding-controls-2026-08-01` để API bỏ block không khớp thay vì báo lỗi [22].
+- **Claude có preserved thinking (Fable 5.1, 5.2, Mythos 5.1, 5.2, Opus 5.5, Sonnet 5.5, Haiku 5.5) kiểm tra prefix của thinking block.** Nếu bạn sửa bất cứ thứ gì *trước* block đó (system prompt, tools, message cũ), block bị coi là "bound to a different conversation". Khi không đặt `thinking.block_binding.prefix_mismatch_behavior`, Fable 5.2, Mythos 5.2 và Mythos 5.1 trả `400`; các model còn lại có thể trả `400` hoặc không báo lỗi, và khi không báo lỗi thì block mất hiệu lực vẫn đến model và vẫn bị tính tiền [23a]. Cách xử lý lâu dài là giữ lịch sử chỉ-thêm (append-only). Với hội thoại đã hỏng, đặt `prefix_mismatch_behavior: "drop_block"` kèm beta header `thinking-binding-controls-2026-08-01` ở mọi request sau của hội thoại đó để API bỏ block không khớp; không bật cho mọi hội thoại để giấu lỗi [23b].
 
 Quy tắc an toàn cho mọi provider: **lưu nguyên response của provider, và dựng request tiếp theo từ chính các object đó**, không phải từ bản rút gọn trong database của bạn. Bảng đầy đủ hơn theo từng thế hệ model có ở [Multi-turn Conversation §3.7](../multi-turn-conversation/#37-reasoning-và-thinking-blocks).
 
@@ -993,7 +993,7 @@ Lưu raw request và response của provider (có kiểm soát truy cập và th
 |---|---|---|
 | Model gọi tool với ID / mã bịa | Không có đường thoát khi thiếu thông tin; `tool_choice` ép buộc | Thêm hướng dẫn "không đoán", tool hỏi lại hoặc liệt kê; validate tồn tại trong code |
 | `400` thiếu tool result | Exception giữa lúc lưu tool call và tool result; bỏ qua một call trong batch song song | `execute_safely` không bao giờ raise; sửa lịch sử khi load ([§3.4](#34-lỗi-từ-tool-trả-về-cho-model-hay-xử-lý-trong-code)) |
-| Mọi request của một hội thoại đều `400` | Lịch sử đã lưu chứa tool call mồ côi hoặc thinking block bị sửa | Thêm kết quả lỗi cho call mồ côi; với Claude dùng `drop_block` hoặc bỏ block [22] |
+| Mọi request của một hội thoại đều `400` | Lịch sử đã lưu chứa tool call mồ côi, hoặc phần đứng trước một thinking block bị sửa | Thêm kết quả lỗi cho call mồ côi; với Claude, đặt `drop_block` ở mọi request sau của hội thoại đó, hoặc bỏ block bị báo lỗi cùng mọi `thinking` / `redacted_thinking` sau nó [22][23b] |
 | `400` thiếu reasoning item (OpenAI) | Code dựng lại lịch sử, lọc mất reasoning item; tỉa lịch sử không theo nhóm | Gửi lại nguyên `resp.output`; tỉa cả nhóm [9] |
 | `400` thiếu thought signature (Gemini 3+) | Dựng lại part; copy signature sai; xen kẽ FC / FR | Gửi lại part nguyên văn; FC trước, FR sau [30] |
 | `400` `tool_choice ... not supported` (Claude) | `any` / `tool` trên Opus 5.5, Sonnet 5.5, Fable 5.1, Mythos 5.1 | `auto` + strict tool, hoặc structured outputs [22] |
@@ -1093,6 +1093,8 @@ Lưu raw request và response của provider (có kiểm soát truy cập và th
 | 21 | Structured outputs (giới hạn strict) | [platform.claude.com/docs/en/build-with-claude/structured-outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) |
 | 22 | Claude API errors | [platform.claude.com/docs/en/api/errors](https://platform.claude.com/docs/en/api/errors) |
 | 23 | Thinking | [platform.claude.com/docs/en/build-with-claude/thinking](https://platform.claude.com/docs/en/build-with-claude/thinking) |
+| 23a | Preserved thinking: Prefix checks on thinking blocks | [platform.claude.com/docs/en/build-with-claude/preserved-thinking/prefix-checks](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/prefix-checks) |
+| 23b | Fix a thinking block bound to a different conversation | [platform.claude.com/docs/en/build-with-claude/preserved-thinking/fix-bound-to-a-different-conversation](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/fix-bound-to-a-different-conversation) |
 | 24 | Web search tool | [platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool) |
 | 25 | Anthropic Engineering: Writing effective tools for agents | [anthropic.com/engineering/writing-tools-for-agents](https://www.anthropic.com/engineering/writing-tools-for-agents) |
 | 26 | Anthropic Engineering: Advanced tool use | [anthropic.com/engineering/advanced-tool-use](https://www.anthropic.com/engineering/advanced-tool-use) |

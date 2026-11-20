@@ -232,7 +232,7 @@ Mỗi model Claude chỉ đọc được thinking block của chính nó và c�
 
 Thinking block của Sonnet 5.5 và Haiku 5.5 còn bị ràng buộc theo tài khoản: gửi block đó qua tài khoản khác (không liên kết) thì API bỏ block, request vẫn thành công [7]. Fallback sang cùng model nhưng qua tài khoản hoặc key của tổ chức khác cũng mất reasoning.
 
-Với Claude 5.1 trở lên, sửa `system`, `tools` hay message cũ sau khi đã có thinking block có thể làm request bị `400 Invalid signature in thinking block`. Chuỗi fallback mà đổi system prompt theo model đích sẽ gặp lỗi này. Cách xử lý (giữ lịch sử append-only, hoặc beta `thinking-binding-controls-2026-08-01` với `prefix_mismatch_behavior: "drop_block"`) có ở [1] và [Multi-turn](../multi-turn-conversation/).
+Trên các model Claude có preserved thinking (Fable 5.1, 5.2, Mythos 5.1, 5.2, Opus 5.5, Sonnet 5.5, Haiku 5.5), sửa `system`, `tools` hay message cũ sau khi đã có thinking block làm block đó không qua prefix check. Tuỳ model, request bị `400` với thông báo block "is bound to a different conversation", hoặc không báo lỗi mà model vẫn đọc và tính tiền block đã mất hiệu lực [7a]. Bản thân việc đổi `model` không tính là sửa: block mà model mới không đọc được bị bỏ, không báo lỗi [7]. Chuỗi fallback mà đổi system prompt theo model đích sẽ gặp vấn đề này. Cách xử lý (giữ lịch sử append-only, hoặc beta `thinking-binding-controls-2026-08-01` với `prefix_mismatch_behavior: "drop_block"` cho hội thoại đã hỏng) có ở [7b] và [Multi-turn](../multi-turn-conversation/).
 
 ### e. Stop reason và refusal
 
@@ -720,7 +720,7 @@ Model được yêu cầu, model thực trả lời, `stop_reason`, số lần t
 | 15 | Output bị cắt sau fallback, `stop_reason: "max_tokens"` | Tokenizer khác; thinking tính vào `max_tokens` [6] | Đếm lại token với model đích; tăng `max_tokens` |
 | 16 | Model fallback trả lời như "quên" các lượt trước | Thinking block của model cũ không đọc được ở model mới và bị bỏ lặng lẽ [7] | Ghim hội thoại vào một model; chấp nhận mất reasoning khi buộc phải chuyển |
 | 17 | Mất reasoning khi chuyển sang key của tài khoản khác dù cùng model | Block của Sonnet 5.5 và Haiku 5.5 ràng buộc theo tài khoản [7] | Replay hội thoại qua đúng tài khoản đã tạo ra nó |
-| 18 | `400 Invalid signature in thinking block` sau fallback | Đổi `system` hoặc `tools` theo model đích giữa hội thoại [1] | Lịch sử append-only; hoặc `prefix_mismatch_behavior: "drop_block"` |
+| 18 | Sau fallback: `400` "The block is bound to a different conversation", hoặc không lỗi nhưng model đọc thinking đã mất hiệu lực | Đổi `system` hoặc `tools` theo model đích giữa hội thoại [7a] | Lịch sử append-only; hoặc `prefix_mismatch_behavior: "drop_block"` cho hội thoại đã hỏng [7b] |
 | 19 | Router gửi gần hết traffic sang model mạnh | Ngưỡng quá thấp, hoặc chế độ Quality [19][23] | Đo phân bố trường `model`; chỉnh ngưỡng trên dữ liệu thật |
 | 20 | Chất lượng giảm ở một nhóm khách hàng sau khi bật router | Router không thấy nhóm đó khi huấn luyện; Bedrock routing chỉ tối ưu cho tiếng Anh [20][23] | Eval theo nhóm; giữ baseline ngoài router |
 | 21 | Model thay đổi giữa các lượt của cùng hội thoại | Router stateless chọn lại mỗi request [18] | Session affinity hoặc ghim model trong state hội thoại |
@@ -781,6 +781,8 @@ Truy cập tháng 11/2026.
 | [5] | [Claude: Stop reasons and fallback](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons) | Các giá trị `stop_reason` |
 | [6] | [Claude Haiku 5.5 migration guide](https://platform.claude.com/docs/en/models/haiku-5-5/migration-guide) | Tokenizer, thinking và `max_tokens`, prefill, computer use, Priority Tier, phong cách trả lời |
 | [7] | [Claude: Preserved thinking](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking) | Model nào đọc được thinking block của model nào, ràng buộc theo tài khoản |
+| [7a] | [Claude: Prefix checks on thinking blocks](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/prefix-checks) | Model nào trả 400, model nào có thể không báo lỗi, `prefix_mismatch_behavior` |
+| [7b] | [Claude: Fix a thinking block bound to a different conversation](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/fix-bound-to-a-different-conversation) | Thông báo lỗi, khi nào dùng `drop_block` |
 | [8] | [Claude: Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) | Ngưỡng tối thiểu theo model, giá cache read và write |
 | [9] | [Claude API: Migrating to API version 2026-10-21](https://platform.claude.com/docs/en/api/migration-2026-10-21) | Bỏ `temperature`, `top_p`, `top_k` |
 | [10] | [OpenAI: Error codes](https://developers.openai.com/api/docs/guides/error-codes) | `503 server_is_overloaded`, các mã billing và spend limit, "won't restore API access" |
