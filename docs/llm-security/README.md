@@ -4,6 +4,8 @@ Tháng 5/2025, Invariant Labs công bố một kịch bản tấn công vào Git
 
 Không có dòng code nào sai. GitHub MCP server làm đúng việc của nó; Invariant không xin CVE vì không có lỗi để vá [15]. Lỗ hổng nằm ở chỗ ghép: cùng một phiên agent vừa đọc văn bản do người lạ viết, vừa đọc được dữ liệu riêng, vừa có quyền đăng nội dung ra nơi công khai.
 
+![Kẻ tấn công mở issue chứa chỉ dẫn trong repo public; agent của nạn nhân đọc issue (A), làm theo chỉ dẫn đọc repo private (B) rồi đăng dữ liệu đó vào pull request công khai (C) mà kẻ tấn công đọc được. Không có lỗi code: lỗ hổng là ba thuộc tính trong cùng một phiên](images/github-mcp.svg)
+
 Đó là hình dạng chung của bảo mật ứng dụng LLM hiện nay. Model không phân biệt được chỉ dẫn của bạn với chỉ dẫn nằm trong dữ liệu nó đọc, và không có cách lọc nào làm việc này đáng tin cậy. OWASP viết thẳng trong bản 2026: không có cơ chế ngăn chặn đáng tin cậy nào cho prompt injection, nên phòng thủ phải nằm ở kiến trúc chứ không ở bộ lọc [1]. Câu hỏi đúng không phải "làm sao chặn injection" mà là "khi injection thành công thì nó làm được gì".
 
 Bài này đi theo thứ tự:
@@ -410,6 +412,8 @@ Test đã chạy:
 12. Vòng lặp trên, chạy với client giả lập: model đọc email rồi gọi `send_email`; `ask_user` nhận đúng tham số, từ chối; email không được gửi; model nhận `tool_result` báo lỗi ở lượt sau.
 13. Model gọi tool mãi không dừng: vòng lặp dừng sau `MAX_TURNS` request với `RuntimeError`. Model dừng vì `max_tokens`: vòng lặp báo `RuntimeError` ngay, không coi câu trả lời dở là kết quả. Model dừng vì `pause_turn`: vòng lặp gửi lại hội thoại để model chạy tiếp, như ở [Tool use §2.3](../tool-use/#23-claude-anthropic).
 
+![Session cộng dồn thuộc tính của mọi tool đã gọi và không bao giờ gỡ: đọc đơn rồi gửi email thì không hỏi; đọc đơn, đọc web rồi gửi email thì phải chờ người duyệt; gửi email trước thì không hỏi, nhưng sau khi đọc email (A và B) thì lần gửi tiếp theo phải chờ duyệt](images/session-guard.svg)
+
 Những gì code này không làm:
 
 - **Không biết nội dung tool trả về có thật sự không tin cậy không.** Bạn gán nhãn khi khai báo tool. Gán sai (gắn `get_orders` là chỉ B trong khi ghi chú đơn hàng do khách tự gõ) là phá quy tắc. Khi không chắc, gắn A.
@@ -498,6 +502,8 @@ Output của model là input không tin cậy cho mọi hệ thống phía sau. 
 ### Code: render markdown của model mà không gửi request ra ngoài
 
 Lọc bằng regex trên văn bản markdown dễ bỏ sót: link kiểu reference, autolink `<https://...>`, HTML thô, ảnh lồng trong link. Cách chắc hơn là parse bằng một parser markdown thật, rồi lọc trên token, nơi mọi cú pháp đã thành cùng một dạng.
+
+![Ảnh inline, ảnh kiểu reference, link kiểu reference và autolink viết khác nhau trong markdown nhưng sau khi parse đều thành token image hoặc link_open; một bước kiểm host trên token chặn cả bốn khi host nằm ngoài allowlist, còn ảnh từ host trong allowlist được giữ](images/parse-filter.svg)
 
 ```python
 from urllib.parse import urlsplit
