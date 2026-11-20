@@ -151,6 +151,8 @@ Trung bình che mất thứ người dùng nhớ. Một request cứ một trăm
 
 Dean và Barroso phân tích hiện tượng này trong "The Tail at Scale". Một server thường trả lời trong 10 ms nhưng p99 là 1 giây. Request chỉ chạm một server thì 1 trên 100 request chậm. Request phải chờ 100 server như thế thì 63% request chậm hơn 1 giây [20]. Trong một dịch vụ thật của Google mà họ đo, p99 của một request lẻ là 10 ms, nhưng p99 để mọi request con xong là 140 ms; riêng việc chờ 5% request con chậm nhất chiếm một nửa con số đó [20].
 
+![Khi mỗi server chỉ chậm hơn 1 giây ở 1% số lần, request chờ 1 server thì 1% request chậm, chờ 100 server thì 63% request chậm hơn 1 giây](images/tail-fanout.svg)
+
 Ứng dụng LLM có cấu trúc giống vậy theo chiều nối tiếp: một lượt trả lời gồm nhiều bước, và tổng p99 bị kéo bởi bước tệ nhất trong mỗi lần chạy. Nguồn dao động chính:
 
 1. **Độ dài output khác nhau.** Cùng một prompt có thể sinh 50 hoặc 2.000 token. Decode tỉ lệ với số token, nên đuôi phân phối độ trễ thường là đuôi phân phối độ dài.
@@ -240,6 +242,8 @@ Fast mode chạy cùng model với cấu hình inference nhanh hơn, không đ�
 - **Kiểm tra đã chạy fast chưa:** `usage.speed` là `"fast"` hoặc `"standard"`. Model không hỗ trợ trả lỗi, trừ Opus 4.6: request có `speed: "fast"` và beta header vẫn thành công nhưng chạy tốc độ thường [2].
 - **Không dùng được** với Batch API và với cam kết Priority Tier [2].
 
+![Với 600 token output, fast mode ở mức tối đa 2,5 lần rút decode từ 10 xuống 4 giây và tổng từ 11,5 xuống 5,5 giây, nhưng chữ đầu tiên vẫn đến ở giây 1,5 như tốc độ thường](images/fast-mode.svg)
+
 Nếu muốn chạy tốc độ thường thay vì chờ capacity của fast mode, tài liệu gợi ý đặt `max_retries=0` cho request fast, bắt `RateLimitError` và gửi lại không có `speed` [2]. Nhớ rằng lần gửi lại là một lần cache miss ([§2.2](#những-thứ-làm-mất-cache-và-làm-chậm)).
 
 ### Claude Priority Tier
@@ -284,6 +288,8 @@ OpenAI WebSocket mode cho phép chạy nhiều hội thoại song song trên m�
 ### Speculative execution: chạy trước bước sau, bỏ nếu đoán sai
 
 Khi bước B phụ thuộc bước A nhưng A gần như luôn cho một kết quả, chạy A và B cùng lúc; nếu A ra kết quả khác dự đoán thì huỷ B [9]. Trường hợp điển hình là kiểm duyệt: chạy kiểm duyệt input cùng lúc với sinh câu trả lời, và huỷ câu trả lời nếu input bị chặn. Đoán đúng thì bước A gần như không thêm độ trễ [9].
+
+![Kiểm duyệt rồi mới sinh thì chữ đầu đến ở giây 2,5; chạy kiểm duyệt cùng lúc với sinh thì chữ đầu đến ở giây 1,5; nếu input bị chặn, nhánh sinh bị huỷ ngay khi kiểm duyệt xong ở giây 1,0](images/speculative-moderation.svg)
 
 Cái giá là token của nhánh bị huỷ. Với Claude, request bị client ngắt giữa chừng vẫn bị tính tiền; các provider khác nhau ở việc có dừng sinh khi bị ngắt không ([Streaming §3.7](../streaming/#37-người-dùng-huỷ-dừng-request-phía-provider-để-không-tốn-token)). Speculative execution đáng làm khi xác suất đoán đúng cao và nhánh bị huỷ thường bị huỷ sớm.
 
@@ -511,6 +517,8 @@ Hai lưu ý từ tài liệu provider. Flex của Gemini có thể nằm trong h
 - **Hedge theo chữ đầu tiên.** Khi đã stream chữ cho người dùng thì không đổi nguồn được nữa. Điểm quyết định tự nhiên là: bản chính chưa có chữ đầu tiên sau ngưỡng thì gửi bản thứ hai.
 - **Bản bị huỷ vẫn có thể bị tính tiền** ([Streaming §3.7](../streaming/#37-người-dùng-huỷ-dừng-request-phía-provider-để-không-tốn-token)), và nó tiêu rate limit đúng lúc hệ thống có thể đang quá tải. Giới hạn tỉ lệ hedge.
 - **Hai bản cho hai câu trả lời khác nhau.** Không vấn đề gì nếu bạn chỉ dùng một bản, nhưng đừng ghi log hay lưu kết quả của bản thua như thể nó là câu trả lời.
+
+![Bản chính chưa có chữ đầu sau p95 TTFT 2 giây nên gửi bản thứ hai; bản hai có chữ đầu ở giây 3,2, được stream cho người dùng và bản chính bị huỷ; không hedge thì chữ đầu ở giây 6](images/hedged-request.svg)
 
 Code: hàm `hedged` chạy một coroutine, chờ `hedge_after_s`, nếu chưa xong và còn ngân sách thì chạy thêm một bản, lấy bản thành công đến trước, huỷ bản còn lại. `HedgeBudget` giới hạn số hedge ở khoảng `ratio` tổng số request.
 

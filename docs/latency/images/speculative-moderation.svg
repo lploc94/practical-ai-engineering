@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" width="820" height="440" role="img" aria-label="Kiểm duyệt rồi mới sinh thì chữ đầu đến ở giây 2,5; chạy kiểm duyệt cùng lúc với sinh thì chữ đầu đến ở giây 1,5; nếu input bị chặn, nhánh sinh bị huỷ ngay khi kiểm duyệt xong"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="440" rx="12"/><text class="title" x="20" y="38">Kiểm duyệt input: chạy trước rồi sinh, hay chạy cùng lúc</text><rect class="tok" x="20" y="59" width="14" height="14" rx="3"/><text class="sub" x="40" y="70">kiểm duyệt input</text><rect class="blue" x="176" y="59" width="14" height="14" rx="3"/><text class="sub" x="196" y="70">TTFT</text><rect class="orange" x="248" y="59" width="14" height="14" rx="3"/><text class="sub" x="268" y="70">chữ trả lời</text><text class="row" x="20" y="112">Tuần tự</text><text class="sub" x="20" y="129">kiểm xong mới sinh</text><rect class="tok" x="231.0" y="100" width="133.0" height="26" rx="4"/><text class="lbl" style="font-size:12px" x="297.5" y="117.0">kiểm duyệt</text><rect class="blue" x="366.0" y="100" width="200.5" height="26" rx="4"/><rect class="orange" x="568.5" y="100" width="200.5" height="26" rx="4"/><line class="lfg dash" x1="567.5" y1="94" x2="567.5" y2="142"/><text class="sub halo" x="573.5" y="144">chữ đầu: giây 2,5</text><text class="row" x="20" y="206">Speculative</text><text class="sub" x="20" y="223">input hợp lệ</text><rect class="tok" x="231.0" y="186" width="133.0" height="26" rx="4"/><text class="lbl" style="font-size:12px" x="297.5" y="203.0">kiểm duyệt: ok</text><rect class="blue" x="231.0" y="218" width="200.5" height="26" rx="4"/><rect class="orange" x="433.5" y="218" width="335.5" height="26" rx="4"/><line class="lfg dash" x1="432.5" y1="180" x2="432.5" y2="260"/><text class="sub halo" x="438.5" y="262">chữ đầu: giây 1,5</text><text class="row" x="20" y="306">Speculative</text><text class="sub" x="20" y="323">input bị chặn</text><rect class="tok" x="231.0" y="286" width="133.0" height="26" rx="4"/><text class="lbl" style="font-size:12px" x="297.5" y="303.0">kiểm duyệt: chặn</text><rect class="blue" x="231.0" y="318" width="133.0" height="26" rx="4"/><rect class="slot" x="366.0" y="318" width="65.5" height="26" rx="4"/><text class="sub" x="440.5" y="335.0">giây 1,0: huỷ nhánh sinh; request đã gửi vẫn tính tiền</text><line class="axis" x1="230" y1="366" x2="770" y2="366"/><line class="axis" x1="230.0" y1="366" x2="230.0" y2="371"/><text class="sub mid" x="230.0" y="384">0 s</text><line class="axis" x1="365.0" y1="366" x2="365.0" y2="371"/><text class="sub mid" x="365.0" y="384">1 s</text><line class="axis" x1="500.0" y1="366" x2="500.0" y2="371"/><text class="sub mid" x="500.0" y="384">2 s</text><line class="axis" x1="635.0" y1="366" x2="635.0" y2="371"/><text class="sub mid" x="635.0" y="384">3 s</text><line class="axis" x1="770.0" y1="366" x2="770.0" y2="371"/><text class="sub mid" x="770.0" y="384">4 s</text><text class="cap2" x="20" y="410">Nếu kiểm duyệt xong sau chữ đầu, giữ output lại tới khi kiểm xong rồi mới gửi cho người dùng.</text><text class="cap2" x="20" y="428">Giả định: kiểm duyệt 1,0 s, TTFT 1,5 s.</text></svg>

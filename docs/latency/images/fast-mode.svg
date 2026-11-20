@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 330" width="820" height="330" role="img" aria-label="Với 600 token output, fast mode rút decode từ 10 xuống 4 giây và tổng từ 11,5 xuống 5,5 giây, nhưng chữ đầu tiên vẫn đến ở giây 1,5"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="330" rx="12"/><text class="title" x="20" y="38">Fast mode: chữ chạy nhanh hơn, chữ đầu không đến sớm hơn</text><rect class="blue" x="20" y="59" width="14" height="14" rx="3"/><text class="sub" x="40" y="70">TTFT: tới chữ đầu tiên</text><rect class="orange" x="218" y="59" width="14" height="14" rx="3"/><text class="sub" x="238" y="70">decode: 600 token output</text><text class="row" x="20" y="121">Tốc độ thường</text><text class="sub" x="20" y="138">60 tokens/giây</text><rect class="blue" x="200" y="106" width="61.8" height="34" rx="4"/><rect class="orange" x="263.8" y="106" width="425.0" height="34" rx="4"/><text class="lbl" x="476.2" y="128.0">10 s</text><text class="sub" x="696.8" y="127.0">xong: 11,5 s</text><text class="row" x="20" y="201">Fast mode</text><text class="sub" x="20" y="218">150 tokens/giây (×2,5)</text><rect class="blue" x="200" y="186" width="61.8" height="34" rx="4"/><rect class="orange" x="263.8" y="186" width="170.0" height="34" rx="4"/><text class="lbl" x="348.8" y="208.0">4 s</text><text class="sub" x="441.8" y="207.0">xong: 5,5 s</text><line class="lfg dash" x1="263.8" y1="96" x2="263.8" y2="230"/><text class="sub halo" x="269.8" y="236">chữ đầu tiên: giây 1,5 ở cả hai</text><line class="axis" x1="200" y1="260" x2="710" y2="260"/><line class="axis" x1="200.0" y1="260" x2="200.0" y2="265"/><text class="sub mid" x="200.0" y="278">0 s</text><line class="axis" x1="285.0" y1="260" x2="285.0" y2="265"/><text class="sub mid" x="285.0" y="278">2 s</text><line class="axis" x1="370.0" y1="260" x2="370.0" y2="265"/><text class="sub mid" x="370.0" y="278">4 s</text><line class="axis" x1="455.0" y1="260" x2="455.0" y2="265"/><text class="sub mid" x="455.0" y="278">6 s</text><line class="axis" x1="540.0" y1="260" x2="540.0" y2="265"/><text class="sub mid" x="540.0" y="278">8 s</text><line class="axis" x1="625.0" y1="260" x2="625.0" y2="265"/><text class="sub mid" x="625.0" y="278">10 s</text><line class="axis" x1="710.0" y1="260" x2="710.0" y2="265"/><text class="sub mid" x="710.0" y="278">12 s</text><text class="cap2" x="20" y="318">Giả định: TTFT 1,5 s, 600 token output, 60 tokens/giây; fast mode lấy mức tối đa 2,5 lần.</text></svg>
