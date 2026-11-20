@@ -2,3 +2,4 @@
 .codex-review/
 _parts/
 .cross-review/
+__pycache__/

@@ -34,3 +34,4 @@ Các tài liệu trong repo được tổ chức theo từng chủ đề lớn.
 - `README.md` (phần mở rộng viết thường) là tài liệu chính của chủ đề đó
 - File phụ chỉ tách ra khi chủ đề đã đủ lớn
 - Thêm chủ đề mới thì cập nhật cả file này và `README.md` ở gốc repo
+- Hình minh họa và ảnh động làm theo [ILLUSTRATIONS.md](./ILLUSTRATIONS.md)

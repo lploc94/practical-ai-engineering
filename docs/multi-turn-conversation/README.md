@@ -177,6 +177,8 @@ Tổng input ≈ N·S + t·N(N+1)/2
 
 Số hạng thứ hai tăng theo `N²`: số lượt tăng gấp đôi thì lượng lịch sử gửi lại tăng gần gấp bốn. Trong ví dụ cụ thể ở [§1.4](#14-kinh-tế-học-của-prompt-caching), `S = 8.000`, mỗi lượt thêm 300 token user và 700 token assistant. Sau 30 lượt, tổng input là 684.000 token, dù nội dung mới chỉ khoảng 38.000 token. Hơn 90% input là phần lặp lại. Cache cho phép tính phần lặp lại đủ điều kiện theo giá đọc, thấp hơn giá input thông thường.
 
+![Biểu đồ cột 30 request: input tăng từ 8.300 lên 37.300 token, khoảng 95% tổng input là lịch sử gửi lại từ request trước](images/quadratic-input.svg)
+
 Cache còn giảm thời gian đến token đầu tiên (TTFT) vì model xử lý lại ít input hơn. Mức cải thiện phụ thuộc vào lượng cache thực sự đọc được và các yếu tố khác như tải hệ thống; hội thoại dài vẫn cần được đo riêng.
 
 ## 1.2 KV cache và vì sao cache chỉ khớp theo prefix
@@ -188,22 +190,17 @@ Inference của một transformer decoder có hai pha:
 - **Prefill**: model đọc toàn bộ input một lượt, tính ra key và value (KV) của attention cho từng token ở từng layer. Đây là pha tốn compute, chạy song song được.
 - **Decode**: model sinh từng token mới, mỗi token cần attend vào KV của tất cả token trước nó.
 
+![Hai pha prefill và decode: prefill tính KV của cả prompt song song, decode sinh từng token và nối thêm KV của nó vào cache](images/prefill-decode.svg)
+
 Trong quá trình decode, model giữ KV của các token trước trong bộ nhớ GPU. Đó là **KV cache** của một request. Prompt caching giữ lại KV của prefix để request khác có cùng prefix có thể dùng tiếp, giảm phần phải prefill.
 
 ### Vì sao chỉ tái dùng được prefix
 
 Attention trong decoder là causal: biểu diễn của token thứ `i` ở mỗi layer được tính từ token `i` và mọi token đứng trước nó. Từ layer thứ hai trở đi, KV của token `i` phụ thuộc vào toàn bộ chuỗi `[0, i]`.
 
-```text
-Request A: [t0 t1 t2 t3 t4 t5 t6 t7]
-Request B: [t0 t1 t2 X  t4 t5 t6 t7]
-                     ↑
-            khác từ vị trí 3
+Lấy hai request 8 token: A là `t0 … t7`, B giống hệt A nhưng token ở vị trí 3 đổi thành `X`. KV của `t0` đến `t2` trong B giống A nên tái dùng được; KV từ `X` trở đi phải tính lại.
 
-KV(t0..t2): giống nhau → tái dùng được
-KV(t3..t7) của B: phụ thuộc vào X → phải tính lại,
-                  dù t4..t7 giống hệt A về mặt token
-```
+![Request A và B khác nhau ở vị trí 3: KV của t0 đến t2 dùng lại từ cache, KV từ vị trí 3 trở đi phải tính lại dù t4 đến t7 giống hệt A](images/prefix-match.svg)
 
 Trong ví dụ trên, `t4` đến `t7` vẫn là những token cũ nhưng ngữ cảnh phía trước chúng đã đổi. Vì vậy cache chỉ dùng được đến trước `X`. Một timestamp thay đổi ở đầu system prompt cũng gây ra hiệu ứng này: phần đứng trước nó còn có thể tái dùng, phần sau phải tính lại.
 
@@ -279,6 +276,8 @@ Một cách cân bằng là rút gọn theo ngưỡng:
 - Khi chạm ngưỡng, compact, tóm tắt hoặc dùng tính năng dọn phía server. Phần lịch sử mới trở thành prefix cho các lượt tiếp theo.
 - Nếu dùng cửa sổ trượt hoặc xoá tool result cũ ở mỗi request, prefix sẽ thay đổi liên tục. Cần tính cả chi phí xử lý lại phần đó khi so với phương án rút gọn theo lô.
 
+![Hai biểu đồ 40 request với cùng giới hạn lịch sử 24K token: cửa sổ trượt phải prefill lại gần hết lịch sử ở mọi request sau khi đầy cửa sổ, compact theo ngưỡng chỉ mất cache một lần](images/trim-vs-compact.svg)
+
 Các cách rút gọn và rủi ro của từng cách được so sánh ở [§3.8](#38-khi-context-quá-dài-trim-summarize-compact).
 
 ## 1.4 Kinh tế học của prompt caching
@@ -343,6 +342,8 @@ Với implicit caching, provider tự tìm phần có thể tái dùng. Ứng d�
 ### Routing: cache nằm trên một máy cụ thể
 
 Cache phải nằm ở nơi request có thể truy cập. Nếu KV đang ở một máy mà request được chuyển sang máy khác, prefix giống nhau vẫn có thể miss. Provider có thể định tuyến theo hash của phần đầu prompt, kết hợp gợi ý từ client:
+
+![Request có prefix P đến máy đang giữ KV của P thì cache hit; request cùng prefix bị đưa sang máy khác thì miss và phải prefill lại](images/cache-routing.svg)
 
 | Provider | Gợi ý routing | Ghi chú |
 |---|---|---|

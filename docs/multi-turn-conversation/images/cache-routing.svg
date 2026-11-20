@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" width="820" height="360" role="img" aria-label="Hai request cùng prefix: request đến máy đang giữ KV thì cache hit, request bị đưa sang máy khác thì miss và phải prefill lại"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+@keyframes k1{0.0%{opacity:0} 4%{opacity:0} 7%{opacity:1} 95%{opacity:1} 100.0%{opacity:0.0}}@keyframes k2{0.0%{opacity:0} 10%{opacity:0} 13%{opacity:1} 44%{opacity:1} 47%{opacity:0} 95%{opacity:0} 100.0%{opacity:0.0}}@keyframes k3{0.0%{opacity:0} 16%{opacity:0} 19%{opacity:1} 44%{opacity:1} 47%{opacity:0} 95%{opacity:0} 100.0%{opacity:0.0}}@keyframes k4{0.0%{opacity:0} 10%{opacity:0} 13%{opacity:1} 44%{opacity:1} 47%{opacity:0} 95%{opacity:0} 100.0%{opacity:0.0}}@keyframes k5{0.0%{opacity:0} 56%{opacity:0} 59%{opacity:1} 95%{opacity:1} 100.0%{opacity:0.0}}@keyframes k6{0.0%{opacity:0} 62%{opacity:0} 65%{opacity:1} 95%{opacity:1} 100.0%{opacity:0.0}}@keyframes k7{0.0%{opacity:0} 56%{opacity:0} 59%{opacity:1} 95%{opacity:1} 100.0%{opacity:0.0}}</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="360" rx="12"/><text class="title" x="20" y="38">Cache nằm trên một máy cụ thể</text><rect class="blue" x="570" y="25" width="14" height="14" rx="3"/><text class="sub" x="590" y="36">cache hit</text><rect class="hatch" x="677" y="25" width="14" height="14" rx="3"/><text class="sub" x="697" y="36">miss: prefill lại</text><rect class="tok" x="20" y="140" width="170" height="64" rx="10" /><text class="row mid" x="105.0" y="168">Request</text><text class="sub mid" x="105.0" y="187">prefix P</text><rect class="tok" x="270" y="140" width="150" height="64" rx="10" /><text class="row mid" x="345.0" y="168">Router</text><text class="sub mid" x="345.0" y="187">hash(prefix, cache key)</text><rect class="tok" x="515" y="62" width="290" height="84" rx="10" /><text class="row" x="529" y="88">Máy A</text><rect class="tok" x="515" y="206" width="290" height="84" rx="10" /><text class="row" x="529" y="232">Máy B</text><g ><rect class="blue" x="529" y="100" width="130" height="34" rx="7"/><text class="lbl" x="594.0" y="122.0">KV của P</text></g><rect class="slot" x="529" y="244" width="130" height="34" rx="7"/><text class="sub mid" x="594.0" y="265">chưa có KV của P</text><g class="a-show" style="animation:k1 16s linear infinite"><line class="lfg" x1="196" y1="172" x2="262" y2="172" marker-end="url(#afg)"/></g><g class="a-show" style="animation:k2 16s linear infinite"><path class="lblue" d="M426,160 C486,160 445,104 507,104" marker-end="url(#ablue)"/></g><g class="a-show" style="animation:k3 16s linear infinite"><rect class="lblue" x="525" y="96" width="138" height="42" rx="9"/><text class="cap" x="673" y="115">hit: đọc KV,</text><text class="cap" x="673" y="133">bỏ qua prefill P</text></g><g class="a-hide" style="animation:k4 16s linear infinite"><text class="cap" x="20" y="326">Router đưa request về máy đã giữ KV của prefix P (cùng prefix, cùng cache key) → cache hit.</text></g><g class="a-show" style="animation:k5 16s linear infinite"><path class="lred dash" d="M426,184 C486,184 445,248 507,248" marker-end="url(#ared)"/></g><g class="a-show" style="animation:k6 16s linear infinite"><g ><rect class="hatch" x="529" y="244" width="130" height="34" rx="7"/><text class="lbl" x="594.0" y="266.0">prefill lại P</text></g><text class="cap" x="673" y="259">miss: prefix giống</text><text class="cap" x="673" y="277">nhưng KV ở máy A</text></g><g class="a-hide" style="animation:k7 16s linear infinite"><text class="cap" x="20" y="326">Cùng prefix P nhưng request sang máy khác (traffic tràn, thiếu cache key) → miss.</text></g><g class="static-only"><text class="cap" x="20" y="326">Cùng prefix P: đến máy đang giữ KV thì hit, sang máy khác thì miss và phải prefill lại.</text></g><text class="cap2" x="20" y="348">Gợi ý routing: prompt_cache_key (OpenAI, xAI Responses), x-grok-conv-id (xAI Chat Completions).</text></svg>
