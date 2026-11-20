@@ -1,10 +1,14 @@
 """Sinh prefix-binding.svg: SVG tĩnh minh hoạ sửa lịch sử làm mất hiệu lực thinking block (§1.5).
 
-Từ Claude 5.1, signature của mỗi thinking block ghi lại prefix đã sinh ra nó: system,
-tools và mọi message trước đó [9]. Sửa một phần trong prefix thì block đó và mọi block
-phía sau mất hiệu lực; API trả 400 hoặc bỏ block, tuỳ tài khoản và cấu hình
-thinking.block_binding.prefix_mismatch_behavior. Nối thêm message mới ở cuối không đụng
-tới prefix của block nào. Hội thoại là ví dụ, không có số liệu.
+Trên các model Claude có preserved thinking (Fable 5.1, 5.2, Mythos 5.1, 5.2, Opus 5.5,
+Sonnet 5.5, Haiku 5.5), signature của mỗi thinking block ghi lại prefix đã sinh ra nó:
+system, tools và mọi message trước đó [9]. Sửa một phần trong prefix thì mọi thinking
+block đứng sau chỗ sửa mất hiệu lực; block đứng trước vẫn hợp lệ. Khi không đặt
+thinking.block_binding.prefix_mismatch_behavior, tuỳ model mà API trả 400 hoặc không báo
+lỗi; khi không báo lỗi, block mất hiệu lực vẫn đến model và vẫn bị tính tiền [9].
+Item Message Batches không đặt cấu hình này thì không nhận 400 (chỉ nêu trong README).
+Nối thêm message mới ở cuối không đụng tới prefix của block nào. Hội thoại là ví dụ,
+không có số liệu.
 
 Chạy: python3 make_prefix_binding.py
 """
@@ -33,10 +37,10 @@ ROWS = [
     ("Sửa user 2", 5, None, 214),
     ("Sửa system", 0, None, 312),
 ]
-H = 412
+H = 432
 
 body: list[str] = []
-body.append('<text class="title" x="20" y="38">Claude 5.1+: sửa phần trước làm hỏng thinking phía sau</text>')
+body.append('<text class="title" x="20" y="38">Claude: sửa phần trước làm hỏng thinking phía sau</text>')
 body.append('<text class="cap2" x="20" y="62">Signature của thinking block ghi lại prefix sinh ra nó: '
             'system, tools và mọi message trước nó.</text>')
 body.append(svgkit.legend(W - 300, 92, [("blue", "còn hợp lệ"), ("hatch", "mất hiệu lực")]))
@@ -72,11 +76,13 @@ notes = {
 }
 for r, text in notes.items():
     body.append(f'<text class="cap" x="{X0}" y="{ROWS[r][3] + BH + 24}">{text}</text>')
-body.append(f'<text class="cap2" x="20" y="{H - 16}">Block mất hiệu lực: API trả 400 hoặc bỏ block, '
-            'tuỳ tài khoản và thinking.block_binding.</text>')
+body.append(f'<text class="cap2" x="20" y="{H - 38}">Request thường không đặt prefix_mismatch_behavior: tuỳ model, '
+            'API trả 400,</text>'
+            f'<text class="cap2" x="20" y="{H - 18}">hoặc không báo lỗi mà vẫn gửi block mất hiệu lực tới model '
+            'và tính tiền.</text>')
 
 assert xs[-1] + ITEMS[-1][1] <= W - 20
 
 svgkit.write(__file__, "prefix-binding.svg", svgkit.svg(
-    W, H, "Claude 5.1 trở lên: nối thêm message ở cuối giữ mọi thinking block hợp lệ; sửa user 2 làm "
+    W, H, "Claude, model có preserved thinking: nối thêm message ở cuối giữ mọi thinking block hợp lệ; sửa user 2 làm "
     "mất hiệu lực thinking sinh sau nó nhưng thinking sinh trước vẫn hợp lệ; sửa system prompt làm mất hiệu lực mọi thinking block", body))
