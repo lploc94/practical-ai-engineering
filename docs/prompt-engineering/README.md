@@ -125,6 +125,8 @@ Model mới ít nhạy hơn, nhưng không hết hẳn. Hua và cộng sự (EMN
 
 **Không deterministic, kể cả khi bạn muốn.** Thinking Machines Lab chạy Qwen3-235B 1.000 lần với cùng prompt, temperature 0, và nhận được 80 output khác nhau. Các output giống nhau ở 102 token đầu, rồi tách ra từ token 103. Nguyên nhân không phải race condition, mà là kích thước batch trên server thay đổi theo tải, làm thứ tự phép cộng số thực thay đổi theo [41]. Chỉ khi dùng kernel batch-invariant, cả 1.000 output mới giống hệt nhau. Các provider thương mại không hứa điều này. Hơn nữa, như bảng ở phần Tra cứu nhanh cho thấy, nhiều model mới không còn cho bạn đặt temperature.
 
+![Chạy 1.000 lần cùng prompt ở temperature 0: mọi output giống nhau đến token 102 rồi bắt đầu tách từ token 103, rẽ tiếp ở các token sau thành 80 output khác nhau, vì batch size đổi theo tải làm đổi thứ tự cộng số thực; kernel batch-invariant cho 1.000 output giống hệt](images/nondeterminism-fork.svg)
+
 Hệ quả: so sánh một output trước và sau khi sửa prompt không nói lên được gì. Một thay đổi prompt cần được đánh giá như một thay đổi code trên một hệ thống ngẫu nhiên. Nghĩa là chạy trên một bộ dữ liệu, nhiều lần, rồi so sánh phân phối kết quả ([§3.4](#34-regression-test-khi-đổi-prompt)).
 
 ## 1.2 System prompt, user message và vai trò của từng phần
@@ -547,6 +549,8 @@ Prompt caching tái sử dụng phần *đầu* prompt khi nó giống hệt l�
 - **Thứ tự này trùng với khuyến nghị về chất lượng.** Tài liệu dài trước, câu hỏi cuối ([§2.2](#22-đưa-tài-liệu-dài-vào-prompt-thứ-tự-trích-dẫn)) cũng là thứ tự tốt cho cache. Hiếm khi bạn phải chọn giữa hai mục tiêu.
 - **Byte giống hệt, không chỉ nội dung giống nhau.** Thứ tự key trong JSON, khoảng trắng cuối dòng, chuẩn Unicode NFC hay NFD ([§3.6](#36-đa-ngôn-ngữ-prompt-tiếng-anh-hay-tiếng-việt)) đều có thể khiến hai prompt "giống nhau" khác nhau về byte.
 
+![Request thứ hai trong cùng phiên: dòng giờ đổi mỗi request đặt ở đầu system prompt làm chỉ dẫn, ví dụ, tài liệu tĩnh và dữ liệu phiên phía sau phải tính lại dù không đổi; đặt phần ổn định trước, ngày render một lần đầu phiên, thì chỉ retrieval và câu hỏi là phần mới](images/cache-layout.svg)
+
 ## 3.4 Regression test khi đổi prompt
 
 Phần này chỉ nêu những điểm đặc thù của prompt. Phương pháp eval đầy đủ (golden dataset, LLM-as-judge, số mẫu cần thiết) sẽ có trong [tài liệu Evaluation](../evaluation/).
@@ -624,7 +628,9 @@ Ba điều rút ra, phần lớn không có trong các bài hướng dẫn:
 
 1. **Tokenizer mới thu hẹp khoảng cách rất nhiều.** Từ 2,13× xuống 1,28×. Các con số "tiếng Việt tốn gấp đôi tiếng Anh" lan truyền trên mạng thường đến từ tokenizer cũ.
 2. **Bỏ dấu không tiết kiệm token.** Với `o200k_base`, bản không dấu còn tốn hơn bản có dấu, vì tokenizer đã học các âm tiết tiếng Việt có dấu phổ biến như một token. Bỏ dấu còn làm mất nghĩa ("bàn", "bán", "bạn" đều thành "ban").
-3. **NFD có thể đắt hơn NFC nhiều lần.** Ở dạng NFD, mỗi chữ có dấu bị tách thành chữ cái gốc cộng một hoặc hai ký tự dấu kết hợp, ví dụ "ệ" thành "e" + dấu mũ + dấu nặng. Văn bản trông hoàn toàn giống nhau trên màn hình. Văn bản NFD thường đến từ tên file trên macOS, copy từ một số file PDF, hoặc bộ gõ cũ. Ngoài chi phí, NFD còn làm vỡ prompt cache (khác byte), làm hỏng so khớp chuỗi trong eval, và có thể làm giảm chất lượng vì model ít thấy dạng này khi huấn luyện. Tỷ lệ cụ thể phụ thuộc tokenizer và dữ liệu; hãy đo trên dữ liệu thật.
+3. **NFD có thể đắt hơn NFC nhiều lần.** Ở dạng NFD, mỗi chữ có dấu bị tách thành chữ cái gốc cộng một hoặc hai ký tự dấu kết hợp, ví dụ "ệ" thành "e" + dấu nặng + dấu mũ. Văn bản trông hoàn toàn giống nhau trên màn hình. Văn bản NFD thường đến từ tên file trên macOS, copy từ một số file PDF, hoặc bộ gõ cũ. Ngoài chi phí, NFD còn làm vỡ prompt cache (khác byte), làm hỏng so khớp chuỗi trong eval, và có thể làm giảm chất lượng vì model ít thấy dạng này khi huấn luyện. Tỷ lệ cụ thể phụ thuộc tokenizer và dữ liệu; hãy đo trên dữ liệu thật.
+
+![Chữ ệ ở dạng NFC là 1 code point, 3 byte; ở dạng NFD là e cộng dấu nặng cộng dấu mũ, 3 code point, 5 byte. Hai dạng hiển thị giống hệt nhưng khác byte nên làm vỡ prompt cache và so khớp chuỗi](images/nfc-nfd.svg)
 
 Cách xử lý: chuẩn hoá mọi văn bản về NFC (`unicodedata.normalize("NFC", s)` trong Python, `s.normalize("NFC")` trong JavaScript) ở ranh giới hệ thống, gồm input người dùng, tài liệu được ingest và chính file template prompt. Với Claude và Gemini, tokenizer khác `tiktoken`, nên hãy đo bằng API đếm token của provider trên dữ liệu thật của bạn.
 

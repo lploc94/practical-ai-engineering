@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" width="900" height="420" role="img" aria-label="Chạy 1.000 lần cùng prompt ở temperature 0: mọi output giống nhau đến token 102 rồi bắt đầu tách từ token 103, rẽ tiếp ở các token sau thành 80 output khác nhau, vì batch size đổi theo tải làm đổi thứ tự cộng số thực; kernel batch-invariant cho 1.000 output giống hệt"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="900" height="420" rx="12"/><text class="title" x="20" y="38">Cùng prompt, temperature 0, vẫn ra 80 output khác nhau</text><text class="cap2" x="20" y="62">Qwen3-235B chạy 1.000 lần với cùng một prompt (Thinking Machines Lab).</text><rect class="blue" x="20" y="83" width="14" height="14" rx="3"/><text class="sub" x="40" y="94">giống nhau ở mọi output</text><rect class="orange" x="225" y="83" width="14" height="14" rx="3"/><text class="sub" x="245" y="94">bắt đầu khác nhau</text><text class="row" x="20" y="170">Kernel thường</text><text class="sub" x="20" y="188">batch size đổi theo tải</text><rect class="blue" x="200" y="152.0" width="360" height="40" rx="7"/><text class="cap mid" x="380.0" y="177">token 1–102: giống nhau ở cả 1.000 output</text><path class="lorange" d="M560,172 C585.0,172 585.0,142 610,142"/><circle class="forange" cx="610" cy="142" r="3"/><path class="lorange" d="M610,142 C655.0,142 655.0,110 700,110"/><circle class="forange" cx="700" cy="110" r="3.5"/><path class="lorange" d="M610,142 C655.0,142 655.0,128 700,128"/><circle class="forange" cx="700" cy="128" r="3.5"/><path class="lorange" d="M610,142 C655.0,142 655.0,146 700,146"/><circle class="forange" cx="700" cy="146" r="3.5"/><path class="lorange" d="M560,172 C600.0,172 600.0,202 640,202"/><circle class="forange" cx="640" cy="202" r="3"/><path class="lorange" d="M640,202 C670.0,202 670.0,198 700,198"/><circle class="forange" cx="700" cy="198" r="3.5"/><path class="lorange" d="M640,202 C670.0,202 670.0,216 700,216"/><circle class="forange" cx="700" cy="216" r="3.5"/><path class="lorange" d="M640,202 C670.0,202 670.0,234 700,234"/><circle class="forange" cx="700" cy="234" r="3.5"/><circle class="forange" cx="560" cy="172" r="3.5"/><text class="sub end halo" x="560" y="210.0">rẽ lần đầu: token 103</text><text class="sub halo" x="620" y="256">rẽ tiếp ở các token sau</text><text class="row" x="716" y="170">80 output</text><text class="sub" x="716" y="188">khác nhau khi kết thúc</text><text class="row" x="20" y="306">Kernel</text><text class="row" x="20" y="324">batch-invariant</text><rect class="blue" x="200" y="290" width="500" height="40" rx="7"/><text class="cap mid" x="450.0" y="315">mọi token: cả 1.000 output giống hệt nhau</text><text class="cap" x="20" y="372">Tải đổi → batch size đổi → thứ tự cộng số thực trong kernel đổi → logit lệch rất nhỏ → có lúc đổi token được chọn.</text><text class="cap2" x="20" y="396">Cộng số thực không kết hợp: (0.1 + 1e20) − 1e20 = 0, còn 0.1 + (1e20 − 1e20) = 0.1.</text></svg>

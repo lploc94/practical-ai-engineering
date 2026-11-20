@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 344" width="860" height="344" role="img" aria-label="Chữ ệ ở dạng NFC là 1 code point, 3 byte; ở dạng NFD là e cộng dấu nặng cộng dấu mũ, 3 code point, 5 byte. Hai dạng hiển thị giống hệt nhưng khác byte nên làm vỡ prompt cache và so khớp chuỗi"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="860" height="344" rx="12"/><text class="title" x="20" y="38">Cùng một chữ "ệ", hai chuỗi byte khác nhau</text><text class="cap2" x="20" y="62">Trên màn hình giống hệt; với tokenizer, prompt cache và phép so chuỗi thì đây là hai chuỗi khác nhau.</text><rect class="blue" x="20" y="81" width="14" height="14" rx="3"/><text class="sub" x="40" y="92">NFC: dạng nên chuẩn hoá về</text><rect class="hatch" x="246" y="81" width="14" height="14" rx="3"/><text class="sub" x="266" y="92">NFD: khác byte, làm vỡ cache và so khớp</text><text class="sub" x="150" y="118">hiển thị</text><text class="sub" x="250" y="118">code point</text><text class="sub" x="610" y="118">byte UTF-8</text><text class="row" x="20" y="151">NFC</text><text class="sub" x="20" y="169">dựng sẵn</text><rect class="tok" x="150" y="128" width="72" height="52" rx="7"/><text class="mid" style="font-size:32px" x="186.0" y="165">ệ</text><rect class="blue" x="250" y="128" width="110" height="52" rx="7"/><text class="lbl halo" x="305.0" y="150">U+1EC7</text><text class="sub mid halo" x="305.0" y="169">ệ</text><rect class="blue" x="610" y="128" width="114" height="52" rx="7"/><text class="lbl halo" x="667.0" y="159">E1 BB 87</text><text class="row" x="738" y="159">3 byte</text><text class="row" x="20" y="249">NFD</text><text class="sub" x="20" y="267">tách dấu</text><rect class="tok" x="150" y="226" width="72" height="52" rx="7"/><text class="mid" style="font-size:32px" x="186.0" y="263">ệ</text><rect class="hatch" x="250" y="226" width="110" height="52" rx="7"/><text class="lbl halo" x="305.0" y="248">U+0065</text><text class="sub mid halo" x="305.0" y="267">e</text><rect class="hatch" x="368" y="226" width="110" height="52" rx="7"/><text class="lbl halo" x="423.0" y="248">U+0323</text><text class="sub mid halo" x="423.0" y="267">dấu nặng</text><rect class="hatch" x="486" y="226" width="110" height="52" rx="7"/><text class="lbl halo" x="541.0" y="248">U+0302</text><text class="sub mid halo" x="541.0" y="267">dấu mũ</text><rect class="hatch" x="610" y="226" width="170" height="52" rx="7"/><text class="lbl halo" x="695.0" y="257">65 CC A3 CC 82</text><text class="row" x="794" y="257">5 byte</text><text class="cap" x="20" y="314">Chuẩn hoá mọi văn bản về NFC ở ranh giới hệ thống: unicodedata.normalize("NFC", s).</text></svg>
