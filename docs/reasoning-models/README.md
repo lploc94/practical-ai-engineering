@@ -150,7 +150,7 @@ Một vài chi tiết dễ bỏ sót:
 - **Tóm tắt của Claude do một model khác viết**, không phải model đang trả lời [5]. Nó hữu ích để hiển thị tiến trình. Nó không phải bản ghi trung thực những gì model đã tính toán.
 - **`signature` của Claude giống nhau với mọi giá trị `display`**, nên đổi `display` giữa các lượt không làm hỏng việc gửi lại [5].
 - **`redacted_thinking` dễ bị lọc mất.** Docs Claude ghi: chỉ lọc theo `block.type == "thinking"` sẽ âm thầm bỏ `redacted_thinking` và làm hỏng giao thức nhiều lượt [5].
-- **Thinking block của Sonnet 5.5 và Haiku 5.5 gắn với tài khoản tạo ra nó.** Chúng chỉ dùng được trong cùng tài khoản hoặc tài khoản liên kết. Điều này đáng chú ý khi chuyển lịch sử hội thoại giữa các tổ chức hoặc giữa môi trường thử và production [5].
+- **Thinking block của Fable 5.2, Mythos 5.2, Sonnet 5.5 và Haiku 5.5 gắn với tài khoản tạo ra nó.** Chúng chỉ dùng được trong cùng tài khoản hoặc tài khoản liên kết; ở tài khoản khác, API bỏ chúng mà không báo lỗi. Điều này đáng chú ý khi chuyển lịch sử hội thoại giữa các tổ chức hoặc giữa môi trường thử và production [5][9].
 - **Hỏi model "giải thích suy luận của bạn" trong phần text có thể bị từ chối.** Trên Claude Fable 5.1, Opus 5.5, Opus 5, Sonnet 5.5 và Fable 5, request cố lấy suy luận nội bộ qua text có thể nhận refusal với `stop_details.category: "reasoning_extraction"`. Muốn xem suy luận thì đọc `thinking` block với `display: "summarized"` [5].
 
 ### Suy luận hiển thị không phải là lời giải thích đáng tin
@@ -786,7 +786,7 @@ Cách dựng bộ eval, grader và đọc kết quả có ý nghĩa thống kê 
 - [ ] Lưu nguyên response của provider: reasoning item, thinking block kèm `signature`, `redacted_thinking`, thought signature, `encrypted_content`, `reasoning_content`.
 - [ ] Không dựng lịch sử từ text đã hiển thị; không lọc block theo type.
 - [ ] Với OpenAI stream: lấy reasoning item từ `output_item.done`.
-- [ ] Không đổi system prompt, tools hoặc message cũ giữa phiên (Claude 5.1+); chỉ nối thêm.
+- [ ] Không đổi system prompt, tools hoặc message cũ giữa phiên (Claude có preserved thinking); chỉ nối thêm.
 - [ ] Đổi effort giữa hội thoại bằng `configuration_update` hoặc per-message effort, không đổi tham số cấp request.
 
 **Vận hành**
