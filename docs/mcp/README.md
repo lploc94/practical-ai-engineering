@@ -89,6 +89,8 @@ Model không nói chuyện với server. Host lấy danh sách tool từ các se
 
 Bản 2026-07-28 đổi một điểm quan trọng ở quan hệ client-server: **server không còn gửi JSON-RPC request ngược cho client** [3]. Trước đây server có thể chủ động hỏi client (xin model sinh text qua sampling, hỏi người dùng qua elicitation, hỏi danh sách thư mục qua roots) trên một kênh SSE mở sẵn. Giờ server muốn hỏi gì thì trả về một result đặc biệt và client gửi lại request kèm câu trả lời ([§1.3](#13-vòng-đời-một-request-từ-initialize-đến-stateless)). Mọi luồng đều do client khởi đầu, nên server có thể chạy stateless sau một load balancer bình thường.
 
+![Host chứa model, vòng lặp tool call và ba client, mỗi client nối đúng một server (orders qua stdio, GitHub và Sentry qua HTTP). Model không nói chuyện với server: host lấy tool qua client, đưa vào prompt, nhận tool call từ model rồi chuyển tới đúng server; kết quả đi ngược lại vào context. Từ bản 2026-07-28 mọi request do client khởi đầu](images/host-client-server.svg)
+
 ## 1.2 Tools, resources và prompts
 
 Server cung cấp ba loại primitive, khác nhau ở chỗ ai quyết định dùng:
@@ -255,6 +257,8 @@ Khi tool cần thêm thông tin từ người dùng (ví dụ xác nhận tài k
 ```
 
 Client hỏi người dùng, rồi gửi lại **cùng tool call với `id` mới** (MUST khác id cũ), kèm `inputResponses` (ví dụ `{"github_login": {"action": "accept", "content": {"name": "octocat"}}}`) và `requestState` nguyên văn [4]. Đặc tả gọi cơ chế này là multi round-trip request (MRTR). Server không phải nhớ gì giữa hai lượt: mọi trạng thái cần thiết nằm trong `requestState` mà client gửi lại. Vì `requestState` đi qua client, server phải coi nó là input không tin cậy (ký hoặc mã hoá nếu nó chứa thứ client không được sửa).
+
+![Client gửi tools/call với id 2; server trả resultType input_required kèm inputRequests và requestState; client hỏi người dùng GitHub username, nhận octocat, rồi gửi lại cùng tool call với id mới 3 kèm inputResponses và requestState nguyên văn; server trả complete. Server không lưu gì giữa hai lượt](images/mrtr.svg)
 
 ### Trạng thái ứng dụng: handle thay cho session
 
@@ -447,6 +451,8 @@ Authorization trong MCP là tuỳ chọn. Server HTTP có xác thực SHOULD the
 4. Client đăng ký (xem dưới), mở trình duyệt với PKCE và tham số `resource` là URI chuẩn của MCP server.
 5. Client đổi `code` lấy token, cũng kèm `resource`. Client **MUST** gửi `resource` ở cả hai bước, kể cả khi AS không hỗ trợ RFC 8707 [5].
 6. Mọi request sau mang `Authorization: Bearer <token>`. Token không bao giờ nằm trong query string [5].
+
+![Client gọi MCP server không token và nhận 401 có resource_metadata; đọc Protected Resource Metadata để biết authorization server; lấy metadata của AS; mở trình duyệt với PKCE và resource để lấy code; đổi code lấy token, cũng kèm resource; rồi gửi Bearer token. Server chỉ nhận token có audience là chính nó, token phát cho server khác bị 401](images/oauth-flow.svg)
 
 Thứ tự đăng ký client mà đặc tả khuyến nghị: dùng thông tin đăng ký trước nếu có; nếu không thì **Client ID Metadata Documents** (client dùng một URL HTTPS làm `client_id`, AS tải JSON metadata từ URL đó); DCR (RFC 7591) chỉ còn để tương thích với AS chưa hỗ trợ CIMD; cuối cùng là hỏi người dùng nhập [5].
 

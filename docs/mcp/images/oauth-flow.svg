@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 730" width="900" height="730" role="img" aria-label="Client gọi MCP server không token và nhận 401 có resource_metadata; đọc Protected Resource Metadata để biết authorization server; lấy metadata của AS; mở trình duyệt với PKCE và resource để lấy code; đổi code lấy token, cũng kèm resource; rồi gửi Bearer token. Server chỉ nhận token có audience là chính nó, token phát cho server khác bị 401"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="900" height="730" rx="12"/><text class="title" x="20" y="38">Client gặp remote server lần đầu: từ 401 tới Bearer token</text><text class="cap2" x="20" y="62">resource là URI của MCP server; server chỉ nhận token phát cho chính nó.</text><rect class="tok" x="25" y="76" width="190" height="46" rx="7"/><text class="row mid" x="120" y="95">MCP client</text><text class="sub mid" x="120" y="113">OAuth client</text><line class="lmuted dash" x1="120" y1="122" x2="120" y2="650"/><rect class="tok" x="345" y="76" width="190" height="46" rx="7"/><text class="row mid" x="440" y="95">MCP server</text><text class="sub mid" x="440" y="113">resource server</text><line class="lmuted dash" x1="440" y1="122" x2="440" y2="650"/><rect class="tok" x="665" y="76" width="190" height="46" rx="7"/><text class="row mid" x="760" y="95">Authorization server</text><text class="sub mid" x="760" y="113">IdP hoặc dịch vụ của bạn</text><line class="lmuted dash" x1="760" y1="122" x2="760" y2="650"/><path class="lfg" marker-end="url(#afg)" d="M120,160H436"/><text class="cap mid halo" x="280.0" y="150">1. request không token</text><path class="lred dash" marker-end="url(#ared)" d="M440,200H124"/><rect class="hatch" x="139.4" y="188" width="41.2" height="24" rx="5"/><text class="lbl" style="font-size:13px" x="160" y="205">401</text><text class="sub halo" x="190" y="192">WWW-Authenticate có resource_metadata</text><path class="lfg" marker-end="url(#afg)" d="M120,244H436"/><text class="cap mid halo" x="280.0" y="234">2. Protected Resource Metadata (RFC 9728)</text><path class="lfg dash" marker-end="url(#afg)" d="M440,284H124"/><text class="sub mid halo" x="280.0" y="276">authorization_servers</text><path class="lfg" marker-end="url(#afg)" d="M120,328H756"/><text class="cap mid halo" x="440.0" y="318">3. metadata của AS (RFC 8414 hoặc OpenID Connect Discovery)</text><path class="lfg dash" marker-end="url(#afg)" d="M760,368H124"/><text class="sub mid halo" x="440.0" y="360">các endpoint của AS</text><path class="lfg" marker-end="url(#afg)" d="M120,412H756"/><text class="cap mid halo" x="440.0" y="402">4. đăng ký client, mở trình duyệt với PKCE</text><rect class="blue" x="638.4" y="400" width="83.2" height="24" rx="5"/><text class="lbl" style="font-size:13px" x="680" y="417">resource</text><path class="lfg dash" marker-end="url(#afg)" d="M760,452H124"/><text class="sub mid halo" x="440.0" y="444">code (người dùng đã đăng nhập, đồng ý)</text><path class="lfg" marker-end="url(#afg)" d="M120,496H756"/><text class="cap mid halo" x="440.0" y="486">5. đổi code lấy token</text><rect class="blue" x="638.4" y="484" width="83.2" height="24" rx="5"/><text class="lbl" style="font-size:13px" x="680" y="501">resource</text><path class="lfg dash" marker-end="url(#afg)" d="M760,536H124"/><text class="sub mid halo" x="440.0" y="528">access token phát cho MCP server</text><path class="lfg" marker-end="url(#afg)" d="M120,580H436"/><text class="cap mid halo" x="280.0" y="570">6. Authorization: Bearer &lt;token&gt;</text><path class="lfg dash" marker-end="url(#afg)" d="M440,620H124"/><text class="sub mid halo" x="280.0" y="612">200, tool chạy với subject của token</text><rect class="blue" x="464" y="558" width="250" height="58" rx="7"/><text class="cap mid" x="589.0" y="579">kiểm aud = chính server</text><text class="sub mid" x="589.0" y="598">token phát cho server khác: 401</text><rect class="blue" x="20" y="667" width="14" height="14" rx="3"/><text class="sub" x="40" y="678">ràng buộc audience</text><rect class="hatch" x="190" y="667" width="14" height="14" rx="3"/><text class="sub" x="210" y="678">bị từ chối</text><text class="cap2" x="20" y="714">Client MUST gửi resource ở cả bước 4 và 5; token không bao giờ nằm trong query string.</text></svg>
