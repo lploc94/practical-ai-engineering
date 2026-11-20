@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 440" width="860" height="440" role="img" aria-label="LoRA giữ nguyên ma trận W 4864×896 (4.358.144 tham số) và chỉ huấn luyện B 4864×16 cộng A 16×896, 92.160 tham số, 2,1% của W. Trên cả Qwen2.5-0.5B, rank 16 mọi lớp linear: 8.798.208 trên 502.830.976 tham số (1,75%). Khi serve có thể gộp B·A vào W"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="860" height="440" rx="12"/><text class="title" x="20" y="38">LoRA: giữ nguyên W, chỉ huấn luyện cặp ma trận hạng thấp</text><rect class="blue" x="530" y="55" width="14" height="14" rx="3"/><text class="sub" x="550" y="66">đóng băng</text><rect class="orange" x="637" y="55" width="14" height="14" rx="3"/><text class="sub" x="657" y="66">được huấn luyện</text><text class="cap2" x="20" y="66">Ví dụ: gate_proj của một lớp MLP trong Qwen2.5-0.5B, rank r = 16.</text><rect class="blue" x="60" y="110" width="150" height="220" rx="7"/><text class="row mid" x="135.0" y="216.0">W</text><text class="sub mid" x="135.0" y="236.0">4864 × 896</text><text class="cap mid" x="135.0" y="356">4.358.144 tham số</text><text class="sub mid" x="135.0" y="376">không đổi khi huấn luyện</text><text class="title mid" x="255" y="227.0">+</text><rect class="orange" x="300" y="110" width="22" height="220" rx="4"/><text class="row mid" x="311.0" y="100">B</text><text class="sub" x="296" y="356">4864 × 16</text><rect class="orange" x="342" y="110" width="150" height="22" rx="4"/><text class="row mid" x="417.0" y="100">A</text><text class="sub end" x="492" y="150">16 × 896</text><text class="sub" x="342" y="188">B·A cùng kích thước với W,</text><text class="sub" x="342" y="206">nhưng hạng tối đa 16</text><text class="cap" x="300" y="380" style="font-weight:600">77.824 + 14.336 = 92.160 tham số (2,1% của W)</text><line class="grid" x1="586" y1="90" x2="586" y2="340"/><text class="row" x="610" y="120">Cả model, mọi lớp linear</text><text class="sub" x="610" y="140">7 ma trận × 24 lớp</text><text class="cap" x="610" y="172">8.798.208 tham số train</text><text class="cap" x="610" y="194">trên 502.830.976 (1,75%)</text><text class="row" x="610" y="246">Khi serve</text><text class="cap" x="610" y="272">gộp W + (α/r)·B·A thành một</text><text class="cap" x="610" y="292">ma trận: không thêm độ trễ,</text><text class="cap" x="610" y="312">hoặc giữ adapter riêng (§3.5)</text><text class="cap2" x="20" y="426">Kích thước tính từ config của Qwen2.5-0.5B; hình không theo đúng tỉ lệ (W thật cao gấp 5,4 lần bề rộng).</text></svg>

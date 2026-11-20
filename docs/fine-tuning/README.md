@@ -142,7 +142,9 @@ Ba cách không loại trừ nhau. Một hệ thống thường dùng model đã
 
 **Full fine-tune** cập nhật mọi tham số. Với Adam và mixed precision, mỗi tham số cần 16 byte cho riêng trạng thái huấn luyện: 2 byte weights fp16, 2 byte gradient, 12 byte cho bản fp32 của weights cùng hai moment của Adam. Bài báo ZeRO tính ví dụ: GPT-2 1,5 tỉ tham số cần ít nhất 24 GB, trong khi weights fp16 chỉ 3 GB [28]. Chưa tính activation. Một model 8B theo công thức này cần khoảng 128 GB chỉ cho trạng thái huấn luyện.
 
-**LoRA** giữ nguyên weights gốc và thêm vào mỗi lớp một cặp ma trận hạng thấp; chỉ cặp ma trận này được huấn luyện. Với GPT-3 175B, LoRA giảm số tham số huấn luyện 10.000 lần và bộ nhớ GPU 3 lần so với fine-tune bằng Adam, chất lượng ngang hoặc hơn trên các model thử, và không thêm độ trễ khi inference vì adapter gộp được vào weights [17]. Trong thí nghiệm ở [§3.3](#33-eval-trước-và-sau-fine-tune), LoRA rank 16 trên mọi lớp linear của Qwen2.5-0.5B chỉ huấn luyện 8,8 triệu trên 502,8 triệu tham số (1,75%).
+**LoRA** giữ nguyên weights gốc và thêm vào mỗi lớp một cặp ma trận hạng thấp; chỉ cặp ma trận này được huấn luyện. Với GPT-3 175B, LoRA giảm số tham số huấn luyện 10.000 lần và bộ nhớ GPU 3 lần so với fine-tune bằng Adam, chất lượng ngang hoặc hơn trên các model thử, và không thêm độ trễ khi inference vì adapter gộp được vào weights [17]. Trong thí nghiệm ở [§3.3](#33-eval-trước-và-sau-fine-tune), LoRA rank 16 trên mọi lớp linear của Qwen2.5-0.5B chỉ huấn luyện 8,8 triệu trên 502,8 triệu tham số (1,75%). Lấy một ma trận cụ thể: theo config của model [41], `gate_proj` của một lớp MLP có W kích thước 4864 × 896, tức 4.358.144 tham số; với rank 16, B có kích thước 4864 × 16 và A có kích thước 16 × 896, tổng 92.160 tham số, khoảng 2,1% của W. Tích B·A (nhân hệ số α/r) cùng kích thước với W nên cộng vào được, nhưng hạng không quá 16 [17].
+
+![LoRA giữ nguyên W 4864×896 của gate_proj (4.358.144 tham số) và chỉ huấn luyện B 4864×16 cộng A 16×896, 92.160 tham số, 2,1% của W; trên cả Qwen2.5-0.5B, rank 16 mọi lớp linear là 8.798.208 trên 502.830.976 tham số (1,75%), và B·A gộp được vào W khi serve](images/lora-update.svg)
 
 **QLoRA** lượng tử hoá model gốc xuống 4-bit (kiểu NF4) và huấn luyện LoRA trên đó, cộng double quantization và paged optimizer để giảm đỉnh bộ nhớ. Kết quả: fine-tune model 65B trên một GPU 48 GB mà vẫn giữ chất lượng fine-tune 16-bit [18].
 
@@ -397,6 +399,10 @@ Các lựa chọn trong code:
 - **Cùng đầu vào, khác đáp án là `conflict`, không phải trùng.** Đáp án được so đúng từng ký tự, không chuẩn hoá chữ thường: `DH-914332` và `dh-914332` là hai nhãn khác nhau. Hai người gán hai nhãn khác nhau cho cùng một câu là dấu hiệu hướng dẫn gán nhãn chưa rõ. Code giữ bản đầu và báo lại; người phải quyết bản nào đúng. Vì đầu vào được so không phân biệt hoa thường, một số `conflict` là hai ví dụ đều đúng (đầu vào viết `dh-…`, đáp án chép theo); người xem báo cáo sẽ thấy ngay.
 - **Lọc theo số token trước khi tới trainer.** Lý do ở test 4 bên dưới.
 
+Trên dữ liệu đồ chơi ở [§3.3](#33-eval-trước-và-sau-fine-tune) (522 dòng sau khi loại trùng, 48 mẫu câu), dùng `split_of` với dấu vân tay của từng dòng làm khoá, tức chia ngẫu nhiên từng dòng, thì 43/48 mẫu câu có dòng ở cả train lẫn test, và cả 110 dòng test đều có dòng cùng mẫu câu trong train. Dùng mẫu câu làm khoá nhóm thì mỗi mẫu câu nằm trọn một tập: test gồm 5 mẫu câu, 60 dòng, không câu nào có mẫu xuất hiện khi train.
+
+![Dữ liệu đồ chơi 522 dòng, 48 mẫu câu: chia ngẫu nhiên từng dòng làm 43/48 mẫu câu có dòng ở cả train lẫn test nên điểm test đo khả năng nhớ; chia theo mẫu câu thì test là 5 mẫu câu, 60 dòng chưa thấy khi train, nhưng không có intent track hay other](images/group-split.svg)
+
 Test đã chạy (`t_ft_data.py`, không cần GPU):
 
 1. Ví dụ hợp lệ không có lỗi; thiếu `messages`, lượt cuối không phải assistant, lượt đầu không phải user, content rỗng, role lạ, hai lượt liên tiếp cùng role, system không ở đầu: mỗi lỗi được báo đúng.
@@ -416,6 +422,10 @@ Test đã chạy (`t_ft_data.py`, không cần GPU):
 3. Hội thoại nhiều lượt: mọi lượt assistant đều được tính loss, không chỉ lượt cuối. Nếu các lượt trước là câu trả lời cũ chất lượng kém, chúng cũng được học.
 4. **Ví dụ dài hơn `max_length` bị cắt từ cuối.** Một ví dụ dài với `max_length=128`: ở chế độ mặc định, ví dụ còn đúng 128 token và không còn chữ nào của câu trả lời, nghĩa là model được huấn luyện trên một ví dụ không có đáp án. Bật `assistant_only_loss`, ví dụ đó bị bỏ hẳn khỏi dataset; TRL chỉ hiện thanh tiến trình "Dropping fully masked examples", không có cảnh báo hay số lượng.
 5. `prepare()` với bộ đếm token loại đúng ví dụ đó trước khi tới trainer.
+
+Đếm bằng tokenizer của Qwen2.5-0.5B-Instruct, ví dụ ở mục 1 dài 30 token, trong đó 8 token được tính loss. Ví dụ dài ở mục 4 có 440 token: chat template tự thêm lượt system mặc định của Qwen (21 token), lượt user 408 token, lượt assistant 11 token cuối; số token mỗi lượt gồm cả các thẻ như `<|im_start|>` và `<|im_end|>` [41]. Cắt ở token 128 rơi vào giữa lượt user.
+
+![Mặc định TRL tính loss trên mọi token, cả system và user; với assistant_only_loss chỉ 8/30 token của đáp án và token dừng được tính; ví dụ 440 token với max_length 128 bị cắt giữa lượt user, nên mặc định model học trên ví dụ không có đáp án, còn với assistant_only_loss ví dụ bị bỏ mà không có cảnh báo](images/loss-mask.svg)
 
 Viết `t_masking.py` còn bắt được một lỗi trong chính code của bài: ở transformers 5, `apply_chat_template(..., tokenize=True)` trả về một dict, nên `len()` của kết quả là số khoá (2), không phải số token. Bộ đếm token đầu tiên vì thế không bao giờ thấy ví dụ nào quá dài. Code trong bài đã sửa bằng `return_dict=True` và đọc `["input_ids"]`.
 
@@ -740,3 +750,4 @@ Truy cập tháng 11/2026.
 | [38] | [Chen và cộng sự, Punica (arXiv 2310.18547)](https://arxiv.org/abs/2310.18547) | Throughput 12 lần, thêm 2 ms mỗi token |
 | [39] | [vLLM: LoRA Adapters](https://docs.vllm.ai/en/latest/features/lora/) | `--enable-lora`, `--lora-modules`, nạp adapter lúc chạy và cảnh báo bảo mật, cách đặt `--max-lora-rank` |
 | [40] | [vLLM: Engine Arguments](https://docs.vllm.ai/en/latest/configuration/engine_args/) | Mặc định `--max-loras` 1, `--max-lora-rank` 16, `--max-cpu-loras` |
+| [41] | [Qwen/Qwen2.5-0.5B-Instruct trên Hugging Face](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) (`config.json`, `tokenizer_config.json`) | Kích thước ma trận (hidden 896, intermediate 4864, 24 lớp, 2 KV head) dùng để tính số tham số LoRA; chat template thêm system prompt mặc định, dùng để đếm token |
