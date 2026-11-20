@@ -118,6 +118,8 @@ e2e ≈ TTFT + (output_tokens − 1) × ITL
 
 Ví dụ minh hoạ: TTFT 0,8 giây, ITL 20 ms, output 1.500 token. Tổng thời gian khoảng 0,8 + 1.499 × 0,02 ≈ 30,8 giây ở cả hai chế độ. Khác biệt nằm ở thời điểm người dùng thấy chữ đầu tiên: giây 0,8 khi stream, giây 30,8 khi không stream. Người đọc trung bình đọc chậm hơn tốc độ sinh của model, nên với câu trả lời dài, stream gần như xoá được cảm giác chờ.
 
+![Với TTFT 0,8 giây, ITL 20 ms và 1.500 token output, model sinh như nhau ở hai chế độ và cả hai đều xong ở giây 30,8; khi stream người dùng thấy chữ từ giây 0,8, khi không stream phải chờ đến giây 30,8](images/ttft-vs-e2e.svg)
+
 Bốn hệ quả thực tế:
 
 **Stream không sửa được TTFT cao.** Prompt dài, hàng đợi đông hay reasoning lâu đều làm TTFT tăng, và stream không rút ngắn phần đó. Muốn giảm TTFT phải rút gọn prompt, dùng prompt caching, đổi model hoặc giảm mức reasoning ([Latency](../latency/)).
@@ -770,6 +772,8 @@ Theo tài liệu `ngx_http_proxy_module` [27]:
 - Upstream có thể tắt buffer cho từng response bằng header `X-Accel-Buffering: no`. Header này bị bỏ qua nếu cấu hình có `proxy_ignore_headers X-Accel-Buffering`.
 - `proxy_read_timeout` mặc định **60 giây**, tính giữa hai lần đọc liên tiếp chứ không phải cho toàn bộ response. Stream dài vẫn ổn, miễn là không có khoảng im lặng nào dài quá 60 giây.
 
+![Khi proxy_buffering bật, nginx giữ các event SSE trong buffer và trình duyệt nhận tất cả cùng lúc khi upstream kết thúc; khi tắt buffering hoặc backend gửi X-Accel-Buffering: no, mỗi event tới trình duyệt ngay sau khi origin gửi](images/proxy-buffering.svg)
+
 ```nginx
 location /api/chat {
     proxy_pass http://app_upstream;
@@ -836,6 +840,8 @@ Trên HTTP/1.1, trình duyệt chỉ mở tối đa 6 kết nối mỗi domain [
 | Comment `: ping` mỗi 15–30 giây | Giữ kết nối dưới ngưỡng idle của nginx (60 giây), ALB (60 giây), Cloudflare (125 giây) |
 | Gửi header ngay (flush) trước khi gọi provider | Một số tầng tính timeout tới byte đầu tiên; header sớm giúp kết nối được coi là đang hoạt động |
 
+![Model im lặng 75 giây trước token đầu trong khi idle timeout là 60 giây: không có heartbeat thì kết nối bị đóng ở giây 60 và token không tới client; gửi ping mỗi 15 giây thì khoảng im lặng dài nhất chỉ 15 giây](images/idle-heartbeat.svg)
+
 ## 3.3 Stream kèm tool call
 
 Cách gom tool call theo từng provider có ở [Tool Use §3.7](../tool-use/#37-streaming-khi-có-tool-call). Ở góc nhìn streaming, có thêm ba điểm:
@@ -880,6 +886,8 @@ Hệ quả thiết kế:
 | 1. Lỗi trước stream | HTTP status khác 200 | 400 sai tham số, 401, 429, 529 trước khi có byte nào |
 | 2. Lỗi trong stream | Status 200, sau đó có event lỗi | Claude `event: error` (`overloaded_error`); OpenAI `error`, `response.failed`; chunk có `error`; Ollama dòng `{"error": ...}` |
 | 3. Đứt kết nối | Kết nối đóng, không có event lỗi, cũng không có event kết thúc | Proxy timeout, mạng di động, server restart |
+
+![Status 200 được gửi trước token đầu tiên: lỗi trước stream có status khác 200; lỗi trong stream đến sau status 200 dưới dạng event error; đứt kết nối thì không có event lỗi lẫn event kết thúc; chỉ event kết thúc như message_stop xác nhận stream thành công](images/stream-error-types.svg)
 
 Loại 1 được SDK xử lý tốt, kể cả retry tự động. Loại 2 và 3 mới là nơi phát sinh bug. Các báo cáo thực tế cho thấy ba kiểu sai lặp lại:
 

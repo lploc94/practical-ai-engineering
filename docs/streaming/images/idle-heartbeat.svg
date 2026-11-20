@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 352" width="820" height="352" role="img" aria-label="Model im lặng 75 giây trong khi idle timeout là 60 giây: không heartbeat thì kết nối bị đóng ở giây 60 và token không tới client; gửi ping mỗi 15 giây thì khoảng im lặng dài nhất chỉ 15 giây"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="352" rx="12"/><text class="title" x="20" y="38">Im lặng lâu hơn idle timeout thì kết nối bị đóng</text><rect class="blue" x="20" y="55" width="14" height="14" rx="3"/><text class="sub" x="40" y="66">token gửi xuống client</text><rect class="hatch" x="218" y="55" width="14" height="14" rx="3"/><text class="sub" x="238" y="66">bị cắt, không tới client</text><text class="row" x="20" y="118">Không heartbeat</text><text class="sub" x="20" y="135">im lặng 75 s</text><rect class="slot" x="200" y="104" width="354.0" height="30" rx="5"/><text class="cap2 mid" x="377.0" y="124">model đang suy luận, không có byte nào</text><rect class="hatch" x="642.5" y="104" width="147.5" height="30" rx="5"/><line class="lred" x1="554.0" y1="92" x2="554.0" y2="146" style="stroke-width:3"/><text class="sub halo" x="560.0" y="100">giây 60: đóng kết nối</text><text class="sub halo" x="646.5" y="150">token từ giây 75 không tới</text><text class="row" x="20" y="228">Ping mỗi 15 s</text><text class="sub" x="20" y="245">im lặng tối đa 15 s</text><rect class="slot" x="200" y="214" width="442.5" height="30" rx="5"/><line class="lfg" x1="288.5" y1="210" x2="288.5" y2="248" style="stroke-width:2.5"/><text class="sub mid halo" x="288.5" y="205" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">: ping</text><line class="lfg" x1="377.0" y1="210" x2="377.0" y2="248" style="stroke-width:2.5"/><text class="sub mid halo" x="377.0" y="205" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">: ping</text><line class="lfg" x1="465.5" y1="210" x2="465.5" y2="248" style="stroke-width:2.5"/><text class="sub mid halo" x="465.5" y="205" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">: ping</text><line class="lfg" x1="554.0" y1="210" x2="554.0" y2="248" style="stroke-width:2.5"/><text class="sub mid halo" x="554.0" y="205" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace">: ping</text><rect class="blue" x="642.5" y="214" width="147.5" height="30" rx="5"/><text class="sub halo" x="646.5" y="260">token từ giây 75</text><path class="lfg" d="M200.0,252 v6 H288.5 v-6"/><text class="sub mid" x="244.2" y="272">15 s &lt; 60 s</text><line class="axis" x1="200" y1="290" x2="790" y2="290"/><line class="axis" x1="200.0" y1="290" x2="200.0" y2="295"/><text class="sub mid" x="200.0" y="308">0 s</text><line class="axis" x1="318.0" y1="290" x2="318.0" y2="295"/><text class="sub mid" x="318.0" y="308">20 s</text><line class="axis" x1="436.0" y1="290" x2="436.0" y2="295"/><text class="sub mid" x="436.0" y="308">40 s</text><line class="axis" x1="554.0" y1="290" x2="554.0" y2="295"/><text class="sub mid" x="554.0" y="308">60 s</text><line class="axis" x1="672.0" y1="290" x2="672.0" y2="295"/><text class="sub mid" x="672.0" y="308">80 s</text><line class="axis" x1="790.0" y1="290" x2="790.0" y2="295"/><text class="sub mid" x="790.0" y="308">100 s</text><text class="cap2" x="20" y="340">Giả định: im lặng 75 s trước token đầu; idle timeout 60 s (mặc định của nginx và AWS ALB).</text></svg>
