@@ -155,6 +155,8 @@ Gemini Python SDK retry tối đa 4 lần, chờ tối đa 60 s [22]. OpenAI SDK
 
 Khi ứng dụng có vòng retry riêng trên một SDK đã retry, số request nhân lên. OpenAI viết thẳng: "If you manage retries in your application, disable SDK retries or account for them in those limits so nested retry loops don't multiply requests" [11]. Gateway thêm một tầng nữa. Ví dụ ba tầng, mỗi tầng ba lần thử, thì một request lỗi có thể thành 27 request lên provider đang quá tải, nhân với số người dùng đang bấm "thử lại".
 
+![Ứng dụng, gateway và SDK mỗi tầng thử 3 lần thì một lần bấm thành 27 request lên provider đang quá tải; chỉ một tầng retry, SDK đặt max_retries=0 và chuỗi fallback có trần 4 lần thử, thì tối đa 4 request](images/retry-multiply.svg)
+
 Vòng fallback cũng có thể tự lặp. LiteLLM issue #19985 (tháng 1/2026) mô tả router có cả `num_retries` lẫn `fallbacks`: model fallback hết lượt retry thì logic fallback chạy lại, và model đó lại được retry `num_retries` lần, lặp không dừng [28]. Issue đã đóng ngày 2/2/2026. Bài học vẫn còn nguyên khi bạn tự viết chuỗi fallback: trần phải đặt cho cả chuỗi, và cần test với mock lỗi để thấy tổng số request thực gửi đi.
 
 ### Retry tốn tiền, không chỉ tốn thời gian
@@ -210,7 +212,7 @@ Model mới có nút `effort` điều khiển mức suy luận (Claude: `output_
 Trang lỗi của Claude liệt kê nhiều trường hợp cùng một request chạy được trên model A và bị `400` trên model B [1]:
 
 - **Extended thinking.** `thinking: {"type": "enabled", "budget_tokens": N}` bị từ chối trên Claude 4.7 trở lên. Ngược lại, `{"type": "adaptive"}` bị từ chối trên Claude 4.5 và cũ hơn.
-- **Tắt thinking.** `{"type": "disabled"}` bị từ chối trên Fable 5.1, Fable 5, Mythos 5.1, Mythos 5 và Opus 5.5 vì thinking luôn bật. Sonnet 5.5 cũng từ chối `disabled` và dùng `{"type": "between_tools"}` để tắt thinking đầu lượt; gửi `between_tools` cho model nào khác Sonnet 5.5 đều bị `400`.
+- **Tắt thinking.** `{"type": "disabled"}` bị từ chối trên Fable 5.2, Mythos 5.2, Fable 5.1, Fable 5, Mythos 5.1, Mythos 5, Opus 5.5 và Mythos Preview vì thinking luôn bật. Sonnet 5.5 cũng từ chối `disabled` và dùng `{"type": "between_tools"}` để tắt thinking đầu lượt; gửi `between_tools` cho model nào khác Sonnet 5.5 đều bị `400`.
 - **Forced tool use.** Opus 5.5, Sonnet 5.5, Fable 5.1, Fable 5.2, Mythos 5.1 và Mythos 5.2 từ chối `tool_choice: {"type": "any"}` và `{"type": "tool", ...}`, kể cả trên endpoint đếm token. Haiku 5.5 vẫn nhận forced tool use [1][6]. Chuỗi Opus 5.5 → Sonnet 5.5 cho một request ép gọi tool sẽ `400` ở cả hai bước.
 - **Prefill.** Claude 4.6 trở lên từ chối message cuối là assistant [1].
 - **Computer use.** Haiku 5.5 từ chối `computer_20250124` và dùng `computer_toolset_20260801` [6].
@@ -228,9 +230,11 @@ Haiku 5.5 dùng tokenizer của Claude 4.7 trở lên; cùng văn bản tốn kh
 
 ### d. Thinking block không đi theo
 
-Mỗi model Claude chỉ đọc được thinking block của chính nó và của một số model khác theo bảng cố định. Block model đích không đọc được sẽ bị bỏ lặng lẽ, request vẫn thành công [7]. Ví dụ: Opus 5.5 đọc block của Opus 5, của các model Opus, Sonnet, Haiku cũ hơn, và (trên Claude API) của Sonnet 5.5 và Haiku 5.5, nhưng không đọc block của Fable hay Mythos. Chiều ngược lại hẹp hơn nhiều: ngoài Fable 5.1 và Mythos 5.1 trên Claude API, không model nào đọc block của Opus 5.5 [7]. Fallback thường đi từ model mới xuống model cũ, ví dụ Opus 5.5 sang Opus 4.8, và đó đúng là chiều mất reasoning. Fallback giữa hội thoại nghĩa là model mới làm tiếp mà không có reasoning của các lượt trước. API không sửa mảng `messages` của bạn, nên block vẫn còn trong lịch sử và dùng lại được nếu hội thoại quay về model cũ [7].
+Mỗi model Claude chỉ đọc được thinking block của chính nó và của một số model khác theo bảng cố định. Block model đích không đọc được sẽ bị bỏ lặng lẽ cho request đó và không bị tính tiền, request vẫn thành công [7]. Ví dụ: Opus 5.5 đọc block của Opus 5, của các model Opus, Sonnet, Haiku cũ hơn, và (trên Claude API) của Sonnet 5.5 và Haiku 5.5, nhưng không đọc block của Fable hay Mythos. Chiều ngược lại hẹp hơn nhiều: ngoài Fable 5.2, Mythos 5.2, Fable 5.1 và Mythos 5.1 trên Claude API, không model nào đọc block của Opus 5.5 [7]. Fallback thường đi từ model mới xuống model cũ, ví dụ Opus 5.5 sang Opus 4.8, và đó đúng là chiều mất reasoning. Fallback giữa hội thoại nghĩa là model mới làm tiếp mà không có reasoning của các lượt trước. API không sửa mảng `messages` của bạn, nên block vẫn còn trong lịch sử và dùng lại được nếu hội thoại quay về model cũ [7]. Vì vậy đừng xoá thinking khỏi lịch sử khi đổi model.
 
-Thinking block của Sonnet 5.5 và Haiku 5.5 còn bị ràng buộc theo tài khoản: gửi block đó qua tài khoản khác (không liên kết) thì API bỏ block, request vẫn thành công [7]. Fallback sang cùng model nhưng qua tài khoản hoặc key của tổ chức khác cũng mất reasoning.
+![Lượt 1 và 2 do Opus 5.5 trả lời, lượt 3 fallback sang Opus 4.8: Opus 4.8 không đọc được thinking block của Opus 5.5 nên API bỏ chúng cho request đó mà không báo lỗi; lượt 4 quay về Opus 5.5 với cùng lịch sử thì mọi block được đọc lại](images/thinking-switch.svg)
+
+Thinking block của Fable 5.2, Mythos 5.2, Sonnet 5.5 và Haiku 5.5 còn bị ràng buộc theo tài khoản: gửi block đó qua tài khoản khác (không liên kết) thì API bỏ block, request vẫn thành công [7]. Fallback sang cùng model nhưng qua tài khoản hoặc key của tổ chức khác cũng mất reasoning.
 
 Trên các model Claude có preserved thinking (Fable 5.1, 5.2, Mythos 5.1, 5.2, Opus 5.5, Sonnet 5.5, Haiku 5.5), sửa `system`, `tools` hay message cũ sau khi đã có thinking block làm block đó không qua prefix check. Tuỳ model, request bị `400` với thông báo block "is bound to a different conversation", hoặc không báo lỗi mà model vẫn đọc và tính tiền block đã mất hiệu lực [7a]. Bản thân việc đổi `model` không tính là sửa: block mà model mới không đọc được bị bỏ, không báo lỗi [7]. Chuỗi fallback mà đổi system prompt theo model đích sẽ gặp vấn đề này. Cách xử lý (giữ lịch sử append-only, hoặc beta `thinking-binding-controls-2026-08-01` với `prefix_mismatch_behavior: "drop_block"` cho hội thoại đã hỏng) có ở [7b] và [Multi-turn](../multi-turn-conversation/).
 
@@ -358,7 +362,7 @@ Ba điều kiện để router tự dựng đáng làm:
 
 Ba cơ chế này không phải routing, nhưng chúng thay đổi việc bạn có cần fallback hay không.
 
-- **Priority Tier của Claude** ưu tiên request hơn mọi request khác để giảm lỗi quá tải; nhắm mục tiêu uptime 99,5%; chỉ dành cho tổ chức đã có cam kết capacity (số input và output token mỗi phút, thời hạn 1–12 tháng, cho một model cụ thể) [30]. Request vượt phần cam kết tự rơi về standard tier. Tham số `service_tier`: `"auto"` (mặc định, dùng Priority nếu còn) hoặc `"standard_only"` [30]. Priority Tier **không hỗ trợ** Fable 5.1, Haiku 5.5, Mythos 5.1, Mythos 5, Opus 5.5, Opus 5, Sonnet 5.5 và Sonnet 5 [30]. Chuyển sang model mới có thể làm mất cam kết capacity; migration guide của Haiku 5.5 nhắc riêng điểm này [6].
+- **Priority Tier của Claude** ưu tiên request hơn mọi request khác để giảm lỗi quá tải; nhắm mục tiêu uptime 99,5%; chỉ dành cho tổ chức đã có cam kết capacity (số input và output token mỗi phút, thời hạn 1–12 tháng, cho một model cụ thể) [30]. Anthropic không còn bán cam kết mới: tổ chức đã có cam kết dùng tiếp tới hết hợp đồng, cần capacity bảo đảm thì liên hệ sales [30]. Request vượt phần cam kết tự rơi về standard tier. Tham số `service_tier`: `"auto"` (mặc định, dùng Priority nếu còn) hoặc `"standard_only"` [30]. Priority Tier **không hỗ trợ** Fable 5.2, Fable 5.1, Haiku 5.5, Mythos 5.2, Mythos 5.1, Mythos 5, Mythos Preview, Opus 5.5, Opus 5, Sonnet 5.5 và Sonnet 5 [30]. Chuyển sang model mới có thể làm mất cam kết capacity; migration guide của Haiku 5.5 nhắc riêng điểm này [6].
 - **OpenAI** có Scale Tier, và Reserved Tier cho GPT-5.6 trở lên, cho capacity dễ dự đoán hơn; tài liệu nói chúng không thay đổi cách xử lý `slow_down`: vẫn theo `Retry-After` và tăng traffic từ từ [11].
 - **Provisioned Throughput** trên Bedrock không dùng được với inference profile cross-region [21]. Phải chọn giữa capacity đặt trước ở một region và phân phối qua nhiều region.
 - **Batch** đổi độ trễ lấy giá thấp hơn, và chạy ngoài capacity thông thường [30]. Batch không phải đích fallback cho request tương tác, vì kết quả có sau nhiều phút đến nhiều giờ. Lưu ý riêng của Claude: refusal trong batch không có fallback credit, và tham số `fallbacks` không dùng được trong batch (request có `fallbacks` cho kết quả errored); muốn chạy lại các item bị từ chối thì gom lại và gửi batch mới trên model khác [3].
@@ -608,13 +612,14 @@ Test chạy SDK `anthropic` 2.6.0 thật, thay transport bằng `httpx2.MockTran
 
 ### Bảng capability nằm trong code
 
-Đừng hard-code một request template cho mọi model. Giữ một bảng capability theo model, dựng request từ bảng đó, và kiểm chuỗi fallback lúc khởi động. Một phần bảng cho các model Claude hiện tại, theo [1][6][9]:
+Đừng hard-code một request template cho mọi model. Giữ một bảng capability theo model, dựng request từ bảng đó, và kiểm chuỗi fallback lúc khởi động. Một phần bảng cho các model Claude hiện tại, theo [1][6][9][30]:
 
 | Model | `thinking` hợp lệ | Forced `tool_choice` | Sampling params | Priority Tier |
 |---|---|---|---|---|
 | Opus 5.5 | `adaptive` hoặc bỏ trống | Không | Không (API `2026-10-21`) | Không |
 | Sonnet 5.5 | `adaptive`, `between_tools` | Không | Không | Không |
 | Haiku 5.5 | `adaptive`, `disabled` | Có | Không | Không |
+| Fable 5.2, Mythos 5.2 | `adaptive` hoặc bỏ trống | Không | Không | Không |
 | Fable 5.1 | `adaptive` hoặc bỏ trống | Không | Không | Không |
 | Opus 4.8 | `adaptive`, `disabled` | Có | Không | Có |
 | Sonnet 5 | `adaptive`, `disabled` | Có | Không | Không |
@@ -642,6 +647,10 @@ Ba trạng thái, như `Breaker` ở [§3.1](#31-thiết-kế-chuỗi-fallback):
 - **Đóng**: cho mọi request qua, đếm lỗi liên tiếp.
 - **Mở**: đạt ngưỡng thì chặn mọi request trong `cooldown_s`.
 - **Nửa mở**: hết cooldown thì cho đúng một request thăm dò qua. Thành công thì đóng lại; lỗi thì mở tiếp.
+
+Với tham số ở ví dụ §3.1 (`threshold=5`, `cooldown_s=30`, 2 lần thử mỗi model) và một kịch bản giả định model chính lỗi 35 giây, mỗi 3 giây một request: không có breaker, 12 request đầu đều thử model chính hai lần, tổng 24 lần thử thất bại, người dùng nào cũng chờ backoff; có breaker, lỗi thứ năm mở breaker và chỉ có 5 lần thử thất bại, các request sau đi thẳng tới fallback cho đến lần thăm dò.
+
+![Model chính lỗi 529 trong 35 giây: không có breaker, request nào cũng thử model chính 2 lần rồi mới sang fallback, tổng 24 lần thử thất bại; có breaker ngưỡng 5, cooldown 30 giây, lỗi thứ 5 mở breaker, request sau đi thẳng tới fallback, hết cooldown một request thăm dò thành công và breaker đóng lại](images/breaker-timeline.svg)
 
 Các lựa chọn thiết kế:
 
@@ -720,7 +729,7 @@ Model được yêu cầu, model thực trả lời, `stop_reason`, số lần t
 | 14 | Chi phí báo cáo thấp hơn hoá đơn | Đọc `usage` cấp trên cùng; bỏ sót lần thử bị từ chối trong `usage.iterations` [3] | Cộng `usage.iterations` |
 | 15 | Output bị cắt sau fallback, `stop_reason: "max_tokens"` | Tokenizer khác; thinking tính vào `max_tokens` [6] | Đếm lại token với model đích; tăng `max_tokens` |
 | 16 | Model fallback trả lời như "quên" các lượt trước | Thinking block của model cũ không đọc được ở model mới và bị bỏ lặng lẽ [7] | Ghim hội thoại vào một model; chấp nhận mất reasoning khi buộc phải chuyển |
-| 17 | Mất reasoning khi chuyển sang key của tài khoản khác dù cùng model | Block của Sonnet 5.5 và Haiku 5.5 ràng buộc theo tài khoản [7] | Replay hội thoại qua đúng tài khoản đã tạo ra nó |
+| 17 | Mất reasoning khi chuyển sang key của tài khoản khác dù cùng model | Block của Fable 5.2, Mythos 5.2, Sonnet 5.5 và Haiku 5.5 ràng buộc theo tài khoản [7] | Replay hội thoại qua đúng tài khoản đã tạo ra nó |
 | 18 | Sau fallback: `400` "The block is bound to a different conversation", hoặc không lỗi nhưng model đọc thinking đã mất hiệu lực | Đổi `system` hoặc `tools` theo model đích giữa hội thoại [7a] | Lịch sử append-only; hoặc `prefix_mismatch_behavior: "drop_block"` cho hội thoại đã hỏng [7b] |
 | 19 | Router gửi gần hết traffic sang model mạnh | Ngưỡng quá thấp, hoặc chế độ Quality [19][23] | Đo phân bố trường `model`; chỉnh ngưỡng trên dữ liệu thật |
 | 20 | Chất lượng giảm ở một nhóm khách hàng sau khi bật router | Router không thấy nhóm đó khi huấn luyện; Bedrock routing chỉ tối ưu cho tiếng Anh [20][23] | Eval theo nhóm; giữ baseline ngoài router |
@@ -781,7 +790,7 @@ Truy cập tháng 11/2026.
 | [4] | [Claude: Fallback credit](https://platform.claude.com/docs/en/build-with-claude/fallback-credit) | "Prompt caches are per-model", credit token, trường phải giữ nguyên, model đích được phép |
 | [5] | [Claude: Stop reasons and fallback](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons) | Các giá trị `stop_reason` |
 | [6] | [Claude Haiku 5.5 migration guide](https://platform.claude.com/docs/en/models/haiku-5-5/migration-guide) | Tokenizer, thinking và `max_tokens`, prefill, computer use, Priority Tier, phong cách trả lời |
-| [7] | [Claude: Preserved thinking](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking) | Model nào đọc được thinking block của model nào, ràng buộc theo tài khoản |
+| [7] | [Claude: Preserved thinking](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking) | Model nào đọc được thinking block của model nào, block bị bỏ không tính tiền, ràng buộc theo tài khoản |
 | [7a] | [Claude: Prefix checks on thinking blocks](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/prefix-checks) | Model nào trả 400, model nào có thể không báo lỗi, `prefix_mismatch_behavior` |
 | [7b] | [Claude: Fix a thinking block bound to a different conversation](https://platform.claude.com/docs/en/build-with-claude/preserved-thinking/fix-bound-to-a-different-conversation) | Thông báo lỗi, khi nào dùng `drop_block` |
 | [8] | [Claude: Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching) | Ngưỡng tối thiểu theo model, giá cache read và write |
@@ -807,4 +816,4 @@ Truy cập tháng 11/2026.
 | [27] | [Bhatti và Vaddina, False Floors (arXiv 2610.01535)](https://arxiv.org/abs/2610.01535) | Baseline chọn trên dữ liệu kiểm tra, đánh giá dưới distribution shift |
 | [28] | [LiteLLM issue #19985](https://github.com/BerriAI/litellm/issues/19985) | Fallback khởi động lại vòng retry; đóng ngày 2/2/2026 |
 | [29] | [anthropic-sdk-python](https://github.com/anthropics/anthropic-sdk-python) | Bản 2.6.0: `_base_client.py` (retry, `retry-after`), `lib/middleware/_fallbacks.py` |
-| [30] | [Claude API: Service tiers](https://platform.claude.com/docs/en/api/service-tiers) | Priority Tier, `service_tier`, model không hỗ trợ, batch |
+| [30] | [Claude API: Service tiers](https://platform.claude.com/docs/en/api/service-tiers) | Priority Tier, không còn bán cam kết mới, `service_tier`, model không hỗ trợ, batch |
