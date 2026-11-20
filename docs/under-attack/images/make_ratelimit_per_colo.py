@@ -1,7 +1,9 @@
 """Sinh ratelimit-per-colo.svg: biểu đồ cột tĩnh minh hoạ mục A4 (counter đếm riêng từng data center).
 
 Số liệu GIẢ ĐỊNH: rule rate limiting "100 request / 10 giây" đếm theo JA4 fingerprint
-(characteristic chỉ có ở Enterprise, bảng plan ở A4). Mọi máy của botnet dùng chung một JA4.
+(characteristic chỉ có ở Enterprise với Advanced Rate Limiting và cần mua thêm Bot Management,
+theo bảng Availability ở developers.cloudflare.com/waf/rate-limiting-rules/). Mọi máy của botnet
+dùng chung một JA4.
 Botnet trải khắp thế giới nên request rơi vào ba data center: 80, 70 và 90 request trong cùng
 10 giây. Mỗi data center giữ counter riêng, nên không counter nào vượt 100 dù tổng là 240.
 Không nơi nào đếm cột "tổng".
@@ -25,8 +27,8 @@ assert TOTAL == 240
 assert all(c <= LIMIT for c in COUNTS.values()), "không counter nào được vượt ngưỡng"
 assert TOTAL > LIMIT
 
-W, H = 760, 460
-PX0, PY0, PH = 90, 140, 230          # vùng vẽ: trái, trên, cao
+W, H = 760, 480
+PX0, PY0, PH = 90, 160, 230          # vùng vẽ: trái, trên, cao
 YMAX = 250
 BW, STEP = 90, 150
 BASE = PY0 + PH
@@ -38,9 +40,10 @@ def y(v: float) -> float:
 
 body: list[str] = []
 body.append('<text class="title" x="20" y="38">Rate limiting đếm riêng ở từng data center</text>')
-body.append(f'<text class="cap2" x="20" y="62">Rule {LIMIT} request / 10 giây đếm theo JA4 (Enterprise). Botnet chung một JA4, '
-            'rải ra ba data center. Số liệu giả định.</text>')
-body.append(svgkit.legend(20, 88, [("blue", "counter của một data center"), ("slot", "tổng (không nơi nào đếm)")]))
+body.append(f'<text class="cap2" x="20" y="62">Rule {LIMIT} request / 10 giây đếm theo JA4 '
+            '(Enterprise, cần Advanced Rate Limiting và Bot Management).</text>')
+body.append('<text class="cap2" x="20" y="82">Botnet chung một JA4, rải ra ba data center. Số liệu giả định.</text>')
+body.append(svgkit.legend(20, 110, [("blue", "counter của một data center"), ("slot", "tổng (không nơi nào đếm)")]))
 
 xs = [PX0 + 40 + i * STEP for i in range(len(COUNTS) + 1)]
 PX1 = xs[-1] + BW + 30
@@ -71,6 +74,7 @@ body.append(f'<text class="cap" x="20" y="{H - 20}">Không counter nào vượt 
             f'dù tổng {TOTAL} request đã vượt ngưỡng.</text>')
 
 svgkit.write(__file__, "ratelimit-per-colo.svg", svgkit.svg(
-    W, H, f"Rule {LIMIT} request trong 10 giây đếm theo JA4; botnet dùng chung một JA4 gửi 80, 70 và 90 request vào ba data center: "
+    W, H, f"Rule {LIMIT} request trong 10 giây đếm theo JA4 (Enterprise, cần Advanced Rate Limiting và "
+    f"Bot Management); botnet dùng chung một JA4 gửi 80, 70 và 90 request vào ba data center: "
     f"không counter nào vượt {LIMIT} nên không bị chặn, dù tổng {TOTAL} request đã vượt ngưỡng (số liệu giả định)",
     body))

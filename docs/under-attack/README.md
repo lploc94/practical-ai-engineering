@@ -181,9 +181,9 @@ Hệ quả thực tế:
 
 Chọn ngưỡng: lấy mức cao nhất một người dùng thật có thể tạo trong một chu kỳ, nhân 3–5. Nếu không có số liệu, bắt đầu cao rồi hạ dần; một ngưỡng quá thấp sẽ chặn người thật đứng chung NAT (văn phòng, mạng di động).
 
-Counter của rate limiting được đếm **riêng tại từng data center** Cloudflare, không đếm gộp toàn mạng. Với rule đếm theo IP, điều này ít ảnh hưởng vì traffic của một IP bình thường chỉ tới một data center. Nó quan trọng khi rule đếm theo characteristic mà nhiều client cùng có (header, ASN, JA4... ở Enterprise): botnet trải khắp thế giới có thể vượt "ngưỡng" tổng mà không bị chặn ở đâu.
+Counter của rate limiting được đếm **riêng tại từng data center** Cloudflare, không đếm gộp toàn mạng. Với rule đếm theo IP, điều này ít ảnh hưởng vì traffic của một IP bình thường chỉ tới một data center. Nó quan trọng khi rule đếm theo characteristic mà nhiều client cùng có (header, ASN, JA4..., chỉ có ở Enterprise với Advanced Rate Limiting; riêng JA4 cần thêm Bot Management): botnet trải khắp thế giới có thể vượt "ngưỡng" tổng mà không bị chặn ở đâu.
 
-![Rule 100 request trong 10 giây đếm theo JA4, botnet dùng chung một JA4 gửi 80, 70 và 90 request vào ba data center: không counter nào vượt 100 nên không bị chặn, dù tổng 240 request đã vượt ngưỡng (số liệu giả định)](images/ratelimit-per-colo.svg)
+![Rule 100 request trong 10 giây đếm theo JA4 (Enterprise, cần Advanced Rate Limiting và Bot Management), botnet dùng chung một JA4 gửi 80, 70 và 90 request vào ba data center: không counter nào vượt 100 nên không bị chặn, dù tổng 240 request đã vượt ngưỡng (số liệu giả định)](images/ratelimit-per-colo.svg)
 
 ### A5. Phút 25+: Giảm tải origin
 
@@ -677,6 +677,7 @@ Tài liệu chính thức của Cloudflare (developers.cloudflare.com) và nginx
 | Rate limiting rules | [developers.cloudflare.com/waf/rate-limiting-rules/](https://developers.cloudflare.com/waf/rate-limiting-rules/) |
 | Rate limiting parameters | [developers.cloudflare.com/waf/rate-limiting-rules/parameters/](https://developers.cloudflare.com/waf/rate-limiting-rules/parameters/) |
 | Cách rate limiting đếm request | [developers.cloudflare.com/waf/rate-limiting-rules/request-rate/](https://developers.cloudflare.com/waf/rate-limiting-rules/request-rate/) |
+| Traffic của một IP thường tới cùng một data center (blog Cloudflare) | [blog.cloudflare.com/counting-things-a-lot-of-different-things/](https://blog.cloudflare.com/counting-things-a-lot-of-different-things/) |
 | Tạo rate limiting rule qua API | [developers.cloudflare.com/waf/rate-limiting-rules/create-api/](https://developers.cloudflare.com/waf/rate-limiting-rules/create-api/) |
 | Thêm rule vào phase ruleset | [developers.cloudflare.com/ruleset-engine/basic-operations/add-rule-phase-rulesets/](https://developers.cloudflare.com/ruleset-engine/basic-operations/add-rule-phase-rulesets/) |
 | Rules language: operators, functions, fields | [developers.cloudflare.com/ruleset-engine/rules-language/](https://developers.cloudflare.com/ruleset-engine/rules-language/) |
