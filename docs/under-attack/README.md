@@ -658,7 +658,7 @@ server {
 
 ## Nguồn
 
-Tài liệu chính thức của Cloudflare (developers.cloudflare.com) và nginx, đối chiếu 11/2026.
+Tài liệu chính thức của Cloudflare (developers.cloudflare.com) và nginx, cộng một bài blog kỹ thuật của Cloudflare, đối chiếu 11/2026.
 
 | Chủ đề | URL |
 |---|---|
