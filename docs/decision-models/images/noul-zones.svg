@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 404" width="820" height="404" role="img" aria-label="Sáu tin nhắn trên trục xác suất muốn gặp người thật: ba tin dưới 0.3 là không, hai tin trên 0.7 là có, riêng Are you a bot với 0.40 rơi vào vùng giữa 0.3 đến 0.7 cần đường xử lý riêng"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="404" rx="12"/><style>.mid-zone{fill:var(--orange-bg);opacity:.7}.dot{fill:var(--fg)}</style><text class="title" x="20" y="38">Hai ngưỡng chia xác suất yes/no thành ba vùng</text><text class="cap2" x="20" y="62">"Khách có đang muốn gặp người thật không?" trên jev-1.13.0, số liệu từ docs Jev (bảng ở §1.4).</text><rect class="mid-zone" x="545.0" y="128" width="140.0" height="206"/><line class="lorange dash" x1="545.0" y1="122" x2="545.0" y2="334"/><text class="sub mid" x="545.0" y="352">0.3</text><line class="lorange dash" x1="685.0" y1="122" x2="685.0" y2="334"/><text class="sub mid" x="685.0" y="352">0.7</text><text class="sub mid" x="440" y="352">0</text><text class="sub mid" x="790" y="352">1</text><line class="axis" x1="440" y1="334" x2="790" y2="334"/><text class="sub mid" x="615.0" y="370">xác suất "có" (noul)</text><text class="row mid" x="492.5" y="98">không</text><text class="sub mid" x="492.5" y="116">không hành động</text><text class="row mid" x="615.0" y="98">xử lý riêng</text><text class="sub mid" x="615.0" y="116">hỏi lại, gắn cờ</text><text class="row mid" x="737.5" y="98">có</text><text class="sub mid" x="737.5" y="116">hành động</text><line class="grid" x1="440" y1="158" x2="790" y2="158"/><text class="cap end" x="426" y="163">Thanks, that fixed it!</text><circle class="dot" cx="447.0" cy="158" r="6"/><text class="sub halo " x="459.0" y="162">0.02</text><line class="grid" x1="440" y1="190" x2="790" y2="190"/><text class="cap end" x="426" y="195">How do I reset my password?</text><circle class="dot" cx="464.5" cy="190" r="6"/><text class="sub halo " x="476.5" y="194">0.07</text><line class="grid" x1="440" y1="222" x2="790" y2="222"/><text class="cap end" x="426" y="227">I need this sorted today, whatever it takes.</text><circle class="dot" cx="531.0" cy="222" r="6"/><text class="sub halo end" x="519.0" y="226">0.26</text><line class="grid" x1="440" y1="254" x2="790" y2="254"/><text class="cap end" x="426" y="259">Are you a bot?</text><circle class="forange" cx="580.0" cy="254" r="6"/><text class="sub halo " x="592.0" y="258">0.40</text><line class="grid" x1="440" y1="286" x2="790" y2="286"/><text class="cap end" x="426" y="291">Is there any way to speak to someone about my invoice?</text><circle class="dot" cx="734.0" cy="286" r="6"/><text class="sub halo end" x="722.0" y="290">0.84</text><line class="grid" x1="440" y1="318" x2="790" y2="318"/><text class="cap end" x="426" y="323">I have asked three times now. … talk to a real person?</text><circle class="dot" cx="786.5" cy="318" r="6"/><text class="sub halo end" x="774.5" y="322">0.99</text><text class="cap2" x="20" y="390">0.3 và 0.7 là điểm khởi đầu; ngưỡng thật đặt từ dữ liệu có nhãn theo chi phí của từng loại sai.</text></svg>

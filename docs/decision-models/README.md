@@ -238,6 +238,8 @@ TypeSafe không công bố kiến trúc của Jev [9]. Cloudflare mô tả Clef 
 3. **Chấm điểm song song mọi lựa chọn hợp lệ.** Một "routing head" cho mỗi option trích phần ngữ cảnh liên quan đến nó, cho các field cross-attend với nhau và với payload gốc, rồi chấm điểm. Bước quyết định không autoregressive.
 4. **Huấn luyện cho calibration.** Cloudflare huấn luyện routing head cùng LoRA rank 256, với cross-entropy có label smoothing cho output hợp lệ và Brier loss để tinh chỉnh calibration, trên dữ liệu tổng hợp hoán vị thứ tự field, prompt và schema. Thêm một mục tiêu RL gọi là RLCD (*Reinforcement Learning for Calibrated Decisions*), cho điểm một phần khi chọn mức liền kề trên thang có thứ tự.
 
+![Cùng câu hỏi chọn đội: LLM prefill rồi decode tuần tự 5 token để viết chuỗi "returns" và không kèm xác suất; decision model chỉ prefill rồi chấm cả ba option một lượt: shipping 0.04, billing 0.35, returns 0.61](images/decode-vs-score.svg)
+
 Trước Clef, Cloudflare thử một hướng đơn giản hơn: lấy DiffusionGemma và đọc logprob mà LLM sinh ra cho từng lựa chọn [10]. Đây cũng là cách nhiều người tự làm "decision model nghèo" với LLM thường: hỏi một câu, đọc logprob của token đầu tiên. Khác biệt là logprob của một LLM đã qua RLHF không được tối ưu để khớp với tần suất đúng.
 
 TypeSafe giải thích vì sao họ không dùng RLHF [9]. RLHF dạy model nói điều người thích nghe; nó có thể thưởng cho sự chiều lòng và cho những câu bịa nghe tự tin. RLHF cũng gây *mode dropping*: model dồn xác suất vào một kiểu output và bỏ các khả năng khác. Cả hai đều xấu khi bạn cần một xác suất phản ánh độ bất định thật. RLCD tối ưu cho một hợp đồng khác: model không sinh văn bản, chỉ trả quyết định và xác suất, và xác suất cao hơn phải tương ứng với khả năng đúng cao hơn.
@@ -325,6 +327,8 @@ spread  = Σ p_i · |i − m|
 MAD_unif = (1/n) · Σ |i − (n−1)/2|
 confidence = max(0, 1 − spread / MAD_unif)
 ```
+
+![Thang ba mức: dồn hết vào mức 1 cho score 1.0 và confidence 1.0; chia đôi hai đầu thang cũng cho score 1.0 nhưng confidence 0; chia đôi hai mức kề cho score 1.5 và confidence 0.25](images/score-shapes.svg)
 
 **Yes/no** không có `confidence` riêng; chính xác suất đã chứa độ bất định. Nếu muốn một số cùng thang với Choice, dùng `|2p − 1|` [14].
 
@@ -1151,6 +1155,8 @@ Instructions ở đây là object: câu hỏi nằm trong `main_question`, còn 
 
 **Kết quả tham khảo** [28]: trên một trang lịch sự kiện của trường đại học, schema hỏi `registration_open_date` và `description`. Trang không có ngày mở đăng ký. `gpt-5.4-mini` để trống ngày (đúng) nhưng chép luôn ví dụ trong description của schema ("Registration opens for the fall semester") vào `description`. Record hợp lệ với schema. Jev cho field `description` 0.98 ở `hallucinated`, 0.97 ở `off_target`, 0.86 ở `unreasonable`; field ngày để trống chỉ 0.05 ở `absence_wrong`. Cascade escalate lên `gpt-5.5` với `reasoning_effort="high"`, model này trả `description` rỗng. Trong một lần chạy nội bộ khác của TypeSafe trên 100 prompt ScrapeGraphAI-100k (verifier `jev-1.12`), cascade đạt điểm LLM-judge khoảng 0.79 với khoảng $0.02 mỗi lần trích, so với 0.82 và khoảng $0.045 khi chỉ dùng `gpt-5.5` reasoning.
 
+![Cascade trên trang lịch sự kiện: gpt-5.4-mini chép ví dụ của schema vào description; Jev chấm description 0.98, 0.97, 0.86 ở ba kiểu lỗi và field ngày để trống 0.05; max 0.98 vượt ngưỡng 0.7 nên cascade gọi gpt-5.5 và nhận description rỗng](images/cascade-verify.svg)
+
 **Lưu ý.**
 
 - Kiểm tra theo `max`, không theo trung bình: một cờ đỏ chắc chắn là đủ, không để nó bị trung bình hoá thành im lặng.
@@ -1576,6 +1582,8 @@ else:
 Không ngưỡng nào tự chuyển tiền: lệnh chuyển rõ ràng mở màn hình xác nhận số tiền và người nhận. Bước xác nhận cần thiết vì một câu lệnh ngập ngừng vẫn có thể có ý định rõ: "Ờ, cái vụ chuyển tiền… ừ, làm đi" được 0.99 cho `approve_transfer`. Đáp án nói người dùng muốn hành động nào, không nói người dùng đã kiểm tra chi tiết chưa [43].
 
 **Ba vùng.** Bắt đầu với: trên ngưỡng cao thì hành động tự động; giữa hai ngưỡng thì thận trọng (hỏi lại, gắn cờ, lấy thêm thông tin); dưới ngưỡng thấp thì không hành động, chuyển người hoặc hệ thống khác [14]. Với yes/no, điểm khởi đầu 0.7 và 0.3 [6].
+
+![Sáu tin nhắn của câu hỏi "khách có muốn gặp người thật không" trên trục xác suất: ba tin dưới 0.3 là không, hai tin trên 0.7 là có, riêng "Are you a bot?" với 0.40 rơi vào vùng giữa cần đường xử lý riêng](images/noul-zones.svg)
 
 **Nâng ngưỡng khi hành động sai đắt** (gọi người trực, hoàn tiền). **Hạ ngưỡng khi bỏ sót đắt** (không gắn cờ một vấn đề an toàn) [6].
 
