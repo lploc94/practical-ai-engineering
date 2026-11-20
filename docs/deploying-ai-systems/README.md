@@ -138,6 +138,8 @@ Một load test open-loop đúng cần hai điều:
 1. Thời điểm gửi tính trước theo lịch (ví dụ tiến trình Poisson với tốc độ λ), không phụ thuộc response.
 2. Độ trễ tính từ thời điểm request *lẽ ra* được gửi theo lịch, không phải lúc nó thật sự rời client. Nếu client bị nghẽn (hết connection, event loop bận), thời gian chờ đó vẫn là độ trễ người dùng thấy.
 
+![Cùng một lần server khựng 4,5 giây: closed-loop chỉ gửi tiếp khi có response nên bỏ 4 mốc lịch và chỉ thấy 1 request chậm, trung vị 0,5 giây; open-loop gửi đúng lịch, đo từ lúc lẽ ra được gửi, thấy 8 trên 10 request chậm, trung vị 2,75 giây](images/coordinated-omission.svg)
+
 Code ở [§3.1](#31-đo-công-suất-một-replica-bằng-tải-open-loop) làm đúng hai điều này.
 
 ## 1.4 SLO và error budget cho dịch vụ LLM
@@ -361,6 +363,8 @@ Từng phần và lý do:
 2. kubelet chạy `preStop`. `sleep 15` giữ pod sống trong lúc mọi nơi cập nhật danh sách endpoint. SIGTERM chỉ được gửi sau khi `preStop` xong [12].
 3. SIGTERM. Với `--shutdown-timeout=90`, vLLM ngừng nhận request mới và tiếp tục chạy request đang có trong tối đa 90 giây; hết hạn thì huỷ phần còn lại [3]. Mặc định là 0: huỷ ngay [3].
 4. Hết `terminationGracePeriodSeconds` (tính từ lúc `preStop` bắt đầu) thì SIGKILL. Mặc định 30 giây [12]; ở đây 120 = 15 `preStop` + 90 drain + 15 dọn dẹp, theo đúng công thức trong hướng dẫn của llm-d [14].
+
+![Khi pod bị dừng, preStop sleep 15 giây cho load balancer kịp gỡ pod, rồi mới SIGTERM; vLLM chạy nốt request đang có tối đa 90 giây rồi huỷ phần còn lại; SIGKILL ở giây 120. Request dài hơn hạn drain vẫn bị cắt](images/graceful-shutdown.svg)
 
 Đặt `--shutdown-timeout` theo p99 thời gian một request ở lại hệ thống. Request dài hơn vẫn bị cắt, nên client phải xử lý được stream bị cắt giữa chừng ([Streaming §3.6](../streaming/#36-lỗi-giữa-chừng-đứt-kết-nối-lỗi-sau-khi-đã-gửi-một-phần-retry-và-resume)).
 
@@ -683,6 +687,8 @@ Mỗi thứ có version, được ghi vào trace của từng request ([LLM Obse
 2. Shadow (tuỳ chọn): bản mới nhận bản sao traffic thật, kết quả không trả cho người dùng, chỉ dùng để so độ trễ, lỗi, điểm judge. Tốn gấp đôi chi phí model cho phần traffic được sao; tắt các tool có tác dụng phụ (gửi email, ghi DB) ở bản shadow.
 3. Canary: một phần nhỏ traffic (1%, rồi 5%, 25%) sang bản mới. So tỉ lệ lỗi, TTFT, tỉ lệ bị cắt, refusal, điểm judge online giữa hai nhóm ([Evaluation §3.5](../evaluation/#35-eval-online-ab-test-feedback-người-dùng-sampling-log)). Chia theo user hoặc phiên, không theo request, để một hội thoại không nhảy qua lại giữa hai bản.
 4. Chuyển toàn bộ, giữ bản cũ chạy thêm một thời gian để rollback không phải chờ khởi động.
+
+![Shadow: bản mới nhận bản sao traffic thật, kết quả không trả cho người dùng, chỉ để so độ trễ, lỗi, điểm judge. Canary: 1%, 5%, 25% rồi toàn bộ traffic sang bản mới, chia theo user hoặc phiên; bản cũ vẫn chạy để rollback ngay](images/shadow-canary.svg)
 
 **Đổi model tự host.** Chạy hai Deployment song song (bản cũ và bản mới, mỗi bản một `--served-model-name` hoặc một nhãn), chia traffic ở gateway. Cần GPU cho cả hai trong suốt thời gian chuyển; nếu không có, chuyển từng replica và chấp nhận mất công suất, hoặc thuê thêm GPU tạm. Rollback nhanh chỉ khi bản cũ còn đang chạy hoặc khởi động lại nhanh (weights và image còn trên node).
 

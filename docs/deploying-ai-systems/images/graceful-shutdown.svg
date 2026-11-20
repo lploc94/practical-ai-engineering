@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 470" width="980" height="470" role="img" aria-label="Khi pod bị dừng, preStop sleep 15 giây cho load balancer kịp gỡ pod, rồi mới SIGTERM; vLLM chạy nốt request đang có tối đa 90 giây rồi huỷ phần còn lại; SIGKILL ở giây 120. Request dài hơn hạn drain vẫn bị cắt"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="980" height="470" rx="12"/><text class="title" x="20" y="38">Dừng một pod vLLM: preStop, drain, rồi mới SIGKILL</text><rect class="tok" x="20" y="59" width="14" height="14" rx="3"/><text class="sub" x="40" y="70">chờ, dọn dẹp</text><rect class="blue" x="148" y="59" width="14" height="14" rx="3"/><text class="sub" x="168" y="70">request đang chạy</text><rect class="hatch" x="311" y="59" width="14" height="14" rx="3"/><text class="sub" x="331" y="70">request bị huỷ</text><text class="row" x="20" y="123">Endpoint</text><text class="sub" x="20" y="139">load balancer</text><text class="row" x="20" y="173">Container</text><text class="sub" x="20" y="189">kubelet, vLLM</text><text class="row" x="20" y="253">Request A</text><text class="sub" x="20" y="269">đang chạy</text><text class="row" x="20" y="298">Request B</text><text class="sub" x="20" y="314">đang chạy, dài</text><text class="row" x="20" y="343">Request C</text><text class="sub" x="20" y="359">đến ở giây 5</text><rect class="slot" x="201.0" y="110" width="82.2" height="30" rx="5"/><text class="sub" x="206.0" y="104">ready: false; mỗi load balancer gỡ pod một lúc</text><text class="sub" x="292.2" y="130.0">không còn nhận traffic mới</text><rect class="tok" x="201.0" y="160" width="82.2" height="30" rx="5"/><text class="lbl" style="font-size:12px" x="242.1" y="180.0">sleep 15</text><rect class="tok" x="285.2" y="160" width="503.4" height="30" rx="5"/><text class="lbl" style="font-size:12px" x="536.9" y="180.0">--shutdown-timeout=90: không nhận mới, chạy nốt</text><rect class="tok" x="790.6" y="160" width="82.2" height="30" rx="5"/><text class="lbl" style="font-size:12px" x="831.7" y="180.0">dọn</text><line class="lfg dash" x1="284.2" y1="156" x2="284.2" y2="366"/><line class="lfg dash" x1="789.6" y1="156" x2="789.6" y2="366"/><line class="lfg dash" x1="873.8" y1="156" x2="873.8" y2="366"/><text class="sub halo" x="288.2" y="206">SIGTERM, giây 15</text><text class="sub halo end" x="785.6" y="206">hết 90 s: huỷ phần còn lại</text><text class="sub halo" x="843.8" y="150">SIGKILL</text><rect class="blue" x="201.0" y="240" width="334.9" height="30" rx="5"/><text class="cap mid" style="font-size:12px" x="368.5" y="260.0">xong trong lúc drain</text><rect class="blue" x="201.0" y="285" width="587.6" height="30" rx="5"/><text class="cap mid" style="font-size:12px" x="494.8" y="305.0">chạy tới hết hạn drain</text><rect class="hatch" x="790.6" y="285" width="54.2" height="30" rx="5"/><text class="sub halo mid" x="817.7" y="280">bị huỷ</text><rect class="blue" x="229.1" y="330" width="194.5" height="30" rx="5"/><text class="cap mid" style="font-size:12px" x="326.3" y="350.0">vẫn được nhận</text><line class="axis" x1="200" y1="382" x2="930" y2="382"/><line class="axis" x1="200.0" y1="382" x2="200.0" y2="387"/><text class="sub mid" x="200.0" y="400">0 s</text><line class="axis" x1="284.2" y1="382" x2="284.2" y2="387"/><text class="sub mid" x="284.2" y="400">15 s</text><line class="axis" x1="368.5" y1="382" x2="368.5" y2="387"/><text class="sub mid" x="368.5" y="400">30 s</text><line class="axis" x1="452.7" y1="382" x2="452.7" y2="387"/><text class="sub mid" x="452.7" y="400">45 s</text><line class="axis" x1="536.9" y1="382" x2="536.9" y2="387"/><text class="sub mid" x="536.9" y="400">60 s</text><line class="axis" x1="621.2" y1="382" x2="621.2" y2="387"/><text class="sub mid" x="621.2" y="400">75 s</text><line class="axis" x1="705.4" y1="382" x2="705.4" y2="387"/><text class="sub mid" x="705.4" y="400">90 s</text><line class="axis" x1="789.6" y1="382" x2="789.6" y2="387"/><text class="sub mid" x="789.6" y="400">105 s</text><line class="axis" x1="873.8" y1="382" x2="873.8" y2="387"/><text class="sub mid" x="873.8" y="400">120 s</text><text class="cap" x="20" y="434" style="font-weight:600">terminationGracePeriodSeconds 120 = 15 preStop + 90 drain + 15 dọn dẹp</text><text class="cap2" x="20" y="456">Mặc định --shutdown-timeout 0: SIGTERM huỷ ngay mọi request đang chạy. Độ dài ba request là giả định.</text></svg>
