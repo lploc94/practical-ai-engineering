@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" width="820" height="400" role="img" aria-label="Agent đúng 90% mỗi lần, các lần thử độc lập: khi k tăng từ 1 đến 8, pass@k tăng từ 90% lên gần 100% còn pass^k giảm từ 90% xuống khoảng 43% (số liệu giả định)"><style>
+svg{--bg:#ffffff;--fg:#1f2328;--muted:#59636e;--slot:#d1d9e0;--tok:#f6f8fa;
+--blue:#0969da;--blue-bg:#ddf4ff;--orange:#bc4c00;--orange-bg:#fff1e5;
+--red:#cf222e;--red-bg:#ffebe9;--green:#1a7f37;--green-bg:#dafbe1}
+@media (prefers-color-scheme: dark){svg{--bg:#0d1117;--fg:#e6edf3;--muted:#9198a1;
+--slot:#3d444d;--tok:#151b23;--blue:#4493f8;--blue-bg:#0c2d6b;--orange:#db6d28;--orange-bg:#3d1e00;
+--red:#f85149;--red-bg:#490202;--green:#3fb950;--green-bg:#033a16}}
+.bg{fill:var(--bg)}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--fg)}
+.title{font-size:20px;font-weight:600}
+.row{font-size:15px;font-weight:600}
+.sub{font-size:12px;fill:var(--muted)}
+.cap{font-size:14px}
+.cap2{font-size:13px;fill:var(--muted)}
+.lbl{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;text-anchor:middle}
+.mid{text-anchor:middle}.end{text-anchor:end}
+.slot{fill:none;stroke:var(--slot);stroke-width:1.5;stroke-dasharray:4 4}
+.tok{fill:var(--tok);stroke:var(--slot);stroke-width:1.5}
+.blue{fill:var(--blue-bg);stroke:var(--blue);stroke-width:2}
+.orange{fill:var(--orange-bg);stroke:var(--orange);stroke-width:2}
+.red{fill:var(--red-bg);stroke:var(--red);stroke-width:2}
+.hatch{fill:url(#hatch);stroke:var(--red);stroke-width:2}
+.fblue{fill:var(--blue)}.forange{fill:var(--orange)}.fred{fill:var(--red)}.ffg{fill:var(--fg)}
+.tblue{fill:var(--blue)}.torange{fill:var(--orange)}.tred{fill:var(--red)}
+.lblue{stroke:var(--blue);stroke-width:2;fill:none}
+.lorange{stroke:var(--orange);stroke-width:2;fill:none}
+.lred{stroke:var(--red);stroke-width:2;fill:none}
+.lmuted{stroke:var(--slot);stroke-width:1.5;fill:none}
+.lfg{stroke:var(--fg);stroke-width:1.5;fill:none}
+.halo{paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round}
+.dash{stroke-dasharray:6 4}
+.grid{stroke:var(--slot);stroke-width:1;opacity:.6}
+.axis{stroke:var(--muted);stroke-width:1}
+.static-only{opacity:0}
+@media (prefers-reduced-motion: reduce){
+.a-show,.a-hide{animation:none!important}.a-show{opacity:1}.a-hide{opacity:0}.static-only{opacity:1}}
+</style><defs><marker id="ablue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fblue" d="M0,0L10,5L0,10z"/></marker><marker id="aorange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="forange" d="M0,0L10,5L0,10z"/></marker><marker id="ared" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="fred" d="M0,0L10,5L0,10z"/></marker><marker id="afg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ffg" d="M0,0L10,5L0,10z"/></marker><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" style="fill:var(--red-bg)"/><line x1="0" y1="0" x2="0" y2="7" style="stroke:var(--red);stroke-width:2;opacity:.55"/></pattern></defs><rect class="bg" width="820" height="400" rx="12"/><text class="title" x="20" y="38">Agent đúng 90% mỗi lần: pass@k và pass^k đi ngược chiều</text><text class="cap2" x="20" y="62">Giả định các lần thử độc lập. pass@k: ít nhất một lần đúng trong k lần. pass^k: cả k lần đều đúng.</text><rect class="fblue" x="80" y="75" width="14" height="14" rx="3"/><text class="sub" x="100" y="86">pass@k</text><rect class="forange" x="166" y="75" width="14" height="14" rx="3"/><text class="sub" x="186" y="86">pass^k</text><line class="grid" x1="80" y1="320" x2="670" y2="320"/><text class="sub end" x="72" y="324">0%</text><line class="grid" x1="80" y1="265.0" x2="670" y2="265.0"/><text class="sub end" x="72" y="269.0">25%</text><line class="grid" x1="80" y1="210.0" x2="670" y2="210.0"/><text class="sub end" x="72" y="214.0">50%</text><line class="grid" x1="80" y1="155.0" x2="670" y2="155.0"/><text class="sub end" x="72" y="159.0">75%</text><line class="grid" x1="80" y1="100.0" x2="670" y2="100.0"/><text class="sub end" x="72" y="104.0">100%</text><line class="axis" x1="80" y1="320" x2="670" y2="320"/><text class="sub mid" x="80.0" y="338">1</text><text class="sub mid" x="164.28571428571428" y="338">2</text><text class="sub mid" x="248.57142857142856" y="338">3</text><text class="sub mid" x="332.85714285714283" y="338">4</text><text class="sub mid" x="417.1428571428571" y="338">5</text><text class="sub mid" x="501.42857142857144" y="338">6</text><text class="sub mid" x="585.7142857142857" y="338">7</text><text class="sub mid" x="670.0" y="338">8</text><text class="sub mid" x="375.0" y="358">k (số lần thử)</text><polyline class="lblue" points="80.0,122.0 164.3,102.2 248.6,100.2 332.9,100.0 417.1,100.0 501.4,100.0 585.7,100.0 670.0,100.0" style="stroke-width:2.5"/><circle class="fblue" cx="80.0" cy="122.0" r="4"/><circle class="fblue" cx="164.3" cy="102.2" r="4"/><circle class="fblue" cx="248.6" cy="100.2" r="4"/><circle class="fblue" cx="332.9" cy="100.0" r="4"/><circle class="fblue" cx="417.1" cy="100.0" r="4"/><circle class="fblue" cx="501.4" cy="100.0" r="4"/><circle class="fblue" cx="585.7" cy="100.0" r="4"/><circle class="fblue" cx="670.0" cy="100.0" r="4"/><polyline class="lorange" points="80.0,122.0 164.3,141.8 248.6,159.6 332.9,175.7 417.1,190.1 501.4,203.1 585.7,214.8 670.0,225.3" style="stroke-width:2.5"/><circle class="forange" cx="80.0" cy="122.0" r="4"/><circle class="forange" cx="164.3" cy="141.8" r="4"/><circle class="forange" cx="248.6" cy="159.6" r="4"/><circle class="forange" cx="332.9" cy="175.7" r="4"/><circle class="forange" cx="417.1" cy="190.1" r="4"/><circle class="forange" cx="501.4" cy="203.1" r="4"/><circle class="forange" cx="585.7" cy="214.8" r="4"/><circle class="forange" cx="670.0" cy="225.3" r="4"/><text class="cap halo" x="86.0" y="170.0">cả hai 90% ở k = 1</text><text class="cap halo" x="682.0" y="105.00000220000001">pass@8 ≈ 100%</text><text class="cap halo" x="682.0" y="230.29721379999998">pass^8 ≈ 43%</text><text class="cap2" x="20" y="388">Agent viết code cho người tự review: pass@k hợp lý. Agent phục vụ khách hàng: pass^k, vì mỗi khách chỉ có một lần.</text></svg>

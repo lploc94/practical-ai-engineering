@@ -158,6 +158,8 @@ SE = sqrt( p̂ (1 − p̂) / n )
 
 Với 200 ca và pass rate 85%, khoảng tin cậy rộng khoảng ±5 điểm. Chênh 2 điểm giữa hai model, nếu so như hai số độc lập, nằm gọn trong nhiễu.
 
+![Trên 200 câu, model cũ đạt 86% rồi 83% khi chạy lại, model mới 84%; khoảng tin cậy 95% rộng khoảng ±5 điểm nên ba khoảng chồng lên nhau và chênh 2 điểm giữa hai model nằm trong nhiễu (số liệu giả định)](images/rerun-noise.svg)
+
 Khi n nhỏ hoặc pass rate gần 0 hay 1, công thức trên cho khoảng tin cậy sai (có thể vượt quá 1). Khoảng Wilson ổn định hơn. Đây là kiến thức thống kê chuẩn, không riêng gì LLM:
 
 ```python
@@ -184,6 +186,10 @@ Công thức trên giả định các ca độc lập. Khi nhiều câu hỏi c�
 ### So sánh hai phiên bản: so theo cặp
 
 Khi so model A với model B trên *cùng* bộ ca, đừng so hai pass rate như hai số độc lập. Tính hiệu số trên từng ca, rồi tính khoảng tin cậy của trung bình hiệu số. Miller khuyên dùng cách so cặp ở mọi chỗ có thể: hai phiên bản thường đúng và sai trên cùng các ca khó, nên phần nhiễu chung triệt tiêu và khoảng tin cậy hẹp hơn đáng kể mà không tốn thêm lần gọi nào [6].
+
+Ví dụ với tình huống đầu bài, thêm giả định về từng câu: trong 200 câu, 162 câu cả hai model đều đúng, 22 câu cả hai đều sai, 10 câu chỉ model cũ đúng, 6 câu chỉ model mới đúng (cũ 86%, mới 84%). Hiệu số chỉ khác 0 ở 16 câu bất đồng. Tính bằng xấp xỉ chuẩn, khoảng tin cậy 95% của hiệu số là −2 ± 7,0 điểm nếu so như hai số độc lập, và −2 ± 3,9 điểm nếu so theo cặp. Cả hai khoảng đều chứa 0, nhưng khoảng theo cặp hẹp hơn gần một nửa.
+
+![200 câu, model cũ đúng 86%, model mới 84%: 184 câu hai model cùng đúng hoặc cùng sai nên hiệu số bằng 0, chỉ 16 câu bất đồng; so như hai số độc lập khoảng tin cậy của hiệu số là −2 ± 7,0 điểm, so theo cặp là −2 ± 3,9 điểm (số liệu giả định)](images/paired-diff.svg)
 
 Bootstrap theo cặp là cách tính đơn giản, không cần giả định phân phối, và xử lý được cả cấu trúc cụm:
 
@@ -435,6 +441,8 @@ Các kỹ thuật RAG nâng cao và eval riêng cho chúng ở [RAG nâng cao §
 [Tool Use §3.9](../tool-use/#39-eval-cho-tool-use) đã trình bày eval theo tầng (chọn tool, tham số, quỹ đạo, kết quả) và benchmark công khai. Phần này bổ sung những điểm về phương pháp.
 
 **pass@k và pass^k đo hai thứ khác nhau.** Anthropic định nghĩa pass@k là xác suất có ít nhất một lần thành công trong k lần thử, còn pass^k là xác suất *cả k lần* đều thành công [1]. τ-bench ước lượng pass^k bằng `E_task[ C(c, k) / C(n, k) ]`, với n lần chạy mỗi task và c lần thành công [27]. Với một agent thành công 90% mỗi lần một cách độc lập, pass@8 gần 100% nhưng pass^8 = 0,9⁸ ≈ 43%. Agent viết code cho lập trình viên tự review thì pass@k là thước đo hợp lý. Agent phục vụ khách hàng thì pass^k mới phản ánh trải nghiệm: mỗi khách chỉ có một lần.
+
+![Agent đúng 90% mỗi lần, các lần thử độc lập: khi k tăng từ 1 đến 8, pass@k tăng từ 90% lên gần 100% còn pass^k giảm từ 90% xuống khoảng 43% (số liệu giả định)](images/pass-at-k.svg)
 
 **Chấm trạng thái, không chấm lời tự khai.** Grader đọc database, hệ thống file, hoặc trạng thái mock sau khi agent chạy [1].
 
